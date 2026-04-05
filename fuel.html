@@ -1,0 +1,267 @@
+<!-- ============================================================
+     THE FUEL VIEW — Nutrition Planner
+     ============================================================ -->
+
+<section class="page-section">
+
+  <header class="page-header">
+    <p class="page-eyebrow">// NUTRITION MODULE</p>
+    <h1 class="page-title">🥗 THE FUEL</h1>
+    <p class="page-subtitle">
+      What you eat is what you become. Track your calories, protein, carbs, and fat
+      to make sure your nutrition supports your goals.
+    </p>
+  </header>
+
+  <!-- DAILY SUMMARY STATS -->
+  <div class="grid-stats" style="margin-bottom:28px">
+    <div class="stat-box">
+      <p class="stat-label">🔥 Total Calories</p>
+      <p class="stat-value" ng-style="{color: totals.calories > user.calorieGoal ? 'var(--accent-red)' : 'var(--text-primary)'}">
+        {{totals.calories}}<span class="stat-unit">kcal</span>
+      </p>
+      <p class="stat-delta">Goal: {{user.calorieGoal}} kcal</p>
+      <div class="progress-track">
+        <div class="progress-fill"
+          ng-style="{width: calProgress + '%', background: calProgress > 100 ? 'var(--accent-red)' : ''}">
+        </div>
+      </div>
+    </div>
+    <div class="stat-box">
+      <p class="stat-label">🥩 Protein</p>
+      <p class="stat-value" style="color:var(--accent-blue)">{{totals.protein}}<span class="stat-unit">g</span></p>
+      <p class="stat-delta">Goal: {{user.proteinGoal}}g</p>
+      <div class="progress-track">
+        <div class="progress-fill" ng-style="{width: proteinProgress + '%', background: 'var(--accent-blue)'}"></div>
+      </div>
+    </div>
+    <div class="stat-box">
+      <p class="stat-label">🍞 Carbohydrates</p>
+      <p class="stat-value" style="color:var(--accent-orange)">{{totals.carbs}}<span class="stat-unit">g</span></p>
+      <p class="stat-delta">{{macroRings.carbs}}% of macros</p>
+    </div>
+    <div class="stat-box">
+      <p class="stat-label">🥑 Fats</p>
+      <p class="stat-value" style="color:var(--accent-purple)">{{totals.fat}}<span class="stat-unit">g</span></p>
+      <p class="stat-delta">{{macroRings.fat}}% of macros</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+
+    <!-- LEFT: LOG MEAL FORM + MEALS LIST -->
+    <div>
+
+      <!-- LOG MEAL FORM -->
+      <article class="card card-accent-blue" style="margin-bottom:24px">
+        <h2 class="card-title">🥗 LOG A MEAL</h2>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:20px">
+          Add what you ate — even snacks count! Consistent tracking = consistent results.
+        </p>
+
+        <div class="workout-form-grid">
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label" for="mealName">Meal / Food Name *</label>
+            <input id="mealName" type="text" class="form-control"
+              ng-model="newMeal.name" placeholder="e.g. Grilled Chicken + Rice" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="mealType">Meal Type</label>
+            <select id="mealType" class="form-control" ng-model="newMeal.type">
+              <option ng-repeat="t in mealTypes" value="{{t}}">{{t}}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="mealCals">Calories (kcal)</label>
+            <input id="mealCals" type="number" class="form-control"
+              ng-model="newMeal.calories" min="0" placeholder="e.g. 500" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="mealProt">Protein (g)</label>
+            <input id="mealProt" type="number" class="form-control"
+              ng-model="newMeal.protein" min="0" placeholder="e.g. 40" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="mealCarbs">Carbs (g)</label>
+            <input id="mealCarbs" type="number" class="form-control"
+              ng-model="newMeal.carbs" min="0" placeholder="e.g. 60" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="mealFat">Fat (g)</label>
+            <input id="mealFat" type="number" class="form-control"
+              ng-model="newMeal.fat" min="0" placeholder="e.g. 15" />
+          </div>
+        </div>
+
+        <button class="btn btn-primary" ng-click="addMeal()" ng-disabled="!newMeal.name">
+           🥗 Log This Meal
+        </button>
+      </article>
+
+      <!-- MEALS LIST -->
+      <article class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <h2 class="card-title" style="margin:0">🥗 TODAY'S MEALS</h2>
+          <span class="badge badge-blue">{{meals.length}} ENTRIES</span>
+        </div>
+
+        <div ng-if="meals.length === 0" class="empty-state">
+          <div class="empty-icon">🥗</div>
+          <p>No meals logged yet.<br/>Use the form above to log your first meal!</p>
+        </div>
+
+        <div ng-repeat="meal in meals">
+          <div class="meal-card">
+            <div>
+              <div class="meal-name">{{meal.name}}</div>
+              <div class="meal-meta">
+                <span class="badge badge-blue" style="margin-right:6px">{{meal.type}}</span>
+                P: {{meal.protein}}g - C: {{meal.carbs}}g - F: {{meal.fat}}g - {{meal.date}}
+              </div>
+            </div>
+            <div class="meal-cals">{{meal.calories}}<span style="font-size:0.75rem;color:var(--text-muted)"> kcal</span></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-outline btn-sm" ng-click="startEditMeal(meal)" title="Edit meal">✎</button>
+              <button class="btn btn-danger btn-sm" ng-click="deleteMeal(meal.id)" title="Remove meal">✕</button>
+            </div>
+          </div>
+          <div class="inline-edit-panel" ng-if="editingMealId === meal.id">
+            <div class="inline-edit-grid inline-edit-grid-meal">
+              <div class="form-group">
+                <label class="form-label">Meal</label>
+                <input type="text" class="form-control" ng-model="editMealForm.name" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Type</label>
+                <select class="form-control" ng-model="editMealForm.type">
+                  <option ng-repeat="t in mealTypes" value="{{t}}">{{t}}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Calories</label>
+                <input type="number" class="form-control" ng-model="editMealForm.calories" min="0" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Protein</label>
+                <input type="number" class="form-control" ng-model="editMealForm.protein" min="0" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Carbs</label>
+                <input type="number" class="form-control" ng-model="editMealForm.carbs" min="0" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Fat</label>
+                <input type="number" class="form-control" ng-model="editMealForm.fat" min="0" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-control" ng-model="editMealForm.date" />
+              </div>
+              <div class="inline-edit-actions">
+                <button class="btn btn-primary btn-sm" ng-click="saveMealEdit()">Save</button>
+                <button class="btn btn-outline btn-sm" ng-click="cancelEditMeal()">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- RIGHT: Macro Breakdown + Tip -->
+    <aside>
+
+      <!-- MACRO RINGS -->
+      <div class="card card-accent-blue" style="margin-bottom:20px">
+        <h2 class="card-title">📊 MACRO SPLIT</h2>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:20px">
+          Your macronutrient ratio for today. Aim for ~40% carbs, 35% protein, 25% fat for muscle gain.
+        </p>
+        <div class="macro-ring-row">
+
+          <!-- Protein Ring -->
+          <div class="macro-ring-box">
+            <svg width="90" height="90" viewBox="0 0 90 90" style="transform:rotate(-90deg)">
+              <circle cx="45" cy="45" r="36" fill="none" stroke="var(--border)" stroke-width="8"/>
+              <circle cx="45" cy="45" r="36" fill="none"
+                stroke="var(--accent-blue)" stroke-width="8"
+                stroke-linecap="round"
+                stroke-dasharray="{{2 * 3.14159 * 36}}"
+                stroke-dashoffset="{{calcRingOffset(macroRings.protein, 36)}}"/>
+            </svg>
+            <p class="macro-label-val">🥩 {{macroRings.protein}}%</p>
+            <p class="macro-label-name">PROTEIN</p>
+          </div>
+
+          <!-- Carbs Ring -->
+          <div class="macro-ring-box">
+            <svg width="90" height="90" viewBox="0 0 90 90" style="transform:rotate(-90deg)">
+              <circle cx="45" cy="45" r="36" fill="none" stroke="var(--border)" stroke-width="8"/>
+              <circle cx="45" cy="45" r="36" fill="none"
+                stroke="var(--accent-orange)" stroke-width="8"
+                stroke-linecap="round"
+                stroke-dasharray="{{2 * 3.14159 * 36}}"
+                stroke-dashoffset="{{calcRingOffset(macroRings.carbs, 36)}}"/>
+            </svg>
+            <p class="macro-label-val">🍞 {{macroRings.carbs}}%</p>
+            <p class="macro-label-name">CARBS</p>
+          </div>
+
+          <!-- Fat Ring -->
+          <div class="macro-ring-box">
+            <svg width="90" height="90" viewBox="0 0 90 90" style="transform:rotate(-90deg)">
+              <circle cx="45" cy="45" r="36" fill="none" stroke="var(--border)" stroke-width="8"/>
+              <circle cx="45" cy="45" r="36" fill="none"
+                stroke="var(--accent-purple)" stroke-width="8"
+                stroke-linecap="round"
+                stroke-dasharray="{{2 * 3.14159 * 36}}"
+                stroke-dashoffset="{{calcRingOffset(macroRings.fat, 36)}}"/>
+            </svg>
+            <p class="macro-label-val">🥑 {{macroRings.fat}}%</p>
+            <p class="macro-label-name">FAT</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- DAILY NUTRITION TIP (from $http / fallback) -->
+      <div class="card" style="border-left:3px solid var(--accent-green)">
+        <h2 class="card-title">💡 DAILY TIP</h2>
+        <p style="font-size:0.9rem;line-height:1.8;color:var(--text-muted)">
+          {{nutritionTip}}
+        </p>
+      </div>
+
+      <!-- GOAL SUMMARY -->
+      <div class="card" style="margin-top:20px">
+        <h2 class="card-title">🎯 YOUR GOALS</h2>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.82rem">
+              <span style="color:var(--text-muted)">Daily Calories</span>
+              <span>{{totals.calories}} / {{user.calorieGoal}} kcal</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" ng-style="{width: calProgress + '%'}"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.82rem">
+              <span style="color:var(--text-muted)">Daily Protein</span>
+              <span>{{totals.protein}} / {{user.proteinGoal}}g</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" ng-style="{width: proteinProgress + '%', background: 'var(--accent-blue)'}"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</section>
