@@ -1,0 +1,242 @@
+<!-- ============================================================
+     LOGS VIEW — Full History
+     ============================================================ -->
+
+<section class="page-section">
+
+  <header class="page-header">
+    <p class="page-eyebrow">// HISTORY MODULE</p>
+    <h1 class="page-title">📋 MY LOGS</h1>
+    <p class="page-subtitle">
+      Your complete workout and meal history. Search, sort, and manage
+      every entry you've ever logged.
+    </p>
+  </header>
+
+  <!-- TAB SWITCHER -->
+  <div style="display:flex;gap:8px;margin-bottom:28px;border-bottom:1px solid var(--border);padding-bottom:0">
+    <button class="btn" ng-click="setTab('workouts')"
+      ng-style="{
+        color:      activeTab==='workouts' ? 'var(--accent-green)' : 'var(--text-muted)',
+        background: activeTab==='workouts' ? 'rgba(181,255,77,0.08)' : 'transparent',
+        borderBottom: activeTab==='workouts' ? '2px solid var(--accent-green)' : '2px solid transparent',
+        borderRadius: '0'
+      }">
+      🏋️ Workouts ({{workoutLogs.length}})
+    </button>
+    <button class="btn" ng-click="setTab('meals')"
+      ng-style="{
+        color:      activeTab==='meals' ? 'var(--accent-blue)' : 'var(--text-muted)',
+        background: activeTab==='meals' ? 'rgba(77,170,255,0.08)' : 'transparent',
+        borderBottom: activeTab==='meals' ? '2px solid var(--accent-blue)' : '2px solid transparent',
+        borderRadius: '0'
+      }">
+      🥗 Meals ({{mealLogs.length}})
+    </button>
+  </div>
+
+  <!-- SEARCH + SORT BAR -->
+  <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+    <input type="text" class="form-control" style="max-width:300px;flex:1"
+      ng-model="searchQuery"
+      placeholder="🔍 Search by name, category..." />
+    <span style="font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono)">
+      SORT BY:
+    </span>
+    <button class="btn btn-outline btn-sm" ng-click="setSortField('date')">
+      Date {{sortField==='date' ? (sortReverse ? '↓' : '↑') : ''}}
+    </button>
+    <button class="btn btn-outline btn-sm" ng-click="setSortField('name')">
+      Name {{sortField==='name' ? (sortReverse ? '↓' : '↑') : ''}}
+    </button>
+    <button class="btn btn-outline btn-sm" ng-click="setSortField('category')" ng-if="activeTab==='workouts'">
+      Category {{sortField==='category' ? (sortReverse ? '↓' : '↑') : ''}}
+    </button>
+    <button class="btn btn-outline btn-sm" ng-click="setSortField('calories')" ng-if="activeTab==='meals'">
+      Calories {{sortField==='calories' ? (sortReverse ? '↓' : '↑') : ''}}
+    </button>
+  </div>
+
+  <!-- WORKOUTS TABLE -->
+  <article class="card" ng-if="activeTab === 'workouts'">
+    <div ng-if="workoutLogs.length === 0" class="empty-state">
+      <div class="empty-icon">🏋️</div>
+      <p>No workouts logged yet. Head to <a href="#/forge" style="color:var(--accent-green)">The Forge</a> to start!</p>
+    </div>
+
+    <div class="log-table-wrap" ng-if="workoutLogs.length > 0">
+      <table class="log-table" summary="Complete workout history">
+        <thead>
+          <tr>
+            <th>EXERCISE</th>
+            <th>CATEGORY</th>
+            <th>SETS</th>
+            <th>REPS</th>
+            <th>WEIGHT</th>
+            <th>INTENSITY</th>
+            <th>DATE</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- $filter:searchQuery | orderBy:sortField — inbuilt $filter service in use -->
+          <tr ng-repeat-start="w in workoutLogs | filter:searchQuery | orderBy:sortField:sortReverse">
+            <td style="font-weight:600">{{w.name}}</td>
+            <td><span class="badge badge-orange">{{w.category}}</span></td>
+            <td style="font-family:var(--font-mono)">{{w.sets}}</td>
+            <td style="font-family:var(--font-mono)">{{w.reps}}</td>
+            <td style="font-family:var(--font-mono)">
+              {{w.weight > 0 ? (w.weight + ' kg') : 'BW'}}
+            </td>
+            <td>
+              <span class="intensity-dot" ng-class="{
+                'intensity-dot-red':    w.intensity==='high',
+                'intensity-dot-orange': w.intensity==='medium',
+                'intensity-dot-green':  w.intensity==='low'
+              }"></span>
+              <span class="badge" ng-class="{
+                'badge-red':    w.intensity==='high',
+                'badge-orange': w.intensity==='medium',
+                'badge-green':  w.intensity==='low'
+              }">{{w.intensity}}</span>
+            </td>
+            <td style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-muted)">{{w.date}}</td>
+            <td>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn btn-outline btn-sm" ng-click="startEditWorkout(w)">✎ Edit</button>
+                <button class="btn btn-danger btn-sm" ng-click="deleteLog('workout', w.id)">✕ Remove</button>
+              </div>
+            </td>
+          </tr>
+          <tr ng-if="editingWorkoutId === w.id" ng-repeat-end>
+            <td colspan="8">
+              <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:end">
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Exercise</label>
+                  <input type="text" class="form-control" ng-model="editWorkoutForm.name" />
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Category</label>
+                  <select class="form-control" ng-model="editWorkoutForm.category">
+                    <option ng-repeat="c in ['Chest','Back','Legs','Shoulders','Arms','Core','Cardio']" value="{{c}}">{{c}}</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Sets</label>
+                  <input type="number" class="form-control" ng-model="editWorkoutForm.sets" min="1" />
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Reps</label>
+                  <input type="number" class="form-control" ng-model="editWorkoutForm.reps" min="1" />
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Weight</label>
+                  <input type="number" class="form-control" ng-model="editWorkoutForm.weight" min="0" />
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Intensity</label>
+                  <select class="form-control" ng-model="editWorkoutForm.intensity">
+                    <option value="low">low</option>
+                    <option value="medium">medium</option>
+                    <option value="high">high</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-control" ng-model="editWorkoutForm.date" />
+                </div>
+                <div style="display:flex;gap:8px;justify-content:flex-end;align-items:center;grid-column:span 1">
+                  <button class="btn btn-primary btn-sm" ng-click="saveWorkoutEdit()">Save</button>
+                  <button class="btn btn-outline btn-sm" ng-click="cancelEditWorkout()">Cancel</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <!-- MEALS TABLE -->
+  <article class="card" ng-if="activeTab === 'meals'">
+    <div ng-if="mealLogs.length === 0" class="empty-state">
+      <div class="empty-icon">🥗</div>
+      <p>No meals logged yet. Head to <a href="#/fuel" style="color:var(--accent-blue)">The Fuel</a> to start!</p>
+    </div>
+
+    <div class="log-table-wrap" ng-if="mealLogs.length > 0">
+      <table class="log-table" summary="Complete meal history">
+        <thead>
+          <tr>
+            <th>MEAL</th>
+            <th>TYPE</th>
+            <th>CALORIES</th>
+            <th>PROTEIN</th>
+            <th>CARBS</th>
+            <th>FAT</th>
+            <th>DATE</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat-start="m in mealLogs | filter:searchQuery | orderBy:sortField:sortReverse">
+            <td style="font-weight:600">{{m.name}}</td>
+            <td><span class="badge badge-blue">{{m.type}}</span></td>
+            <td style="font-family:var(--font-mono);color:var(--accent-orange)">{{m.calories}} kcal</td>
+            <td style="font-family:var(--font-mono)">{{m.protein}}g</td>
+            <td style="font-family:var(--font-mono)">{{m.carbs}}g</td>
+            <td style="font-family:var(--font-mono)">{{m.fat}}g</td>
+            <td style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-muted)">{{m.date}}</td>
+            <td>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn btn-outline btn-sm" ng-click="startEditMeal(m)">✎ Edit</button>
+                <button class="btn btn-danger btn-sm" ng-click="deleteLog('meal', m.id)">✕ Remove</button>
+              </div>
+            </td>
+          </tr>
+          <tr ng-if="editingMealId === m.id" ng-repeat-end>
+            <td colspan="8">
+              <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:end">
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Meal</label>
+                  <input type="text" class="form-control" ng-model="editMealForm.name" />
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Type</label>
+                  <select class="form-control" ng-model="editMealForm.type">
+                    <option ng-repeat="t in ['Breakfast','Lunch','Dinner','Snack','Pre-Workout','Post-Workout']" value="{{t}}">{{t}}</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Calories</label>
+                  <input type="number" class="form-control" ng-model="editMealForm.calories" min="0" />
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Protein</label>
+                  <input type="number" class="form-control" ng-model="editMealForm.protein" min="0" />
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Carbs</label>
+                  <input type="number" class="form-control" ng-model="editMealForm.carbs" min="0" />
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Fat</label>
+                  <input type="number" class="form-control" ng-model="editMealForm.fat" min="0" />
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-control" ng-model="editMealForm.date" />
+                </div>
+                <div style="display:flex;gap:8px;justify-content:flex-end;align-items:center;grid-column:span 1">
+                  <button class="btn btn-primary btn-sm" ng-click="saveMealEdit()">Save</button>
+                  <button class="btn btn-outline btn-sm" ng-click="cancelEditMeal()">Cancel</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+</section>

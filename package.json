@@ -1,12 +1,15 @@
 {
+  "name": "corematrix",
+  "version": "1.0.0",
+  "description": "CoreMatrix workout and nutrition planner",
+  "main": "Codes/server.js",
+  "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node Codes/server.js"
   },
   "dependencies": {
-    "angular": "^1.8.3",
-    "angular-route": "^1.8.3",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "mysql2": "^3.18.2"
+    "cors": "^2.8.0",
+    "express": "^5.0.0",
+    "mysql2": "^3.0.0"
   }
 }

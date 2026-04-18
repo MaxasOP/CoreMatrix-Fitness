@@ -1,0 +1,204 @@
+<!-- ============================================================
+     THE FORGE VIEW — Workout Planner
+     ============================================================ -->
+
+<section class="page-section">
+
+  <header class="page-header">
+    <p class="page-eyebrow">// TRAINING MODULE</p>
+    <h1 class="page-title">🔥 THE FORGE</h1>
+    <p class="page-subtitle">
+      Log your workouts, track your sets, and see your weekly plan.
+      Every session you log is a step toward your goal.
+    </p>
+  </header>
+
+  <div class="forge-layout">
+
+    <!-- LEFT COLUMN: Form + Workout List -->
+    <div>
+      <!-- LOG NEW WORKOUT FORM -->
+      <article class="card card-accent-orange" style="margin-bottom:28px">
+        <h2 class="card-title">🏋️ LOG A NEW WORKOUT</h2>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:20px">
+          Fill in the fields below and hit <strong>Log It</strong> - it is that simple!
+        </p>
+
+        <div class="workout-form-grid">
+          <div class="form-group">
+            <label class="form-label" for="workoutName">Exercise Name *</label>
+            <input id="workoutName" type="text" class="form-control"
+              ng-model="newWorkout.name" placeholder="e.g. Bench Press" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="workoutCat">Muscle Group</label>
+            <select id="workoutCat" class="form-control" ng-model="newWorkout.category">
+              <option ng-repeat="c in categories" value="{{c}}">{{c}}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="workoutSets">Sets</label>
+            <input id="workoutSets" type="number" class="form-control"
+              ng-model="newWorkout.sets" min="1" max="20" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="workoutReps">Reps per Set</label>
+            <input id="workoutReps" type="number" class="form-control"
+              ng-model="newWorkout.reps" min="1" max="100" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="workoutWeight">Weight (kg) - 0 for bodyweight</label>
+            <input id="workoutWeight" type="number" class="form-control"
+              ng-model="newWorkout.weight" min="0" placeholder="e.g. 80" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="workoutIntensity">Intensity Level</label>
+            <select id="workoutIntensity" class="form-control" ng-model="newWorkout.intensity">
+              <option value="low"> Low - Warm-up / Active Recovery</option>
+              <option value="medium"> Medium - Challenging but manageable</option>
+              <option value="high"> High - Maximum effort</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" ng-click="addWorkout()"
+          ng-disabled="!newWorkout.name" style="margin-top:8px">
+           🏋️ Log This Workout
+        </button>
+      </article>
+
+      <!-- LOGGED WORKOUTS LIST -->
+      <article class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+          <h2 class="card-title" style="margin:0">🏋️ YOUR WORKOUT LOGS</h2>
+          <span class="badge badge-green">{{workouts.length}} LOGGED</span>
+        </div>
+
+        <div ng-if="workouts.length === 0" class="empty-state">
+          <div class="empty-icon">🏋️</div>
+          <p>No workouts logged yet. <br/>Use the form above to log your first session!</p>
+        </div>
+
+        <div class="workout-list" ng-if="workouts.length > 0">
+          <div class="workout-item" ng-repeat="w in workouts">
+            <div class="workout-item-icon">
+              <span ng-switch="w.category">
+                <span ng-switch-when="Chest">💪</span>
+                <span ng-switch-when="Back">🔙</span>
+                <span ng-switch-when="Legs">🦵</span>
+                <span ng-switch-when="Shoulders">💪</span>
+                <span ng-switch-when="Arms">💪</span>
+                <span ng-switch-when="Core">🎯</span>
+                <span ng-switch-when="Cardio">❤️</span>
+                <span ng-switch-default>🏋️</span>
+              </span>
+            </div>
+            <div class="workout-item-info">
+              <div class="workout-item-name">{{w.name}}</div>
+              <div class="workout-item-meta">
+                {{w.sets}} sets x {{w.reps}} reps
+                <span ng-if="w.weight > 0"> - {{w.weight}}kg</span>
+                <span ng-if="w.weight == 0"> - Bodyweight</span>
+                - {{w.category}} - {{w.date}}
+              </div>
+            </div>
+            <span class="intensity-dot" ng-class="{
+              'intensity-dot-red':    w.intensity==='high',
+              'intensity-dot-orange': w.intensity==='medium',
+              'intensity-dot-green':  w.intensity==='low'
+            }"></span>
+            <span class="badge" ng-class="{
+              'badge-red':    w.intensity==='high',
+              'badge-orange': w.intensity==='medium',
+              'badge-green':  w.intensity==='low'
+            }">{{w.intensity | uppercase}}</span>
+            <div class="workout-item-actions">
+              <button class="btn btn-outline btn-sm" ng-click="markDone(w)" title="Mark as done today">✓</button>
+              <button class="btn btn-outline btn-sm" ng-click="startEditWorkout(w)" title="Edit log">✎</button>
+              <button class="btn btn-danger btn-sm" ng-click="deleteWorkout(w.id)" title="Delete log">✕</button>
+            </div>
+          </div>
+          <div class="inline-edit-panel" ng-if="editingWorkoutId === w.id">
+            <div class="inline-edit-grid">
+              <div class="form-group">
+                <label class="form-label">Exercise</label>
+                <input type="text" class="form-control" ng-model="editWorkoutForm.name" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-control" ng-model="editWorkoutForm.category">
+                  <option ng-repeat="c in categories" value="{{c}}">{{c}}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Sets</label>
+                <input type="number" class="form-control" ng-model="editWorkoutForm.sets" min="1" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Reps</label>
+                <input type="number" class="form-control" ng-model="editWorkoutForm.reps" min="1" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Weight</label>
+                <input type="number" class="form-control" ng-model="editWorkoutForm.weight" min="0" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Intensity</label>
+                <select class="form-control" ng-model="editWorkoutForm.intensity">
+                  <option value="low">low</option>
+                  <option value="medium">medium</option>
+                  <option value="high">high</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-control" ng-model="editWorkoutForm.date" />
+              </div>
+              <div class="inline-edit-actions">
+                <button class="btn btn-primary btn-sm" ng-click="saveWorkoutEdit()">Save</button>
+                <button class="btn btn-outline btn-sm" ng-click="cancelEditWorkout()">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- RIGHT SIDEBAR: Weekly Matrix -->
+    <aside>
+      <div class="card card-accent-green" style="position:sticky;top:88px">
+        <h2 class="card-title">📅 THIS WEEK</h2>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div ng-repeat="day in weekPlan"
+            style="padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-input)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <strong style="font-size:0.85rem">{{day.day}}</strong>
+              <span class="badge" ng-class="{
+                'badge-orange': day.group==='PUSH',
+                'badge-blue':   day.group==='PULL',
+                'badge-green':  day.group==='LEGS',
+                'badge-red':    day.group==='REST'
+              }">{{day.group}}</span>
+            </div>
+            <div ng-if="day.group !== 'REST'"
+              style="font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono)">
+              <div ng-repeat="ex in day.exercises" style="margin-bottom:2px">
+                {{ex.name}}
+              </div>
+            </div>
+            <div ng-if="day.group === 'REST'"
+              style="font-size:0.75rem;color:var(--text-muted)">
+               😴 Rest and recover
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</section>
