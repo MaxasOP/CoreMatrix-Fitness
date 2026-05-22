@@ -1,3 +1,21 @@
+# CoreMatrix
+
+CoreMatrix has been migrated from the legacy AngularJS/MySQL app to a MERN stack.
+
+Use these folders:
+
+- [backend/](backend/README.md) for the Express + Mongoose API
+- [client/](client/) for the React frontend
+
+The legacy root-level AngularJS and MySQL files have been removed.
+
+## Quick Start
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
 # ⬡ CoreMatrix
 ### Personalized Workout and Nutrition Planner
 
