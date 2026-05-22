@@ -17,7 +17,6 @@ CoreMatrix combines three layers:
 
 When a user registers, the app now collects body weight, height, age, activity level, and goal. Those values are used to calculate profile fields automatically, including BMI, calorie goal, protein goal, and target weight. Those values are stored in the database and restored on login.
 
----
 
 ## Quick Start
 
@@ -53,7 +52,6 @@ The server runs at `http://localhost:3000` and starts `Codes/server.js` through 
 
 Open `http://localhost:3000` in your browser. Do not open `index.html` directly if you want the database-backed login and storage to work.
 
----
 
 ## Authentication Flow
 
@@ -61,21 +59,9 @@ Open `http://localhost:3000` in your browser. Do not open `index.html` directly 
 
 The registration form collects:
 
-- Name
-- Email
-- Password
-- Training goal
-- Body weight in kg
-- Height in cm
-- Age
-- Activity level
 
 On submit, the backend stores the account in `users` and auto-calculates:
 
-- BMI
-- Calorie goal
-- Protein goal
-- Target weight
 
 ### Login
 
@@ -85,7 +71,6 @@ Login validates the email and password on the client and then verifies credentia
 
 The top-right profile menu includes a sign-out action. It clears the current session state in the browser and returns the user to the login screen.
 
----
 
 ## Project Structure
 
@@ -109,7 +94,6 @@ WPProject/
     └── style.css        # Shared visual system and responsive layout
 ```
 
----
 
 ## Frontend Architecture
 
@@ -117,12 +101,6 @@ WPProject/
 
 The SPA uses `ngRoute` with these pages:
 
-- `/` for the dashboard
-- `/auth` for login and registration
-- `/forge` for workout entry
-- `/fuel` for nutrition entry
-- `/progress` for charts and summaries
-- `/logs` for full history
 
 ### Shared state
 
@@ -132,24 +110,15 @@ The SPA uses `ngRoute` with these pages:
 
 `DataService` is the main client-side API layer. It:
 
-- stores the active user in `localStorage`
-- loads user-specific workouts and meals
-- supports create, update, and delete operations
-- falls back to seeded local data if the API is not reachable
 
 ### Editing behavior
 
 Workout logs can be edited inline from:
 
-- The Forge
-- My Logs
 
 Meal logs can be edited inline from:
 
-- The Fuel
-- My Logs
 
----
 
 ## Backend Architecture
 
@@ -169,7 +138,6 @@ Handles registration and login. Registration hashes passwords and stores profile
 
 Implements user-scoped workout and meal CRUD operations. Reads and writes are filtered by `user_id` so one user's logs are not mixed with another user's.
 
----
 
 ## Database Schema
 
@@ -177,44 +145,17 @@ Implements user-scoped workout and meal CRUD operations. Reads and writes are fi
 
 Important fields:
 
-- `name`
-- `email`
-- `password`
-- `goal`
-- `weight_kg`
-- `height_cm`
-- `age_years`
-- `activity_level`
-- `bmi`
-- `calorie_goal`
-- `protein_goal`
-- `target_weight`
 
 ### Workouts table
 
 Each workout belongs to a user via `user_id` and stores:
 
-- name
-- category
-- sets
-- reps
-- weight
-- intensity
-- log date
 
 ### Meals table
 
 Each meal belongs to a user via `user_id` and stores:
 
-- name
-- type
-- calories
-- protein
-- carbs
-- fat
-- log date
 
----
 
 ## API Reference
 
@@ -237,26 +178,16 @@ Each meal belongs to a user via `user_id` and stores:
 
 The client sends `userId` with workout and meal requests so every read/update/delete only touches that user's records.
 
----
 
 ## Running Notes
 
-- If you want the database-backed experience, start the server with `npm start`.
-- If the server is down, the app will fall back to local seeded data for some screens, but registration and login will not work.
-- The app is designed to work best when opened from `http://localhost:3000`.
 
----
 
 ## Responsive Behavior
 
 The layout is built to handle desktop and mobile screens:
 
-- navigation wraps and collapses on smaller screens
-- Forge and Fuel forms collapse into one column on mobile
-- inline edit panels stack vertically on narrow screens
-- the profile menu adapts to the viewport width
 
----
 
 ## Troubleshooting
 
@@ -264,17 +195,11 @@ The layout is built to handle desktop and mobile screens:
 
 Check that:
 
-- the Node server is running
-- MySQL is reachable
-- you opened the app through `http://localhost:3000`
-- all registration fields are completed
 
 ### Login fails
 
 Check that:
 
-- the email matches a registered account
-- the password is at least 8 characters and meets the client-side validation rules
 
 ### Logs do not match the current user
 
@@ -284,7 +209,6 @@ Make sure you are signed in. The app stores the active user in `localStorage` an
 
 Use the latest `style.css` changes. They include a responsive nav, single-column auth layout, and stacked inline editors for smaller screens.
 
----
 
 ## Development Commands
 
@@ -297,7 +221,6 @@ Run both commands from the repository root.
 
 If you need to inspect or extend the schema manually, update `dbConfig.js` and restart the server.
 
----
 
 ## Deployment (Docker + GitHub Container Registry)
 
@@ -327,9 +250,6 @@ The repository includes a GitHub Actions workflow that builds and pushes the ima
 
 Set these for production (example in `backend/.env.example`):
 
-- `MONGO_URI` — your MongoDB Atlas connection string
-- `JWT_SECRET` — secret used to sign JWT tokens
-- `PORT` — optional (default 4000)
 
 When deploying to a container platform, set the above env vars in the platform's secret manager.
 
