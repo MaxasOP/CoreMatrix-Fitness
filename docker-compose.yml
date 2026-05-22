@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    image: corematrix:latest
+    ports:
+      - '4000:4000'
+    env_file:
+      - backend/.env
+    restart: always

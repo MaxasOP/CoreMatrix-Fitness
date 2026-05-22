@@ -296,3 +296,40 @@ npm start
 Run both commands from the repository root.
 
 If you need to inspect or extend the schema manually, update `dbConfig.js` and restart the server.
+
+---
+
+## Deployment (Docker + GitHub Container Registry)
+
+This repository is prepared for containerized deployment. The `Dockerfile` builds the React `client` then packages the static build into the backend image so a single container can serve the full app.
+
+1. Build and run locally (optional):
+
+```bash
+# Build image
+docker build -t corematrix:latest .
+
+# Run container (ensure backend/.env contains your MONGO_URI pointing to Atlas)
+docker run --rm -p 4000:4000 --env-file backend/.env corematrix:latest
+```
+
+2. Using Docker Compose:
+
+```bash
+docker-compose up --build -d
+```
+
+3. GitHub Container Registry
+
+The repository includes a GitHub Actions workflow that builds and pushes the image to `ghcr.io` on `main` branch pushes. Configure the registry access as needed; the action uses `GITHUB_TOKEN` by default.
+
+4. Environment variables
+
+Set these for production (example in `backend/.env.example`):
+
+- `MONGO_URI` — your MongoDB Atlas connection string
+- `JWT_SECRET` — secret used to sign JWT tokens
+- `PORT` — optional (default 4000)
+
+When deploying to a container platform, set the above env vars in the platform's secret manager.
+
