@@ -1,0 +1,128 @@
+<!-- ============================================================
+     PROGRESS VIEW — Analytics & Charts
+     ============================================================ -->
+
+<section class="page-section">
+
+  <header class="page-header">
+    <p class="page-eyebrow">// ANALYTICS MODULE</p>
+    <h1 class="page-title">📈 YOUR PROGRESS</h1>
+    <p class="page-subtitle">
+      Every data point here represents effort. See how far you've come and
+      where you're heading.
+    </p>
+  </header>
+
+  <!-- SUMMARY STATS -->
+  <div class="grid-stats" style="margin-bottom:32px">
+    <div class="stat-box">
+      <p class="stat-label">🏋️ Total Workouts</p>
+      <p class="stat-value">{{totalWorkouts}}</p>
+      <p class="stat-delta">All time</p>
+    </div>
+    <div class="stat-box">
+      <p class="stat-label">🥗 Meals Logged</p>
+      <p class="stat-value">{{totalMeals}}</p>
+      <p class="stat-delta">All time</p>
+    </div>
+    <div class="stat-box">
+      <p class="stat-label">🔥 Avg Calories/Meal</p>
+      <p class="stat-value">{{avgCalories}}<span class="stat-unit">kcal</span></p>
+    </div>
+    <div class="stat-box">
+      <p class="stat-label">💪 Muscle Groups</p>
+      <p class="stat-value">{{categoryData.length}}</p>
+      <p class="stat-delta">Trained</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+
+    <!-- WORKOUTS BY MUSCLE GROUP — Horizontal Bar Chart -->
+    <article class="card card-accent-orange">
+      <h2 class="card-title">🏋️ WORKOUTS BY MUSCLE GROUP</h2>
+      <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:20px">
+        How many sessions you've dedicated to each muscle group. Balance is key!
+      </p>
+
+      <div ng-if="categoryData.length === 0" class="empty-state">
+        <div class="empty-icon">🏋️</div>
+        <p>Log some workouts first to see your chart!</p>
+      </div>
+
+      <div ng-repeat="cat in categoryData" style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.85rem">
+          <span style="font-weight:600">{{cat.label}}</span>
+          <span style="color:var(--text-muted);font-family:var(--font-mono)">{{cat.count}} sessions</span>
+        </div>
+        <div style="height:10px;background:var(--border);border-radius:99px;overflow:hidden">
+          <div style="height:100%;background:linear-gradient(90deg,var(--accent-orange),var(--accent-green));
+            border-radius:99px;transition:width 0.8s ease"
+            ng-style="{width: (cat.count / maxCount * 100) + '%'}">
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- RECENT WORKOUT HISTORY -->
+    <article class="card card-accent-green">
+      <h2 class="card-title">🏋️ RECENT SESSIONS</h2>
+      <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:20px">
+        Your last 7 logged workouts, sorted by date.
+      </p>
+
+      <div ng-if="weeklyWorkouts.length === 0" class="empty-state">
+        <div class="empty-icon">🏋️</div>
+        <p>No workouts logged yet!</p>
+      </div>
+
+      <div ng-repeat="w in weeklyWorkouts" style="display:flex;gap:14px;align-items:center;
+        padding:12px 0;border-bottom:1px solid var(--border)">
+        <div style="width:40px;height:40px;border-radius:8px;
+          background:rgba(181,255,77,0.08);border:1px solid var(--accent-green);
+          display:flex;align-items:center;justify-content:center;
+          font-family:var(--font-mono);font-size:0.7rem;color:var(--accent-green)">
+          {{w.date.slice(5)}}
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:0.9rem">{{w.name}}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted)">
+            {{w.sets}}x{{w.reps}} - {{w.category}}
+          </div>
+        </div>
+        <span class="intensity-dot" ng-class="{
+          'intensity-dot-red':    w.intensity==='high',
+          'intensity-dot-orange': w.intensity==='medium',
+          'intensity-dot-green':  w.intensity==='low'
+        }"></span>
+        <span class="badge" ng-class="{
+          'badge-red':    w.intensity==='high',
+          'badge-orange': w.intensity==='medium',
+          'badge-green':  w.intensity==='low'
+        }">{{w.intensity}}</span>
+      </div>
+
+      <a href="#/logs" class="btn btn-outline" style="margin-top:16px;width:100%;justify-content:center">
+        View Full History
+      </a>
+    </article>
+
+  </div>
+
+  <!-- MOTIVATIONAL STREAK SECTION -->
+  <article class="card" style="margin-top:24px;text-align:center;padding:40px;
+    background:linear-gradient(135deg,var(--bg-card),var(--bg-surface))">
+    <p style="font-family:var(--font-mono);font-size:0.72rem;color:var(--accent-green);letter-spacing:3px;margin-bottom:12px">
+      // REMEMBER THIS
+    </p>
+    <h2 style="font-family:var(--font-display);font-size:clamp(1.8rem,4vw,3rem);
+      letter-spacing:4px;color:var(--text-primary);margin-bottom:12px">
+      CONSISTENCY BEATS INTENSITY
+    </h2>
+    <p style="color:var(--text-muted);max-width:500px;margin:0 auto;line-height:1.8">
+      You don't need perfect days. You need enough good days in a row.
+      Keep logging. Keep showing up. The results will follow.
+    </p>
+  </article>
+
+</section>
