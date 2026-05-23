@@ -13,10 +13,12 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <nav style={{ padding: 10 }}>
+      <div style={{ minHeight: '100vh', fontFamily: 'Arial, sans-serif', background: '#f8fafc', color: '#0f172a' }}>
+      <nav style={{ padding: 10, borderBottom: '1px solid #e2e8f0', background: '#fff' }}>
         <Link to="/">Home</Link> | <Link to="/forge">Forge</Link> | <Link to="/fuel">Fuel</Link> | <Link to="/progress">Progress</Link> | <Link to="/logs">Logs</Link>
         {user ? (<span style={{ marginLeft: 12 }}>Signed in: <strong>{user.name}</strong> <button onClick={logout} style={{ marginLeft: 8 }}>Sign out</button></span>) : (<Link to="/auth" style={{ marginLeft: 12 }}>Sign in</Link>)}
       </nav>
+      <main style={{ padding: 16 }}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
@@ -25,6 +27,8 @@ export default function App() {
         <Route path="/progress" element={<Progress />} />
         <Route path="/logs" element={<Logs />} />
       </Routes>
+      </main>
+      </div>
     </BrowserRouter>
   );
 }
