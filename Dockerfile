@@ -25,7 +25,7 @@ LABEL org.opencontainers.image.source="https://github.com/maxasop/CoreMatrix-Fit
 LABEL org.opencontainers.image.license="MIT"
 
 # Create a non-root user and run as that user
-RUN addgroup -S appgroup && adduser -S app -G appgroup
+RUN addgroup -S app && adduser -S app -G app
 RUN chown -R app:app /app
 USER app
 
