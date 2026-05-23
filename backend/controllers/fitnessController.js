@@ -12,14 +12,14 @@ function resolveUserId(req) {
 async function getAllWorkouts(req, res) {
   try {
     const userId = resolveUserId(req);
+    // Don't expose other users' data to anonymous requests
+    if (!userId) return res.json([]);
     const filter = {};
-    if (userId) {
-      try {
-        filter.user_id = mongoose.Types.ObjectId(userId);
-      } catch (e) {
-        // If conversion fails, fall back to using the raw value (Mongoose will attempt casting)
-        filter.user_id = userId;
-      }
+    try {
+      filter.user_id = mongoose.Types.ObjectId(userId);
+    } catch (e) {
+      // If conversion fails, fall back to using the raw value (Mongoose will attempt casting)
+      filter.user_id = userId;
     }
     const workouts = await Workout.find(filter).sort({ log_date: -1, created_at: -1 }).lean();
     res.json(workouts);
@@ -60,13 +60,13 @@ async function deleteWorkout(req, res) {
 async function getAllMeals(req, res) {
   try {
     const userId = resolveUserId(req);
+    // Don't expose other users' data to anonymous requests
+    if (!userId) return res.json([]);
     const filter = {};
-    if (userId) {
-      try {
-        filter.user_id = mongoose.Types.ObjectId(userId);
-      } catch (e) {
-        filter.user_id = userId;
-      }
+    try {
+      filter.user_id = mongoose.Types.ObjectId(userId);
+    } catch (e) {
+      filter.user_id = userId;
     }
     const meals = await Meal.find(filter).sort({ log_date: -1, calories: -1 }).lean();
     res.json(meals);
