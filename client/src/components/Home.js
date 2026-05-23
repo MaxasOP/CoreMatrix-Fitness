@@ -15,22 +15,29 @@ export default function Home() {
   const [workouts, setWorkouts] = useState([]);
   const [meals, setMeals] = useState([]);
   const [tip, setTip] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => { fetchAll(); }, []);
 
   async function fetchAll() {
     try {
       const [wRes, mRes, tRes] = await Promise.all([api.get('/workouts'), api.get('/meals'), api.get('/tip')]);
-      setWorkouts(wRes.data || []);
-      setMeals(mRes.data || []);
+      setWorkouts(Array.isArray(wRes.data) ? wRes.data : []);
+      setMeals(Array.isArray(mRes.data) ? mRes.data : []);
       setTip((tRes.data && tRes.data.tip) || '');
-    } catch (err) { console.warn('Home fetch error', err); }
+      setError('');
+    } catch (err) {
+      console.warn('Home fetch error', err);
+      setError('Dashboard data could not be loaded. Check REACT_APP_API_URL in Vercel and make sure it points to the Render backend.');
+    }
   }
 
   function getTodayStats() {
     const today = new Date().toISOString().split('T')[0];
-    const todayMeals = meals.filter(m => (m.date || (m.log_date && m.log_date.split && m.log_date.split('T')[0])) === today || (m.log_date && new Date(m.log_date).toISOString().split('T')[0] === today));
-    const todayWorkouts = workouts.filter(w => (w.date || (w.log_date && w.log_date.split && w.log_date.split('T')[0])) === today || (w.log_date && new Date(w.log_date).toISOString().split('T')[0] === today));
+    const safeMeals = Array.isArray(meals) ? meals : [];
+    const safeWorkouts = Array.isArray(workouts) ? workouts : [];
+    const todayMeals = safeMeals.filter(m => (m.date || (m.log_date && m.log_date.split && m.log_date.split('T')[0])) === today || (m.log_date && new Date(m.log_date).toISOString().split('T')[0] === today));
+    const todayWorkouts = safeWorkouts.filter(w => (w.date || (w.log_date && w.log_date.split && w.log_date.split('T')[0])) === today || (w.log_date && new Date(w.log_date).toISOString().split('T')[0] === today));
     return {
       calories: todayMeals.reduce((s,m)=>s + (Number(m.calories)||0), 0),
       protein:  todayMeals.reduce((s,m)=>s + (Number(m.protein)||0), 0),
@@ -40,7 +47,7 @@ export default function Home() {
   }
 
   const stats = getTodayStats();
-  const recentWorkouts = workouts.slice(0,5);
+  const recentWorkouts = Array.isArray(workouts) ? workouts.slice(0, 5) : [];
 
   const completedDays = defaultWeekPlan.filter(d => d.group !== 'REST').length;
   const weekProgress = Math.round((completedDays / 5) * 100);
@@ -48,6 +55,7 @@ export default function Home() {
   return (
     <div style={{ padding: 20 }}>
       <h2>Dashboard</h2>
+      {error && <div style={{ marginBottom: 12, color: '#b45309', background: '#fffbeb', border: '1px solid #fcd34d', padding: 10 }}>{error}</div>}
       <div style={{ display: 'flex', gap: 20 }}>
         <div style={{ padding: 12, border: '1px solid #ddd' }}>
           <h4>Today</h4>

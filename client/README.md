@@ -24,3 +24,4 @@ Backend note:
 
 - Do not deploy the Express backend to Vercel.
 - Keep the API on Render or another Node host, then point the client to that API URL.
+- Set `REACT_APP_API_URL=https://corematrix-fitness.onrender.com/api` in the Vercel project environment variables.
