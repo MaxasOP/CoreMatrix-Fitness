@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: process.env.REACT_APP_API_URL || '/api' });
+const isProd = process.env.NODE_ENV === 'production';
+const fallbackBaseURL = isProd
+	? 'https://corematrix-fitness.onrender.com/api'
+	: '/api';
+
+const api = axios.create({ baseURL: process.env.REACT_APP_API_URL || fallbackBaseURL });
 
 // Attach Authorization header when token present in localStorage
 api.interceptors.request.use((config) => {
