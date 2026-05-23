@@ -7,7 +7,8 @@ function authOptional(req, res, next) {
   const token = auth.split(' ')[1];
   try {
     const payload = jwt.verify(token, JWT_SECRET);
-    req.user = { id: payload.sub };
+    // Ensure `id` is a string to avoid ObjectId conversion errors downstream
+    req.user = { id: payload.sub ? String(payload.sub) : payload.sub };
   } catch (err) {
     // ignore invalid token
   }
