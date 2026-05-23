@@ -53,38 +53,54 @@ export default function Home() {
   const weekProgress = Math.round((completedDays / 5) * 100);
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Dashboard</h2>
-      {error && <div style={{ marginBottom: 12, color: '#b45309', background: '#fffbeb', border: '1px solid #fcd34d', padding: 10 }}>{error}</div>}
-      <div style={{ display: 'flex', gap: 20 }}>
-        <div style={{ padding: 12, border: '1px solid #ddd' }}>
-          <h4>Today</h4>
-          <div>Calories: <strong>{stats.calories}</strong></div>
-          <div>Protein: <strong>{stats.protein}g</strong></div>
-          <div>Workouts: <strong>{stats.workouts}</strong></div>
-          <div>Total sets: <strong>{stats.totalSets}</strong></div>
-        </div>
-        <div style={{ padding: 12, border: '1px solid #ddd' }}>
-          <h4>Weekly Plan Progress</h4>
-          <div style={{ width: 120, height: 120, borderRadius: 60, background: '#f3f3f3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 20, fontWeight: 'bold' }}>{weekProgress}%</div>
-              <div style={{ fontSize: 12 }}>weekly</div>
-            </div>
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mt-6">
+      <div className="card p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm muted">Today</div>
+            <div className="stat-num">{stats.calories} kcal</div>
+            <div className="text-sm muted">Protein: <strong>{stats.protein}g</strong></div>
           </div>
-        </div>
-        <div style={{ padding: 12, border: '1px solid #ddd', flex: 1 }}>
-          <h4>Daily Tip</h4>
-          <div>{tip}</div>
+          <div className="floaty p-3 card">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v20" stroke="#06b6d4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M5 12h14" stroke="#7c3aed" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </div>
         </div>
       </div>
 
-      <div style={{ marginTop: 20 }}>
-        <h4>Recent Workouts</h4>
-        <ul>
-          {recentWorkouts.map(w => <li key={w._id || w.id}>{w.name} — {w.category} — {w.sets}×{w.reps}</li>)}
-        </ul>
+      <div className="card p-5">
+        <div className="text-sm muted">Weekly Progress</div>
+        <div className="mt-3 flex items-center gap-4">
+          <div className="w-24 h-24 rounded-full flex items-center justify-center card">
+            <div className="text-xl font-bold">{weekProgress}%</div>
+          </div>
+          <div className="flex-1">
+            <div className="text-sm muted">{completedDays} active days</div>
+            <div className="h-2 bg-white/10 rounded mt-2">
+              <div className="h-2 accent-fill rounded" style={{ width: `${weekProgress}%` }} />
+            </div>
+          </div>
+        </div>
       </div>
+
+      <div className="card p-5">
+        <div className="text-sm muted">Daily Tip</div>
+        <div className="mt-3 text-lg">{tip || 'Keep the tempo — small wins compound.'}</div>
+      </div>
+
+      <section className="md:col-span-2 card p-5">
+        <h3 className="text-lg font-semibold">Recent Workouts</h3>
+        <ul className="mt-3 divide-y divide-white/6">
+          {recentWorkouts.map(w => (
+            <li key={w._id || w.id} className="py-3 flex items-center justify-between">
+              <div>
+                <div className="font-semibold">{w.name}</div>
+                <div className="text-sm muted">{w.category} — {w.sets}×{w.reps}</div>
+              </div>
+              <div className="text-sm muted">{new Date(w.log_date).toLocaleDateString()}</div>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

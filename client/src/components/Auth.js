@@ -25,14 +25,25 @@ export default function Auth() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>{mode === 'login' ? 'Login' : 'Register'}</h2>
-      {mode !== 'login' && <input name="name" placeholder="Name" value={form.name} onChange={onChange} />}
-      <div><input name="email" placeholder="Email" value={form.email} onChange={onChange} /></div>
-      <div><input name="password" type="password" placeholder="Password" value={form.password} onChange={onChange} /></div>
-      <div style={{ marginTop: 8 }}><button onClick={submit}>{mode === 'login' ? 'Login' : 'Register'}</button>
-      <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')} style={{ marginLeft: 8 }}>{mode === 'login' ? 'Switch to register' : 'Switch to login'}</button></div>
-      <div style={{ marginTop: 8, color: 'green' }}>{msg}</div>
+    <div className="max-w-md mx-auto card p-6 mt-8">
+      <div className="text-center mb-4">
+        <div className="logo-mark mx-auto mb-2" />
+        <h2 className="text-2xl font-bold">{mode === 'login' ? 'Welcome back' : 'Create your account'}</h2>
+        <div className="text-sm muted">{mode === 'login' ? 'Sign in to continue' : 'Join CoreMatrix and track progress'}</div>
+      </div>
+
+      <div className="space-y-3">
+        {mode !== 'login' && <input name="name" placeholder="Name" value={form.name} onChange={onChange} className="w-full p-3 rounded bg-white/5 border border-white/6" />}
+        <input name="email" placeholder="Email" value={form.email} onChange={onChange} className="w-full p-3 rounded bg-white/5 border border-white/6" />
+        <input name="password" type="password" placeholder="Password" value={form.password} onChange={onChange} className="w-full p-3 rounded bg-white/5 border border-white/6" />
+      </div>
+
+      <div className="mt-4 flex items-center gap-3">
+        <button onClick={submit} className="btn-primary accent-fill w-full">{mode === 'login' ? 'Login' : 'Register'}</button>
+        <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="w-32 p-2 rounded border border-white/6">{mode === 'login' ? 'Sign up' : 'Sign in'}</button>
+      </div>
+
+      {msg && <div className="mt-3 text-sm" style={{ color: msg.toLowerCase().includes('error') ? '#ff7b7b' : '#7ef0c7' }}>{msg}</div>}
     </div>
   );
 }
