@@ -1,273 +1,207 @@
-# CoreMatrix
 
-CoreMatrix has been migrated from the legacy AngularJS/MySQL app to a MERN stack.
 
-Use these folders:
+# CoreMatrix (MERN)
 
-- [backend/](backend/README.md) for the Express + Mongoose API
-- [client/](client/) for the React frontend
+CoreMatrix is a personalized workout & nutrition tracker that was migrated from an old AngularJS + MySQL stack to a modern MERN (MongoDB, Express, React, Node.js) architecture. This README explains what the app is, how the project is organized, where you were getting stuck, and how to run, deploy, and troubleshoot it. It's written so a non-developer can understand the big picture and a developer can act on the details.
 
-The legacy root-level AngularJS and MySQL files have been removed.
+--
 
-## Quick Start
+Contents
+- Overview
+- Tech stack
+- Project structure (what's in each folder)
+- What you were stuck on (summary of problems and fixes)
+- How to run locally (backend + frontend)
+- Environment variables and production notes
+- Deployments (Render for backend, Vercel for frontend, Docker/GHCR)
+- API reference
+- Troubleshooting (common issues & how they were resolved)
+- Next steps
 
-### 1. Install dependencies
+--
+
+Overview
+--------
+CoreMatrix lets users register, log workouts and meals, view daily/weekly summaries, and track long-term progress. Every user has their own private data — workouts and meals are scoped to the signed-in account.
+
+We migrated the app to:
+- A Node/Express API using Mongoose to talk to MongoDB (hosted on Atlas for production).
+- A React single-page app (Create React App) for a modern, responsive, mobile-first UI.
+- Docker + CI automation for building and optionally publishing container images.
+
+Tech stack (short)
+-------------------
+- Frontend: React (Create React App), React Router, Tailwind used via CDN for fast design.
+- Backend: Node.js + Express, Mongoose (MongoDB ODM), JWT auth, Helmet for security.
+- Database: MongoDB Atlas (production) or local Mongo for development.
+- Deployment: Frontend on Vercel (static React build), Backend on Render (container), optional Docker image built and pushed to GitHub Container Registry (GHCR).
+
+Project structure
+------------------
+- `backend/` — Express API, Mongoose models, controllers, routes, middleware, and backend configuration. Key files:
+    - `backend/server.js` — app entrypoint, connects to MongoDB, registers routes, serves client build when present.
+    - `backend/controllers/authController.js` — register/login handlers and profile calculations.
+    - `backend/controllers/fitnessController.js` — CRUD for workouts & meals and a daily tip endpoint.
+    - `backend/models/` — `User.js`, `Workout.js`, `Meal.js` (Mongoose schemas).
+    - `backend/middleware/authMiddleware.js` — optional JWT middleware used to identify the requesting user.
+
+- `client/` — React app (Create React App). Key files:
+    - `client/src/index.js` — app bootstrap and global styles import.
+    - `client/src/App.js` — routes and page wiring.
+    - `client/src/components/` — `Home.js`, `Auth.js`, `Forge.js`, `Fuel.js`, `Progress.js`, `Logs.js`, and a shared `Layout.js`.
+    - `client/src/api.js` — axios wrapper used to contact the backend.
+    - `client/public/index.html` — includes Tailwind CDN and Inter font for the new UI.
+    - `client/src/styles.css` — custom theme and helpers (glass, safe-area, cards).
+
+- Root CI / Deployment files:
+    - `Dockerfile` — multi-stage build that builds the React app then packages it into the backend image.
+    - `.github/workflows/docker-publish.yml` — builds and pushes image to GHCR (if enabled).
+
+What you were stuck on — summary (and what we fixed)
+-------------------------------------------------
+This section documents the issues you ran into while migrating and how they were addressed.
+
+1. Blank front-end (production):
+     - Cause: The deployed Vercel frontend was not pointing to the backend API, causing runtime errors (client expected arrays but got HTML responses).
+     - Fix: `client/src/api.js` was updated to use `REACT_APP_API_URL` and a Render fallback; Home.js added defensive guards for non-array responses.
+
+2. Registration POST returning 405 / wrong origin:
+     - Cause: During development the frontend was POSTing to the Vercel origin instead of the Render backend.
+     - Fix: Instructed to set `REACT_APP_API_URL=https://corematrix-fitness.onrender.com/api` in Vercel project env variables and updated `api.js` fallback.
+
+3. Exposed anonymous data on dashboard:
+     - Cause: Unauthenticated GETs for `/api/workouts` and `/api/meals` returned all records.
+     - Fix: Backend `getAllWorkouts` / `getAllMeals` now return an empty array for anonymous requests — only authenticated requests return that user's data.
+
+4. 500 errors due to ObjectId conversion and JWT sub types:
+     - Cause: `req.user.id` could be a non-string and converting to `mongoose.Types.ObjectId()` threw.
+     - Fix: `authMiddleware` coerces `payload.sub` to a string; controllers try ObjectId conversion inside try/catch and fall back to the raw value.
+
+5. Docker build failing on Render with chown errors:
+     - Cause: chown to a non-existent user/group in the image during build.
+     - Fix: Dockerfile updated to create the user/group and chown the app directory before switching users (applied in Dockerfile changes).
+
+6. GHCR push errors / image tagging issues:
+     - Cause: Uppercase owner/repo expansion and missing registry permissions.
+     - Fix: GitHub Actions workflow tag lowercased, and workflow permissions updated to allow `packages: write` when pushing images.
+
+How to run locally (developer quick-start)
+----------------------------------------
+Prerequisites: Node 16+, npm, and a MongoDB instance (local or Atlas). Docker is optional.
+
+1. Install dependencies (run in both `backend/` and `client/` if you prefer separate installs):
 
 ```bash
-npm install
+# from repository root (runs both client and backend installs if package.json scripts set up), or:
+cd client && npm install
+cd ../backend && npm install
 ```
-# ⬡ CoreMatrix
-### Personalized Workout and Nutrition Planner
 
-CoreMatrix is a single-page AngularJS application backed by a Node.js and MySQL API. It provides workout logging, meal tracking, progress charts, a weekly training plan, and a per-user authentication flow so each account sees only its own data.
+2. Configure local environment (development):
 
-The application files now live inside the `Codes/` folder, while the repository root contains the `package.json` used to start the server.
+Create `backend/.env` with at least:
+
+```
+MONGO_URI=mongodb://localhost:27017/corematrix
+JWT_SECRET=change_this_to_a_secure_value
+PORT=4000
+```
+
+3. Run backend (development):
+
+```bash
+cd backend
+npm run dev   # or `node server.js` depending on scripts
+```
+
+4. Run client (development):
+
+```bash
+cd client
+npm start
+```
+
+Open `http://localhost:3000` (CRA default) or the port shown by `npm start` for the client. The client uses `REACT_APP_API_URL` to find the backend; set it locally if needed (e.g., `http://localhost:4000/api`).
+
+Production-style local build (single container):
+
+```bash
+docker build -t corematrix:local .
+docker run --rm -p 4000:4000 --env-file backend/.env corematrix:local
+```
+
+Environment variables (production checklist)
+-----------------------------------------
+- `MONGO_URI` — MongoDB connection string (Atlas recommended in production).
+- `JWT_SECRET` — secure random secret for signing JWTs.
+- `PORT` — optional.
+
+Make sure Render (backend) and Vercel (frontend) have the correct env vars configured:
+- On Vercel set `REACT_APP_API_URL` to `https://corematrix-fitness.onrender.com/api` (or your backend URL).
+- On Render set `MONGO_URI` and `JWT_SECRET` in the service's environment.
+
+Deployment notes
+----------------
+- Backend: currently deployed on Render as a container (`https://corematrix-fitness.onrender.com`). Render must have `MONGO_URI` and `JWT_SECRET` set in its environment.
+- Frontend: deployed on Vercel (root set to `client/`). Ensure `REACT_APP_API_URL` is configured in Vercel's Environment Variables and that the project is redeployed after changes.
+- Optional: GitHub Actions workflow builds a Docker image and can push to GHCR (permissions must be set to allow `packages: write`).
+
+API reference (high-level)
+--------------------------
+- `GET /api/health` — returns { status: 'ok' } for health checks.
+- `POST /api/auth/register` — create an account; response includes `token`.
+- `POST /api/auth/login` — login; response includes `token`.
+- `GET /api/workouts` — returns workouts for the authenticated user (empty array for anonymous requests).
+- `POST /api/workouts` — create a workout (authenticated).
+- `PUT /api/workouts/:id` — update a workout (authenticated).
+- `DELETE /api/workouts/:id` — delete a workout (authenticated).
+- `GET /api/meals` — returns meals for the authenticated user (empty array for anonymous requests).
+- `POST /api/meals` — create a meal (authenticated).
+- `GET /api/tip` — get a daily nutrition tip (public).
+
+Troubleshooting — common issues & quick fixes
+--------------------------------------------
+- Blank frontend or dashboard not loading:
+    - Ensure `REACT_APP_API_URL` on Vercel points to the backend API (e.g. `https://corematrix-fitness.onrender.com/api`).
+    - Check browser console for CORS or 405/500 errors.
+
+- Registration / login failing (405/401):
+    - Confirm backend URL set in `client/src/api.js` (via `REACT_APP_API_URL`) and that the backend is reachable.
+    - Inspect backend logs (Render) for stack traces.
+
+- Seeing other users' data while not signed in:
+    - Update: backend now returns `[]` on anonymous list requests; redeploy backend to apply the fix.
+
+- 500 errors from backend during reads:
+    - Often caused by invalid `userId` conversions. We added defensive ObjectId handling and JWT coercion.
+    - Check `backend` logs for exact error messages; confirm `JWT_SECRET` matches the secret used to sign tokens.
+
+- Docker build errors on Render (chown issues):
+    - Ensure Dockerfile creates and uses non-root user properly; recent Dockerfile patches addressed chown/create user ordering.
+
+Where you can look in the code (quick links)
+-------------------------------------------
+- API entrypoint: [backend/server.js](backend/server.js)
+- Auth logic: [backend/controllers/authController.js](backend/controllers/authController.js)
+- Fitness controllers: [backend/controllers/fitnessController.js](backend/controllers/fitnessController.js)
+- Client entry: [client/src/index.js](client/src/index.js)
+- Client API wrapper: [client/src/api.js](client/src/api.js)
+- Main layout and styles: [client/src/components/Layout.js](client/src/components/Layout.js), [client/src/styles.css](client/src/styles.css)
+
+Next steps and recommendations
+------------------------------
+1. Redeploy backend on Render after any backend code changes so the anonymous-data fix and ObjectId handling are active in production.
+2. Redeploy Vercel after any client changes and ensure `REACT_APP_API_URL` is set.
+3. Optional: replace Tailwind CDN with a proper build integration (recommended for production performance) and include generated CSS in the build.
+4. Optional: add automated integration tests that exercise register/login and authenticated API calls to prevent regressions.
+
+If you want, I can:
+- Apply consistent styling to the remaining pages (`Forge`, `Fuel`, `Progress`, `Logs`).
+- Add Chart.js or another charting lib for progress graphs.
+- Add small E2E tests that run against the deployed backend to verify registration/login/data scoping.
 
 ---
 
-## What This App Does
+If you want a single-file checklist or a condensed developer guide, tell me the audience (dev / ops / non-dev) and I'll prepare it.
 
-CoreMatrix combines three layers:
-
-1. A client-side AngularJS SPA for navigation and forms.
-2. A Node.js/Express API for authentication and CRUD operations.
-3. A MySQL database for persistent user, workout, and meal storage.
-
-When a user registers, the app now collects body weight, height, age, activity level, and goal. Those values are used to calculate profile fields automatically, including BMI, calorie goal, protein goal, and target weight. Those values are stored in the database and restored on login.
-
-
-## Quick Start
-
-### 1. Install dependencies
-
-```bash
-npm install
-```
-
-Run this from the repository root so the root `package.json` is used.
-
-### 2. Configure MySQL
-
-Set environment variables if your MySQL server is not using the defaults:
-
-```bash
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_PORT=3306
-DB_NAME=corematrix_db
-```
-
-### 3. Start the backend
-
-```bash
-npm start
-```
-
-The server runs at `http://localhost:3000` and starts `Codes/server.js` through the root npm script.
-
-### 4. Open the app
-
-Open `http://localhost:3000` in your browser. Do not open `index.html` directly if you want the database-backed login and storage to work.
-
-
-## Authentication Flow
-
-### Registration
-
-The registration form collects:
-
-
-On submit, the backend stores the account in `users` and auto-calculates:
-
-
-### Login
-
-Login validates the email and password on the client and then verifies credentials on the server. On success, the current user is saved in `localStorage` and the SPA loads that user's workouts and meals.
-
-### Sign out
-
-The top-right profile menu includes a sign-out action. It clears the current session state in the browser and returns the user to the login screen.
-
-
-## Project Structure
-
-```text
-WPProject/
-├── package.json         # npm start -> Codes/server.js
-└── Codes/
-    ├── app.js            # AngularJS routing
-    ├── auth.html         # Login and register screen
-    ├── authController.js  # Register and login handlers
-    ├── controllers.js    # Main, Home, Workout, Nutrition, Progress, Logs controllers
-    ├── dbConfig.js       # MySQL pool and schema bootstrap
-    ├── forge.html        # Workout logging view
-    ├── fuel.html         # Meal logging view
-    ├── home.html         # Dashboard
-    ├── index.html        # App shell and navigation
-    ├── logs.html         # Full history table
-    ├── progress.html     # Charts and summary view
-    ├── server.js         # Express entry point
-    ├── services.js       # AngularJS data service and API calls
-    └── style.css        # Shared visual system and responsive layout
-```
-
-
-## Frontend Architecture
-
-### AngularJS routing
-
-The SPA uses `ngRoute` with these pages:
-
-
-### Shared state
-
-`MainCtrl` owns the current user profile and top-level UI state. Child controllers inherit that profile through AngularJS scope chaining.
-
-### Data service
-
-`DataService` is the main client-side API layer. It:
-
-
-### Editing behavior
-
-Workout logs can be edited inline from:
-
-
-Meal logs can be edited inline from:
-
-
-
-## Backend Architecture
-
-### `server.js`
-
-Starts the Express app, initializes the database, wires auth and fitness routes, and serves the SPA.
-
-### `dbConfig.js`
-
-Creates the MySQL connection pool and ensures the schema exists. It now also upgrades the `users` table with the profile fields required for automatic body metric calculation.
-
-### `authController.js`
-
-Handles registration and login. Registration hashes passwords and stores profile metrics derived from the registration form.
-
-### `fitnessLogic.js`
-
-Implements user-scoped workout and meal CRUD operations. Reads and writes are filtered by `user_id` so one user's logs are not mixed with another user's.
-
-
-## Database Schema
-
-### Users table
-
-Important fields:
-
-
-### Workouts table
-
-Each workout belongs to a user via `user_id` and stores:
-
-
-### Meals table
-
-Each meal belongs to a user via `user_id` and stores:
-
-
-
-## API Reference
-
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| GET | /api/health | Backend health check |
-| POST | /api/auth/register | Create a user account |
-| POST | /api/auth/login | Authenticate a user |
-| GET | /api/workouts | Fetch workouts for the active user |
-| POST | /api/workouts | Create a workout |
-| PUT | /api/workouts/:id | Update a workout |
-| DELETE | /api/workouts/:id | Delete a workout |
-| GET | /api/meals | Fetch meals for the active user |
-| POST | /api/meals | Create a meal |
-| PUT | /api/meals/:id | Update a meal |
-| DELETE | /api/meals/:id | Delete a meal |
-| GET | /api/tip | Fetch a daily nutrition tip |
-
-### Request scoping
-
-The client sends `userId` with workout and meal requests so every read/update/delete only touches that user's records.
-
-
-## Running Notes
-
-
-
-## Responsive Behavior
-
-The layout is built to handle desktop and mobile screens:
-
-
-
-## Troubleshooting
-
-### Registration fails
-
-Check that:
-
-
-### Login fails
-
-Check that:
-
-
-### Logs do not match the current user
-
-Make sure you are signed in. The app stores the active user in `localStorage` and uses that profile to load only matching records.
-
-### Mobile layout looks cramped
-
-Use the latest `style.css` changes. They include a responsive nav, single-column auth layout, and stacked inline editors for smaller screens.
-
-
-## Development Commands
-
-```bash
-npm install
-npm start
-```
-
-Run both commands from the repository root.
-
-If you need to inspect or extend the schema manually, update `dbConfig.js` and restart the server.
-
-
-## Deployment (Docker + GitHub Container Registry)
-
-This repository is prepared for containerized deployment. The `Dockerfile` builds the React `client` then packages the static build into the backend image so a single container can serve the full app.
-
-1. Build and run locally (optional):
-
-```bash
-# Build image
-docker build -t corematrix:latest .
-
-# Run container (ensure backend/.env contains your MONGO_URI pointing to Atlas)
-docker run --rm -p 4000:4000 --env-file backend/.env corematrix:latest
-```
-
-2. Using Docker Compose:
-
-```bash
-docker-compose up --build -d
-```
-
-3. GitHub Container Registry
-
-The repository includes a GitHub Actions workflow that builds and pushes the image to `ghcr.io` on `main` branch pushes. Configure the registry access as needed; the action uses `GITHUB_TOKEN` by default.
-
-4. Environment variables
-
-Set these for production (example in `backend/.env.example`):
-
-
-When deploying to a container platform, set the above env vars in the platform's secret manager.
 
