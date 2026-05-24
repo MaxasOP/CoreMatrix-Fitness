@@ -2,7 +2,7 @@
 
 # CoreMatrix (MERN)
 
-CoreMatrix is a personalized workout & nutrition tracker that was migrated from an old AngularJS + MySQL stack to a modern MERN (MongoDB, Express, React, Node.js) architecture. This README explains what the app is, how the project is organized, where you were getting stuck, and how to run, deploy, and troubleshoot it. It's written so a non-developer can understand the big picture and a developer can act on the details.
+CoreMatrix is a personalized workout & nutrition tracker that was migrated from an old AngularJS + MySQL stack to a modern MERN (MongoDB, Express, React, Node.js) architecture. This README explains what the app is, how the project is organized, and how to run, deploy, and troubleshoot it. It's written so a non-developer can understand the big picture and a developer can act on the details.
 
 --
 
