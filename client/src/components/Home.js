@@ -1,17 +1,73 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../api';
+import { AuthContext } from '../AuthContext';
+import heroTraining from '../assets/hero-training.svg';
+import mealBowl from '../assets/meal-bowl.svg';
 
 const defaultWeekPlan = [
-  { day: 'Monday',    group: 'PUSH' },
-  { day: 'Tuesday',   group: 'PULL' },
-  { day: 'Wednesday', group: 'REST' },
-  { day: 'Thursday',  group: 'LEGS' },
-  { day: 'Friday',    group: 'PUSH' },
-  { day: 'Saturday',  group: 'PULL' },
-  { day: 'Sunday',    group: 'REST' },
+  { day: 'Monday',    group: 'PUSH', dayIndex: 1 },
+  { day: 'Tuesday',   group: 'PULL', dayIndex: 2 },
+  { day: 'Wednesday', group: 'REST', dayIndex: 3 },
+  { day: 'Thursday',  group: 'LEGS', dayIndex: 4 },
+  { day: 'Friday',    group: 'PUSH', dayIndex: 5 },
+  { day: 'Saturday',  group: 'PULL', dayIndex: 6 },
+  { day: 'Sunday',    group: 'REST', dayIndex: 0 },
 ];
 
+function parseLocalDate(value) {
+  if (!value) return null;
+  if (typeof value === 'string') {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (match) {
+      const y = Number(match[1]);
+      const m = Number(match[2]) - 1;
+      const d = Number(match[3]);
+      return new Date(y, m, d);
+    }
+  }
+  const dt = new Date(value);
+  if (Number.isNaN(dt.getTime())) return null;
+  return dt;
+}
+
+function toDateKey(value) {
+  const dt = parseLocalDate(value);
+  if (!dt) return null;
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth() + 1).padStart(2, '0');
+  const d = String(dt.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function getItemDate(item) {
+  if (!item) return null;
+  if (item.date) return toDateKey(item.date);
+  if (item.log_date) return toDateKey(item.log_date);
+  return null;
+}
+
+function getItemDayIndex(item) {
+  if (!item) return null;
+  const dt = parseLocalDate(item.date || item.log_date);
+  return dt ? dt.getDay() : null;
+}
+
+function computeStreak(items) {
+  const dates = new Set(items.map(getItemDate).filter(Boolean));
+  let streak = 0;
+  const cursor = new Date();
+  while (true) {
+    const key = toDateKey(cursor);
+    if (!key || !dates.has(key)) break;
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+
 export default function Home() {
+  const { user } = useContext(AuthContext);
   const [workouts, setWorkouts] = useState([]);
   const [meals, setMeals] = useState([]);
   const [tip, setTip] = useState('');
@@ -33,11 +89,11 @@ export default function Home() {
   }
 
   function getTodayStats() {
-    const today = new Date().toISOString().split('T')[0];
+    const today = toDateKey(new Date());
     const safeMeals = Array.isArray(meals) ? meals : [];
     const safeWorkouts = Array.isArray(workouts) ? workouts : [];
-    const todayMeals = safeMeals.filter(m => (m.date || (m.log_date && m.log_date.split && m.log_date.split('T')[0])) === today || (m.log_date && new Date(m.log_date).toISOString().split('T')[0] === today));
-    const todayWorkouts = safeWorkouts.filter(w => (w.date || (w.log_date && w.log_date.split && w.log_date.split('T')[0])) === today || (w.log_date && new Date(w.log_date).toISOString().split('T')[0] === today));
+    const todayMeals = safeMeals.filter(m => getItemDate(m) === today);
+    const todayWorkouts = safeWorkouts.filter(w => getItemDate(w) === today);
     return {
       calories: todayMeals.reduce((s,m)=>s + (Number(m.calories)||0), 0),
       protein:  todayMeals.reduce((s,m)=>s + (Number(m.protein)||0), 0),
@@ -48,58 +104,125 @@ export default function Home() {
 
   const stats = getTodayStats();
   const recentWorkouts = Array.isArray(workouts) ? workouts.slice(0, 5) : [];
-
-  const completedDays = defaultWeekPlan.filter(d => d.group !== 'REST').length;
+  const daysWithWorkout = new Set(workouts.map(getItemDayIndex).filter(d => d !== null));
+  const completedDays = defaultWeekPlan.filter(d => d.group !== 'REST' && daysWithWorkout.has(d.dayIndex)).length;
   const weekProgress = Math.round((completedDays / 5) * 100);
+  const streak = computeStreak(workouts);
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mt-6">
-      <div className="card p-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-sm muted">Today</div>
-            <div className="stat-num">{stats.calories} kcal</div>
-            <div className="text-sm muted">Protein: <strong>{stats.protein}g</strong></div>
+    <div className="mt-6 space-y-6 page">
+      {error && (
+        <div className="card p-4" style={{ borderColor: 'rgba(255,90,31,0.4)' }}>
+          <div className="tag">Heads up</div>
+          <div className="mt-2">{error}</div>
+        </div>
+      )}
+
+      <section className="hero card p-6 grid md:grid-cols-2 gap-6 reveal" style={{ '--d': '0.05s' }}>
+        <div>
+          <div className="tag muted">Today is a good day</div>
+          <h1 className="display text-4xl sm:text-5xl mt-2">{user ? `Welcome back, ${user.name}` : 'Build power, not excuses'}</h1>
+          <p className="mt-3 muted">Track your lifts, fuel your performance, and see real progress. This dashboard is built for daily wins.</p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link to="/forge" className="btn-primary">Log workout</Link>
+            <Link to="/fuel" className="btn-secondary">Log meal</Link>
+            {!user && <Link to="/auth" className="btn-secondary">Create account</Link>}
           </div>
-          <div className="floaty p-3 card">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v20" stroke="#06b6d4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M5 12h14" stroke="#7c3aed" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <span className="chip">Goal: {user?.goal || 'Build strength'}</span>
+            <span className="chip">Streak: {streak} day{streak === 1 ? '' : 's'}</span>
+            <span className="chip">Weekly plan: PUSH / PULL / LEGS</span>
           </div>
         </div>
-      </div>
+        <div className="photo-card floaty">
+          <img src={heroTraining} alt="Training illustration" />
+        </div>
+      </section>
 
-      <div className="card p-5">
-        <div className="text-sm muted">Weekly Progress</div>
-        <div className="mt-3 flex items-center gap-4">
-          <div className="w-24 h-24 rounded-full flex items-center justify-center card">
-            <div className="text-xl font-bold">{weekProgress}%</div>
+      <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="card p-4 reveal" style={{ '--d': '0.1s' }}>
+          <div className="tag muted">Calories</div>
+          <div className="text-2xl font-bold mt-1">{stats.calories}</div>
+          <div className="muted text-sm">from meals today</div>
+        </div>
+        <div className="card p-4 reveal" style={{ '--d': '0.15s' }}>
+          <div className="tag muted">Protein</div>
+          <div className="text-2xl font-bold mt-1">{stats.protein}g</div>
+          <div className="muted text-sm">muscle repair fuel</div>
+        </div>
+        <div className="card p-4 reveal" style={{ '--d': '0.2s' }}>
+          <div className="tag muted">Workouts</div>
+          <div className="text-2xl font-bold mt-1">{stats.workouts}</div>
+          <div className="muted text-sm">sessions today</div>
+        </div>
+        <div className="card p-4 reveal" style={{ '--d': '0.25s' }}>
+          <div className="tag muted">Total sets</div>
+          <div className="text-2xl font-bold mt-1">{stats.totalSets}</div>
+          <div className="muted text-sm">volume logged</div>
+        </div>
+      </section>
+
+      <section className="grid md:grid-cols-3 gap-4">
+        <div className="card p-5 reveal" style={{ '--d': '0.3s' }}>
+          <div className="tag muted">Weekly progress</div>
+          <div className="mt-2 text-3xl font-bold">{weekProgress}%</div>
+          <div className="muted text-sm">{completedDays} of 5 training days</div>
+          <div className="h-2 bg-black/10 rounded mt-3">
+            <div className="h-2 accent-fill rounded" style={{ width: `${weekProgress}%` }} />
           </div>
-          <div className="flex-1">
-            <div className="text-sm muted">{completedDays} active days</div>
-            <div className="h-2 bg-white/10 rounded mt-2">
-              <div className="h-2 accent-fill rounded" style={{ width: `${weekProgress}%` }} />
+          <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+            {defaultWeekPlan.map(d => (
+              <div key={d.day} className="flex items-center gap-2">
+                <span className="chip" style={{ borderColor: daysWithWorkout.has(d.dayIndex) ? 'rgba(255,90,31,0.7)' : 'rgba(16,20,24,0.12)' }}>{d.day.slice(0,3)}</span>
+                <span className="muted">{d.group}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="card p-5 reveal" style={{ '--d': '0.35s' }}>
+          <div className="tag muted">Daily tip</div>
+          <div className="mt-2 text-lg">{tip || 'Power comes from consistency, not perfection.'}</div>
+          <div className="mt-4 photo-card">
+            <img src={mealBowl} alt="Nutrition illustration" />
+          </div>
+        </div>
+
+        <div className="card p-5 reveal" style={{ '--d': '0.4s' }}>
+          <div className="tag muted">Fuel snapshot</div>
+          <div className="mt-2 text-3xl font-bold">{stats.calories} kcal</div>
+          <div className="muted text-sm">today's intake</div>
+          <div className="mt-4">
+            <div className="flex items-center justify-between text-sm">
+              <span>Protein</span>
+              <strong>{stats.protein}g</strong>
+            </div>
+            <div className="h-2 bg-black/10 rounded mt-2">
+              <div className="h-2 accent-fill rounded" style={{ width: `${Math.min(100, stats.protein)}%` }} />
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="card p-5">
-        <div className="text-sm muted">Daily Tip</div>
-        <div className="mt-3 text-lg">{tip || 'Keep the tempo — small wins compound.'}</div>
-      </div>
-
-      <section className="md:col-span-2 card p-5">
-        <h3 className="text-lg font-semibold">Recent Workouts</h3>
-        <ul className="mt-3 divide-y divide-white/6">
-          {recentWorkouts.map(w => (
-            <li key={w._id || w.id} className="py-3 flex items-center justify-between">
-              <div>
-                <div className="font-semibold">{w.name}</div>
-                <div className="text-sm muted">{w.category} — {w.sets}×{w.reps}</div>
-              </div>
-              <div className="text-sm muted">{new Date(w.log_date).toLocaleDateString()}</div>
-            </li>
-          ))}
-        </ul>
+      <section className="card p-5 reveal" style={{ '--d': '0.45s' }}>
+        <h3 className="text-xl">Recent workouts</h3>
+        {recentWorkouts.length === 0 ? (
+          <div className="card-soft p-4 mt-3">
+            <div className="muted">No workouts yet. Start with a quick entry in Forge.</div>
+          </div>
+        ) : (
+          <ul className="mt-3 space-y-3">
+            {recentWorkouts.map(w => (
+              <li key={w._id || w.id} className="flex items-center justify-between">
+                <div>
+                  <div className="font-semibold">{w.name}</div>
+                  <div className="muted text-sm">{w.category} — {w.sets}x{w.reps}</div>
+                </div>
+                <div className="muted text-sm">{new Date(w.log_date).toLocaleDateString()}</div>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );

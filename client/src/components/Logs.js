@@ -3,6 +3,7 @@ import api from '../api';
 
 export default function Logs() {
   const [items, setItems] = useState([]);
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => { fetchAll(); }, []);
 
@@ -16,18 +17,41 @@ export default function Logs() {
     } catch (err) { console.warn('Logs fetch error', err); }
   }
 
+  const filtered = items.filter(it => filter === 'all' || it.type === filter);
+
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Logs</h2>
-      <ul>
-        {items.map((it, idx) => (
-          <li key={idx} style={{ marginBottom: 8 }}>
-            <strong>{it.type === 'workout' ? it.data.name : it.data.name}</strong> — {it.type} — {it.date}
-            {it.type === 'workout' && <span> — {it.data.sets}×{it.data.reps}</span>}
-            {it.type === 'meal' && <span> — {it.data.calories} kcal</span>}
-          </li>
-        ))}
-      </ul>
+    <div className="mt-6 space-y-6 page">
+      <section className="card p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <div className="tag muted">History</div>
+            <h2 className="text-3xl">Logs</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className={`chip ${filter === 'all' ? 'accent-fill' : ''}`} onClick={() => setFilter('all')}>All</button>
+            <button className={`chip ${filter === 'workout' ? 'accent-fill' : ''}`} onClick={() => setFilter('workout')}>Workouts</button>
+            <button className={`chip ${filter === 'meal' ? 'accent-fill' : ''}`} onClick={() => setFilter('meal')}>Meals</button>
+          </div>
+        </div>
+
+        {filtered.length === 0 ? (
+          <div className="card-soft p-4 mt-4">No entries yet. Log a workout or meal to populate your timeline.</div>
+        ) : (
+          <div className="mt-4 space-y-3">
+            {filtered.map((it, idx) => (
+              <div key={idx} className="card-soft p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <div className="font-semibold">{it.data.name}</div>
+                  <div className="muted text-sm">
+                    {it.type === 'workout' ? `${it.data.sets}x${it.data.reps} — ${it.data.category}` : `${it.data.calories} kcal — ${it.data.type}`}
+                  </div>
+                </div>
+                <div className="text-sm muted">{it.date}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

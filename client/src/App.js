@@ -8,6 +8,7 @@ import Fuel from './components/Fuel';
 import Progress from './components/Progress';
 import Logs from './components/Logs';
 import Layout from './components/Layout';
+import Setup from './components/Setup';
 
 export default function App() {
   const { user, logout } = useContext(AuthContext);
@@ -18,6 +19,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/setup" element={<Setup />} />
           <Route path="/forge" element={<Forge />} />
           <Route path="/fuel" element={<Fuel />} />
           <Route path="/progress" element={<Progress />} />

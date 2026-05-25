@@ -67,4 +67,56 @@ async function login(req, res) {
   }
 }
 
-module.exports = { register, login };
+async function updateProfile(req, res) {
+  try {
+    const userId = req.user && req.user.id;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const { goal, weightKg, heightCm, ageYears, activityLevel } = req.body || {};
+    const input = {
+      goal: goal || user.goal,
+      weightKg: weightKg ?? user.weight_kg,
+      heightCm: heightCm ?? user.height_cm,
+      ageYears: ageYears ?? user.age_years,
+      activityLevel: activityLevel || user.activity_level
+    };
+
+    const profile = calculateProfileMetrics(input);
+
+    user.goal = goal || user.goal || 'Build Muscle';
+    user.weight_kg = profile.weight_kg;
+    user.height_cm = profile.height_cm;
+    user.age_years = profile.age_years;
+    user.activity_level = profile.activity_level;
+    user.bmi = profile.bmi;
+    user.calorie_goal = profile.calorie_goal;
+    user.protein_goal = profile.protein_goal;
+    user.target_weight = profile.target_weight;
+
+    await user.save();
+
+    res.json({
+      message: 'Profile updated',
+      userId: user._id,
+      name: user.name,
+      email: user.email,
+      goal: user.goal,
+      weight: user.weight_kg,
+      height: user.height_cm,
+      age: user.age_years,
+      activityLevel: user.activity_level,
+      bmi: user.bmi,
+      calorieGoal: user.calorie_goal,
+      proteinGoal: user.protein_goal,
+      targetWeight: user.target_weight
+    });
+  } catch (err) {
+    console.error('Profile update error:', err.message);
+    res.status(500).json({ error: 'Profile update failed', details: err.message });
+  }
+}
+
+module.exports = { register, login, updateProfile };
