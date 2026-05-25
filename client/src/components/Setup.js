@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 import api from '../api';
+import bgScale from '../assets/weighing-scale-svgrepo-com.svg';
+import bgGrape from '../assets/grape-svgrepo-com.svg';
 
 const goalOptions = [
   { label: 'Build Muscle', value: 'Build Muscle' },
@@ -71,7 +73,9 @@ export default function Setup() {
 
   if (!user) {
     return (
-      <div className="mt-6 page">
+      <div className="mt-6 page page-shell">
+        <img src={bgScale} alt="" aria-hidden="true" className="bg-ornament bg-ornament--left" />
+        <img src={bgGrape} alt="" aria-hidden="true" className="bg-ornament bg-ornament--right" />
         <div className="card-soft p-5">
           <div className="tag muted">Sign in required</div>
           <h2 className="text-3xl mt-2">Set your goals</h2>
@@ -85,7 +89,9 @@ export default function Setup() {
   }
 
   return (
-    <div className="mt-6 space-y-6 page">
+    <div className="mt-6 space-y-6 page page-shell">
+      <img src={bgScale} alt="" aria-hidden="true" className="bg-ornament bg-ornament--left" />
+      <img src={bgGrape} alt="" aria-hidden="true" className="bg-ornament bg-ornament--right" />
       <section className="card p-6">
         <div className="tag muted">Setup</div>
         <h1 className="text-3xl mt-2">Personalize your goals</h1>

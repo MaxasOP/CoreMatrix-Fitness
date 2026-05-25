@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
+import bgScale from '../assets/weighing-scale-svgrepo-com.svg';
+import bgBike from '../assets/stationary-bike-gym-svgrepo-com.svg';
 
 const weekPlan = [
   { day: 'Monday',    group: 'PUSH', dayIndex: 1 },
@@ -61,7 +63,9 @@ export default function Progress() {
   const topCategories = Object.entries(categoryCounts).sort((a,b) => b[1] - a[1]).slice(0, 4);
 
   return (
-    <div className="mt-6 space-y-6 page">
+    <div className="mt-6 space-y-6 page page-shell">
+      <img src={bgScale} alt="" aria-hidden="true" className="bg-ornament bg-ornament--left" />
+      <img src={bgBike} alt="" aria-hidden="true" className="bg-ornament bg-ornament--right" />
       <section className="card p-5">
         <div className="tag muted">Consistency</div>
         <h2 className="text-3xl">Weekly progress</h2>

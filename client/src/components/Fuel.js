@@ -2,7 +2,9 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
-import mealBowl from '../assets/meal-bowl.svg';
+import mealArt from '../assets/fish-svgrepo-com.svg';
+import bgAvocado from '../assets/avocado-svgrepo-com.svg';
+import bgWatermelon from '../assets/watermelon-svgrepo-com.svg';
 
 const presets = [
   { name: 'Power oats', type: 'Breakfast', calories: 420, protein: 25, carbs: 55, fat: 10 },
@@ -90,7 +92,9 @@ export default function Fuel() {
   const calorieGoal = user?.calorieGoal || 2200;
 
   return (
-    <div className="mt-6 space-y-6 page">
+    <div className="mt-6 space-y-6 page page-shell">
+      <img src={bgAvocado} alt="" aria-hidden="true" className="bg-ornament bg-ornament--left" />
+      <img src={bgWatermelon} alt="" aria-hidden="true" className="bg-ornament bg-ornament--right" />
       {!isAuthed && (
         <div className="card-soft p-4">
           <div className="tag muted">Sign in required</div>
@@ -151,7 +155,7 @@ export default function Fuel() {
             <div className="flex items-center justify-between"><span>Fat</span><strong>{totals.fat}g</strong></div>
           </div>
           <div className="photo-card mt-4">
-            <img src={mealBowl} alt="Meal illustration" />
+            <img src={mealArt} alt="Fish illustration" />
           </div>
         </aside>
       </section>

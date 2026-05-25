@@ -2,8 +2,10 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
-import heroTraining from '../assets/hero-training.svg';
-import mealBowl from '../assets/meal-bowl.svg';
+import heroAthlete from '../assets/man-lifting-weights-medium-skin-tone-svgrepo-com.svg';
+import mealArt from '../assets/avocado-svgrepo-com.svg';
+import bgDumbbel from '../assets/dumbbel-svgrepo-com.svg';
+import bgTarget from '../assets/target-svgrepo-com.svg';
 
 const defaultWeekPlan = [
   { day: 'Monday',    group: 'PUSH', dayIndex: 1 },
@@ -110,7 +112,9 @@ export default function Home() {
   const streak = computeStreak(workouts);
 
   return (
-    <div className="mt-6 space-y-6 page">
+    <div className="mt-6 space-y-6 page page-shell">
+      <img src={bgDumbbel} alt="" aria-hidden="true" className="bg-ornament bg-ornament--left" />
+      <img src={bgTarget} alt="" aria-hidden="true" className="bg-ornament bg-ornament--right" />
       {error && (
         <div className="card p-4" style={{ borderColor: 'rgba(255,90,31,0.4)' }}>
           <div className="tag">Heads up</div>
@@ -135,7 +139,7 @@ export default function Home() {
           </div>
         </div>
         <div className="photo-card floaty">
-          <img src={heroTraining} alt="Training illustration" />
+          <img src={heroAthlete} alt="Weightlifting illustration" />
         </div>
       </section>
 
@@ -184,7 +188,7 @@ export default function Home() {
           <div className="tag muted">Daily tip</div>
           <div className="mt-2 text-lg">{tip || 'Power comes from consistency, not perfection.'}</div>
           <div className="mt-4 photo-card">
-            <img src={mealBowl} alt="Nutrition illustration" />
+            <img src={mealArt} alt="Nutrition illustration" />
           </div>
         </div>
 

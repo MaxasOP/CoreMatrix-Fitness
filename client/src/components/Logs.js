@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
+import bgLogs from '../assets/training-gym-LOGS.svg';
+import bgDumbbel from '../assets/dumbbel-svgrepo-com.svg';
 
 export default function Logs() {
   const [items, setItems] = useState([]);
@@ -20,7 +22,9 @@ export default function Logs() {
   const filtered = items.filter(it => filter === 'all' || it.type === filter);
 
   return (
-    <div className="mt-6 space-y-6 page">
+    <div className="mt-6 space-y-6 page page-shell">
+      <img src={bgLogs} alt="" aria-hidden="true" className="bg-ornament bg-ornament--left" />
+      <img src={bgDumbbel} alt="" aria-hidden="true" className="bg-ornament bg-ornament--right" />
       <section className="card p-5">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>

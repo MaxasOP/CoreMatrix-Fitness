@@ -2,7 +2,9 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
-import heroTraining from '../assets/hero-training.svg';
+import boxingArt from '../assets/boxing-svgrepo-com.svg';
+import bgDumbbel from '../assets/dumbbel-svgrepo-com.svg';
+import bgRings from '../assets/gymnastics-ring-svgrepo-com.svg';
 
 const templates = [
   { name: 'Bench Press', category: 'Chest', sets: 4, reps: 8, weight: 60, intensity: 'high' },
@@ -66,7 +68,9 @@ export default function Forge() {
   }
 
   return (
-    <div className="mt-6 space-y-6 page">
+    <div className="mt-6 space-y-6 page page-shell">
+      <img src={bgDumbbel} alt="" aria-hidden="true" className="bg-ornament bg-ornament--left" />
+      <img src={bgRings} alt="" aria-hidden="true" className="bg-ornament bg-ornament--right" />
       {!isAuthed && (
         <div className="card-soft p-4">
           <div className="tag muted">Sign in required</div>
@@ -125,7 +129,7 @@ export default function Forge() {
           <h3 className="text-2xl">Train with intent</h3>
           <p className="muted mt-2">Use templates to speed up logging. Capture sets, reps, and intensity in under 10 seconds.</p>
           <div className="photo-card mt-4">
-            <img src={heroTraining} alt="Training illustration" />
+            <img src={boxingArt} alt="Boxing illustration" />
           </div>
         </aside>
       </section>

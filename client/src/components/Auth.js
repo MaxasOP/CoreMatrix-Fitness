@@ -2,7 +2,9 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
-import heroTraining from '../assets/hero-training.svg';
+import bikeArt from '../assets/stationary-bike-gym-svgrepo-com.svg';
+import bgBoxing from '../assets/boxing-svgrepo-com.svg';
+import bgRings from '../assets/gymnastics-ring-svgrepo-com.svg';
 
 export default function Auth() {
   const [mode, setMode] = useState('login');
@@ -30,7 +32,9 @@ export default function Auth() {
   }
 
   return (
-    <div className="grid md:grid-cols-2 gap-6 mt-6 page">
+    <div className="grid md:grid-cols-2 gap-6 mt-6 page page-shell">
+      <img src={bgBoxing} alt="" aria-hidden="true" className="bg-ornament bg-ornament--left" />
+      <img src={bgRings} alt="" aria-hidden="true" className="bg-ornament bg-ornament--right" />
       <div className="card p-6">
         <div className="text-center mb-4">
           <div className="logo-mark mx-auto mb-2" />
@@ -62,7 +66,7 @@ export default function Auth() {
           </ul>
         </div>
         <div className="photo-card mt-4">
-          <img src={heroTraining} alt="Training illustration" />
+          <img src={bikeArt} alt="Stationary bike illustration" />
         </div>
       </div>
     </div>
