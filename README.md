@@ -1,9 +1,8 @@
 
 
-# CoreMatrix (MERN)
+# CoreMatrix Fitness App
 
-CoreMatrix is a personalized workout & nutrition tracker that was migrated from an old AngularJS + MySQL stack to a modern MERN (MongoDB, Express, React, Node.js) architecture. This README explains what the app is, how the project is organized, and how to run, deploy, and troubleshoot it. It's written so a non-developer can understand the big picture and a developer can act on the details.
-
+CoreMatrix is a personalized workout & nutrition tracker that works on modern MERN (MongoDB, Express, React, Node.js) architecture. This README explains what the app is, how the project is organized, and how to run, deploy, and troubleshoot it. 
 --
 
 Contents
@@ -24,7 +23,7 @@ Overview
 --------
 CoreMatrix lets users register, log workouts and meals, view daily/weekly summaries, and track long-term progress. Every user has their own private data — workouts and meals are scoped to the signed-in account.
 
-We migrated the app to:
+
 - A Node/Express API using Mongoose to talk to MongoDB (hosted on Atlas for production).
 - A React single-page app (Create React App) for a modern, responsive, mobile-first UI.
 - Docker + CI automation for building and optionally publishing container images.
@@ -56,34 +55,6 @@ Project structure
 - Root CI / Deployment files:
     - `Dockerfile` — multi-stage build that builds the React app then packages it into the backend image.
     - `.github/workflows/docker-publish.yml` — builds and pushes image to GHCR (if enabled).
-
-What you were stuck on — summary (and what we fixed)
--------------------------------------------------
-This section documents the issues you ran into while migrating and how they were addressed.
-
-1. Blank front-end (production):
-     - Cause: The deployed Vercel frontend was not pointing to the backend API, causing runtime errors (client expected arrays but got HTML responses).
-     - Fix: `client/src/api.js` was updated to use `REACT_APP_API_URL` and a Render fallback; Home.js added defensive guards for non-array responses.
-
-2. Registration POST returning 405 / wrong origin:
-     - Cause: During development the frontend was POSTing to the Vercel origin instead of the Render backend.
-     - Fix: Instructed to set `REACT_APP_API_URL=https://corematrix-fitness.onrender.com/api` in Vercel project env variables and updated `api.js` fallback.
-
-3. Exposed anonymous data on dashboard:
-     - Cause: Unauthenticated GETs for `/api/workouts` and `/api/meals` returned all records.
-     - Fix: Backend `getAllWorkouts` / `getAllMeals` now return an empty array for anonymous requests — only authenticated requests return that user's data.
-
-4. 500 errors due to ObjectId conversion and JWT sub types:
-     - Cause: `req.user.id` could be a non-string and converting to `mongoose.Types.ObjectId()` threw.
-     - Fix: `authMiddleware` coerces `payload.sub` to a string; controllers try ObjectId conversion inside try/catch and fall back to the raw value.
-
-5. Docker build failing on Render with chown errors:
-     - Cause: chown to a non-existent user/group in the image during build.
-     - Fix: Dockerfile updated to create the user/group and chown the app directory before switching users (applied in Dockerfile changes).
-
-6. GHCR push errors / image tagging issues:
-     - Cause: Uppercase owner/repo expansion and missing registry permissions.
-     - Fix: GitHub Actions workflow tag lowercased, and workflow permissions updated to allow `packages: write` when pushing images.
 
 How to run locally (developer quick-start)
 ----------------------------------------
@@ -195,13 +166,5 @@ Next steps and recommendations
 3. Optional: replace Tailwind CDN with a proper build integration (recommended for production performance) and include generated CSS in the build.
 4. Optional: add automated integration tests that exercise register/login and authenticated API calls to prevent regressions.
 
-If you want, I can:
-- Apply consistent styling to the remaining pages (`Forge`, `Fuel`, `Progress`, `Logs`).
-- Add Chart.js or another charting lib for progress graphs.
-- Add small E2E tests that run against the deployed backend to verify registration/login/data scoping.
-
----
-
-If you want a single-file checklist or a condensed developer guide, tell me the audience (dev / ops / non-dev) and I'll prepare it.
 
 
