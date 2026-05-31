@@ -1,4 +1,4 @@
-// Cache-busting comment to force Vercel to rebuild this file
+// Cache-busting comment to force Vercel to rebuild this file v2
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
@@ -95,12 +95,19 @@ export default function Fuel() {
   return (
     <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
       {msg && (
-        <div className="fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-2xl bg-gray-900 text-white font-medium z-50 transition-all duration-300 transform translate-y-0">
-          {msg}
+        <div className="fixed z-[100] bottom-24 inset-x-4 sm:bottom-6 sm:inset-x-auto sm:right-6 px-5 py-4 rounded-2xl shadow-2xl bg-white/95 backdrop-blur-xl border border-gray-100 text-gray-900 font-bold flex items-center gap-4 reveal">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg shrink-0 ${msg.includes('sign in') || msg.includes('manage') ? 'bg-gradient-to-br from-orange-400 to-red-500 shadow-orange-500/30' : 'bg-gradient-to-br from-green-400 to-emerald-600 shadow-emerald-500/30'}`}>
+            {msg.includes('sign in') || msg.includes('manage') ? (
+               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            ) : (
+               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+            )}
+          </div>
+          <div className="text-sm sm:text-base flex-1">{msg}</div>
         </div>
       )}
       {!isAuthed && (
-        <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl">
+        <div className="card-soft bg-emerald-50/50 border-emerald-200 p-6">
           <div className="font-semibold text-emerald-800 uppercase tracking-wide text-xs mb-2">Sign in required</div>
           <div className="text-emerald-900 mt-1">Create an account to save meals, track macros, and see your history.</div>
           <div className="mt-4">
@@ -109,7 +116,7 @@ export default function Fuel() {
         </div>
       )}
       <section className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+        <div className="md:col-span-2 card p-6">
           <div className="flex items-center justify-between">
             <div>
               <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Nutrition log</div>
@@ -140,17 +147,17 @@ export default function Fuel() {
           </div>
 
           <div className="mt-4 flex flex-wrap gap-3">
-            <button onClick={addOrUpdateMeal} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0" disabled={!isAuthed}>{editingId ? 'Save Meal' : 'Add Meal'}</button>
-            {editingId && <button onClick={() => { setEditingId(null); setForm({ name: '', type: 'Lunch', calories: 0, protein: 0, carbs: 0, fat: 0, date: getTodayKey() }); }} className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-3 rounded-xl font-medium transition-colors">Cancel</button>}
+            <button onClick={addOrUpdateMeal} className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-teal-400 hover:to-emerald-400 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:active:scale-100" disabled={!isAuthed}>{editingId ? 'Save Meal' : 'Add Meal'}</button>
+            {editingId && <button onClick={() => { setEditingId(null); setForm({ name: '', type: 'Lunch', calories: 0, protein: 0, carbs: 0, fat: 0, date: getTodayKey() }); }} className="bg-white/50 hover:bg-white/80 text-gray-800 px-6 py-3 rounded-xl font-bold transition-colors active:scale-95 border border-gray-200">Cancel</button>}
           </div>
         </div>
 
-        <aside className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+        <aside className="card p-6">
           <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Today's Intake</div>
           <h3 className="text-4xl font-extrabold text-gray-900">{totals.calories} <span className="text-lg text-gray-400 font-medium">kcal</span></h3>
           <div className="text-sm text-gray-500 font-medium mt-1">Goal: {calorieGoal} kcal</div>
           <div className="h-3 bg-gray-100 rounded-full mt-4 overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, Math.round((totals.calories / calorieGoal) * 100))}%` }} />
+            <div className="h-full bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-600 animate-gradient-x rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, Math.round((totals.calories / calorieGoal) * 100))}%` }} />
           </div>
           <div className="mt-6 space-y-3 text-sm">
             <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Protein</span><strong className="text-gray-900">{totals.protein}g</strong></div>
@@ -160,7 +167,7 @@ export default function Fuel() {
         </aside>
       </section>
 
-      <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+      <section className="card p-6">
         <div className="flex items-center justify-between">
           <h3 className="text-2xl font-bold text-gray-900">Meal history</h3>
         </div>
@@ -169,11 +176,17 @@ export default function Fuel() {
             {[1, 2, 3].map(i => <div key={i} className="h-20 bg-black/5 rounded-xl w-full"></div>)}
           </div>
         ) : meals.length === 0 ? (
-          <div className="bg-gray-50 border border-gray-100 rounded-xl p-6 mt-4 text-center text-gray-500">No meals yet. Add your first meal above.</div>
+          <div className="card-soft py-12 mt-4 flex flex-col items-center justify-center text-center">
+            <div className="w-20 h-20 mb-4 bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-500 rounded-full flex items-center justify-center shadow-inner">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </div>
+            <div className="text-gray-900 font-extrabold text-lg">No meals logged</div>
+            <div className="muted mt-1 text-sm">Fuel your body. Log your first meal today!</div>
+          </div>
         ) : (
           <div className="mt-4 space-y-3">
             {meals.map(m => (
-              <div key={m._id || m.id} className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-white hover:shadow-md hover:border-gray-200 hover:-translate-y-0.5 transition-all duration-300">
+              <div key={m._id || m.id} className="card-soft flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-white/80 hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-200 hover:-translate-y-0.5 transition-all duration-300">
                 <div>
                   <div className="font-semibold text-gray-900">{m.name}</div>
                   <div className="text-gray-500 text-sm mt-0.5"><span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-xs font-medium mr-2">{m.type}</span> {m.calories} kcal • P: <span className="font-medium">{m.protein}</span> C: <span className="font-medium">{m.carbs}</span> F: <span className="font-medium">{m.fat}</span></div>

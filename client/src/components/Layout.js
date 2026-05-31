@@ -23,7 +23,14 @@ export default function Layout({ children }){
     ) },
   ];
   return (
-    <div className="min-h-screen bg-gray-50/30 text-gray-900 font-sans selection:bg-[#ff5a1f]/20">
+    <div className="min-h-screen text-gray-900 font-sans selection:bg-[#ff5a1f]/20 relative z-0">
+      {/* Animated Background Blobs */}
+      <div className="fixed inset-0 z-[-1] overflow-hidden bg-slate-50">
+        <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-orange-400/20 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
+        <div className="absolute top-[-10%] right-[-10%] w-[40rem] h-[40rem] bg-pink-400/20 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-[-20%] left-[20%] w-[40rem] h-[40rem] bg-purple-400/20 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-4000"></div>
+      </div>
+
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-sm/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">

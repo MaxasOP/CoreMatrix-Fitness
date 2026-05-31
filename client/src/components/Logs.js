@@ -24,7 +24,7 @@ export default function Logs() {
 
   return (
     <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-      <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+      <section className="card p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">History</div>
@@ -42,11 +42,17 @@ export default function Logs() {
             {[1, 2, 3, 4].map(i => <div key={i} className="h-20 bg-black/5 rounded-xl w-full"></div>)}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-gray-50 border border-gray-100 rounded-xl p-6 mt-6 text-center text-gray-500">No entries yet. Log a workout or meal to populate your timeline.</div>
+          <div className="card-soft py-16 mt-6 flex flex-col items-center justify-center text-center">
+            <div className="w-20 h-20 mb-4 bg-gradient-to-br from-blue-100 to-indigo-50 text-blue-500 rounded-full flex items-center justify-center shadow-inner">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <div className="text-gray-900 font-extrabold text-lg">Your timeline is empty</div>
+            <div className="muted mt-1 text-sm">Log a workout or meal to start tracking your history.</div>
+          </div>
         ) : (
           <div className="mt-6 space-y-3">
             {filtered.map((it, idx) => (
-              <div key={idx} className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-white hover:shadow-md hover:border-gray-200 hover:-translate-y-0.5 transition-all duration-300">
+              <div key={idx} className="card-soft flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-white/80 hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-300">
                 <div className="flex items-center gap-4">
                   <div className={`p-3 rounded-lg shadow-sm ${it.type === 'workout' ? 'bg-orange-50 text-orange-500' : 'bg-emerald-50 text-emerald-500'}`}>
                     {it.type === 'workout' ? (

@@ -1,4 +1,4 @@
-// Cache-busting comment to force Vercel to rebuild this file
+// Cache-busting comment to force Vercel to rebuild this file v2
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
@@ -71,12 +71,19 @@ export default function Forge() {
   return (
     <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
       {msg && (
-        <div className="fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-2xl bg-gray-900 text-white font-medium z-50 transition-all duration-300 transform translate-y-0">
-          {msg}
+        <div className="fixed z-[100] bottom-24 inset-x-4 sm:bottom-6 sm:inset-x-auto sm:right-6 px-5 py-4 rounded-2xl shadow-2xl bg-white/95 backdrop-blur-xl border border-gray-100 text-gray-900 font-bold flex items-center gap-4 reveal">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg shrink-0 ${msg.includes('sign in') || msg.includes('manage') ? 'bg-gradient-to-br from-orange-400 to-red-500 shadow-orange-500/30' : 'bg-gradient-to-br from-green-400 to-emerald-600 shadow-emerald-500/30'}`}>
+            {msg.includes('sign in') || msg.includes('manage') ? (
+               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            ) : (
+               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+            )}
+          </div>
+          <div className="text-sm sm:text-base flex-1">{msg}</div>
         </div>
       )}
       {!isAuthed && (
-        <div className="bg-orange-50 border border-orange-100 p-6 rounded-2xl">
+        <div className="card-soft bg-orange-50/50 border-orange-200 p-6">
           <div className="font-semibold text-orange-800 uppercase tracking-wide text-xs mb-2">Sign in required</div>
           <div className="text-orange-900 mt-1">Create an account to save workouts, track progress, and see your history.</div>
           <div className="mt-4">
@@ -85,7 +92,7 @@ export default function Forge() {
         </div>
       )}
       <section className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+        <div className="md:col-span-2 card p-6">
           <div className="flex items-center justify-between">
             <div>
               <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Workout builder</div>
@@ -148,11 +155,17 @@ export default function Forge() {
             {[1, 2, 3].map(i => <div key={i} className="h-20 bg-black/5 rounded-xl w-full"></div>)}
           </div>
         ) : workouts.length === 0 ? (
-          <div className="bg-gray-50 border border-gray-100 rounded-xl p-6 mt-4 text-center text-gray-500">No workouts yet. Add your first session above.</div>
+          <div className="card-soft py-12 mt-4 flex flex-col items-center justify-center text-center">
+            <div className="w-20 h-20 mb-4 bg-gradient-to-br from-orange-100 to-orange-50 text-orange-500 rounded-full flex items-center justify-center shadow-inner">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+            </div>
+            <div className="text-gray-900 font-extrabold text-lg">No workouts yet</div>
+            <div className="muted mt-1 text-sm">Your journey starts here. Add your first session above!</div>
+          </div>
         ) : (
           <div className="mt-4 space-y-3">
             {workouts.map(w => (
-              <div key={w._id || w.id} className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-white hover:shadow-md hover:border-gray-200 hover:-translate-y-0.5 transition-all duration-300">
+              <div key={w._id || w.id} className="card-soft flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-white/80 hover:shadow-lg hover:shadow-orange-500/10 hover:border-orange-200 hover:-translate-y-0.5 transition-all duration-300">
                 <div>
                   <div className="font-semibold text-gray-900">{w.name}</div>
                   <div className="text-gray-500 text-sm mt-0.5">{w.category} • <span className="font-medium">{w.sets}</span>x<span className="font-medium">{w.reps}</span> @ {w.weight}kg • {w.intensity}</div>

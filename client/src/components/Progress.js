@@ -63,17 +63,17 @@ export default function Progress() {
 
   return (
     <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-      <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+      <section className="card p-6">
         <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Consistency</div>
         <h2 className="text-3xl font-extrabold text-gray-900">Weekly progress</h2>
-        <div className="mt-4 text-5xl font-black text-gray-900">{weekProgress}%</div>
+        <div className="mt-4 text-6xl font-black flex items-center gap-4"><span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 animate-gradient-x">{weekProgress}%</span> {weekProgress === 100 && <span className="text-5xl animate-bounce">🏆</span>}</div>
         <div className="text-gray-500 font-medium mt-1">{completed} training days completed</div>
         <div className="h-3 bg-gray-100 rounded-full mt-5 overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-1000" style={{ width: `${weekProgress}%` }} />
+          <div className="h-full bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 animate-gradient-x rounded-full transition-all duration-1000" style={{ width: `${weekProgress}%` }} />
         </div>
         <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {weekly.map(d => (
-            <div key={d.day} className={`p-4 rounded-xl border ${d.done && d.group !== 'REST' ? 'bg-indigo-50 border-indigo-100' : 'bg-gray-50 border-gray-100'} flex flex-col gap-1`}>
+            <div key={d.day} className={`card-soft ${d.done && d.group !== 'REST' ? 'bg-indigo-50/50 border-indigo-200 shadow-inner' : ''} flex flex-col gap-1`}>
               <div className="flex items-center justify-between">
                 <div className={`font-semibold ${d.done && d.group !== 'REST' ? 'text-indigo-900' : 'text-gray-900'}`}>{d.day}</div>
                 {d.done && d.group !== 'REST' && <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>}
@@ -85,7 +85,7 @@ export default function Progress() {
       </section>
 
       <section className="grid md:grid-cols-3 gap-4">
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+        <div className="card p-6 hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300">
           <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Profile</div>
           <h3 className="text-2xl font-bold text-gray-900">Your metrics</h3>
           {user ? (
@@ -100,19 +100,25 @@ export default function Progress() {
           )}
         </div>
 
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm md:col-span-2">
+        <div className="card p-6 md:col-span-2 hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300">
           <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Focus areas</div>
           <h3 className="text-2xl font-bold text-gray-900">Top categories</h3>
           {topCategories.length === 0 ? (
-            <div className="mt-4 p-6 text-center rounded-xl bg-gray-50 border border-gray-100 text-gray-500">No workouts yet. Start logging to see patterns.</div>
+            <div className="card-soft py-10 mt-6 flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 mb-3 bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-500 rounded-full flex items-center justify-center shadow-inner">
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+              </div>
+              <div className="text-gray-900 font-extrabold text-base">No analytics yet</div>
+              <div className="muted mt-1 text-sm">Start logging workouts to see patterns.</div>
+            </div>
           ) : (
             <div className="mt-6 grid sm:grid-cols-2 gap-4">
               {topCategories.map(([cat, count]) => (
-                <div key={cat} className="p-5 rounded-xl bg-gray-50 border border-gray-100 hover:shadow-md transition-shadow">
+                <div key={cat} className="card-soft p-5 hover:shadow-lg hover:shadow-orange-500/10 hover:-translate-y-0.5 transition-all">
                   <div className="font-bold text-gray-900 text-lg">{cat}</div>
                   <div className="text-gray-500 text-sm font-medium mt-1">{count} session{count !== 1 ? 's' : ''}</div>
                   <div className="h-2 bg-gray-200 rounded-full mt-4 overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-orange-400 to-[#ff5a1f] rounded-full" style={{ width: `${Math.min(100, count * 12)}%` }} />
+                    <div className="h-full bg-gradient-to-r from-[#ff5a1f] to-orange-400 animate-gradient-x rounded-full" style={{ width: `${Math.min(100, count * 12)}%` }} />
                   </div>
                 </div>
               ))}
