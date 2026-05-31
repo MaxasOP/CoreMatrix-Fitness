@@ -1,25 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 
 export default function Layout({ children }){
   const { user, logout } = useContext(AuthContext);
   const location = useLocation();
-  const [theme, setTheme] = useState(() => {
-    if (typeof window === 'undefined') return 'light';
-    const stored = localStorage.getItem('cmTheme');
-    if (stored === 'dark' || stored === 'light') return stored;
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
-    return 'light';
-  });
-
-  useEffect(() => {
-    if (typeof document === 'undefined') return;
-    document.documentElement.dataset.theme = theme;
-    try { localStorage.setItem('cmTheme', theme); } catch (e) {}
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', theme === 'dark' ? '#0b0f14' : '#f6f2ea');
-  }, [theme]);
   const nav = [
     { to: '/', label: 'Dashboard', icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 12l9-9 9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M5 10v10h14V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
@@ -38,60 +23,60 @@ export default function Layout({ children }){
     ) },
   ];
   return (
-    <div className="min-h-screen safe-area cra-overlay">
-      <header className="sticky top-0 z-40 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="logo-mark shadow-lg" aria-hidden="true" />
+    <div className="min-h-screen bg-gray-50/30 text-gray-900 font-sans selection:bg-[#ff5a1f]/20">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-sm/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#ff5a1f] to-orange-500 rounded-xl shadow-md shadow-orange-500/20 flex items-center justify-center transform group-hover:-rotate-3 transition-transform">
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+            </div>
             <div>
-              <div className="display text-2xl">CoreMatrix</div>
-              <div className="text-sm muted">Forge your fitness, fuel your body</div>
+              <div className="font-extrabold text-xl tracking-tight text-gray-900">CoreMatrix</div>
+              <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest leading-none">Forge & Fuel</div>
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-2">
-            {nav.map(n => (
-              <Link key={n.to} to={n.to} className={`nav-pill ${location.pathname === n.to ? 'active' : ''}`}>
-                {n.label}
-              </Link>
-            ))}
+          <nav className="hidden md:flex items-center gap-1 bg-gray-50/80 p-1.5 rounded-2xl border border-gray-100">
+            {nav.map(n => {
+              const isActive = location.pathname === n.to;
+              return (
+                <Link key={n.to} to={n.to} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${isActive ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50'}`}>
+                  {n.label}
+                </Link>
+              );
+            })}
           </nav>
 
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="btn-secondary"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? 'Light' : 'Dark'}
-            </button>
+          <div className="flex items-center gap-4">
             {user ? (
               <>
-                <div className="text-sm hide-sm">Signed in as <strong>{user.name}</strong></div>
-                <button onClick={logout} className="btn-primary">Sign out</button>
+                <div className="text-sm hidden lg:block text-gray-500 font-medium">Signed in as <strong className="text-gray-900">{user.name}</strong></div>
+                <button onClick={logout} className="text-sm font-semibold text-gray-600 hover:text-red-600 bg-gray-100 hover:bg-red-50 px-4 py-2.5 rounded-xl transition-colors">Sign out</button>
               </>
             ) : (
-              <Link to="/auth" className="btn-primary">Sign in</Link>
+              <Link to="/auth" className="bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-md hover:-translate-y-0.5">Sign in</Link>
             )}
           </div>
         </div>
       </header>
 
-      <main className="px-4 sm:px-6 pb-28 md:pb-12">
-        <div className="max-w-6xl mx-auto">
-          {children}
-        </div>
+      <main className="pb-28 md:pb-12 pt-2">
+        {children}
       </main>
 
-      <nav className="bottom-nav fixed bottom-0 left-0 right-0 md:hidden">
-        <div className="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between" style={{ paddingBottom: 'calc(8px + env(safe-area-inset-bottom))' }}>
-          {nav.map(n => (
-            <Link key={n.to} to={n.to} className={`flex flex-col items-center gap-1 ${location.pathname === n.to ? 'font-semibold' : ''}`}>
-              {n.icon}
-              <span className="text-xs">{n.label}</span>
-            </Link>
-          ))}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-safe">
+        <div className="bg-white/90 backdrop-blur-xl border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] px-6 py-3 flex items-center justify-between">
+          {nav.map(n => {
+            const isActive = location.pathname === n.to;
+            return (
+              <Link key={n.to} to={n.to} className={`flex flex-col items-center gap-1.5 w-16 transition-colors ${isActive ? 'text-[#ff5a1f]' : 'text-gray-400 hover:text-gray-600'}`}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-orange-50' : 'bg-transparent'}`}>
+                  {n.icon}
+                </div>
+                <span className="text-[10px] font-semibold tracking-wide">{n.label}</span>
+              </Link>
+            );
+          })}
         </div>
       </nav>
     </div>
