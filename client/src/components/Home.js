@@ -2,10 +2,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
-import heroAthlete from '../assets/man-lifting-weights-medium-skin-tone-svgrepo-com.svg';
-import mealArt from '../assets/avocado-svgrepo-com.svg';
-import bgDumbbel from '../assets/dumbbel-svgrepo-com.svg';
-import bgTarget from '../assets/target-svgrepo-com.svg';
 
 const defaultWeekPlan = [
   { day: 'Monday',    group: 'PUSH', dayIndex: 1 },
@@ -74,6 +70,7 @@ export default function Home() {
   const [meals, setMeals] = useState([]);
   const [tip, setTip] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => { fetchAll(); }, []);
 
@@ -86,7 +83,9 @@ export default function Home() {
       setError('');
     } catch (err) {
       console.warn('Home fetch error', err);
-      setError('Dashboard data could not be loaded. Check REACT_APP_API_URL in Vercel and make sure it points to the Render backend.');
+      setError('We had trouble loading your dashboard. Please check your connection or try refreshing the page.');
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -111,10 +110,23 @@ export default function Home() {
   const weekProgress = Math.round((completedDays / 5) * 100);
   const streak = computeStreak(workouts);
 
+  if (isLoading) {
+    return (
+      <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 animate-pulse cursor-wait">
+        <section className="card p-6 h-64 bg-black/5 border-transparent"></section>
+        <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map(i => <div key={i} className="card p-4 h-24 bg-black/5 border-transparent"></div>)}
+        </section>
+        <section className="grid md:grid-cols-3 gap-4">
+          {[1, 2, 3].map(i => <div key={i} className="card p-5 h-48 bg-black/5 border-transparent"></div>)}
+        </section>
+        <section className="card p-5 h-40 bg-black/5 border-transparent"></section>
+      </div>
+    );
+  }
+
   return (
-    <div className="mt-6 space-y-6 page page-shell">
-      <img src={bgDumbbel} alt="" aria-hidden="true" className="bg-ornament bg-ornament--left" />
-      <img src={bgTarget} alt="" aria-hidden="true" className="bg-ornament bg-ornament--right" />
+    <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
       {error && (
         <div className="card p-4" style={{ borderColor: 'rgba(255,90,31,0.4)' }}>
           <div className="tag">Heads up</div>
@@ -122,107 +134,125 @@ export default function Home() {
         </div>
       )}
 
-      <section className="hero card p-6 grid md:grid-cols-2 gap-6 reveal" style={{ '--d': '0.05s' }}>
-        <div>
-          <div className="tag muted">Today is a good day</div>
-          <h1 className="display text-4xl sm:text-5xl mt-2">{user ? `Welcome back, ${user.name}` : 'Build power, not excuses'}</h1>
-          <p className="mt-3 muted">Track your lifts, fuel your performance, and see real progress. This dashboard is built for daily wins.</p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Link to="/forge" className="btn-primary">Log workout</Link>
-            <Link to="/fuel" className="btn-secondary">Log meal</Link>
-            {!user && <Link to="/auth" className="btn-secondary">Create account</Link>}
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <span className="chip">Goal: {user?.goal || 'Build strength'}</span>
-            <span className="chip">Streak: {streak} day{streak === 1 ? '' : 's'}</span>
-            <span className="chip">Weekly plan: PUSH / PULL / LEGS</span>
-          </div>
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900 via-gray-800 to-black p-8 sm:p-10 lg:p-12 text-white shadow-2xl reveal group" style={{ '--d': '0.05s' }}>
+        <div className="absolute top-0 right-0 -mt-20 -mr-20 text-white opacity-5 group-hover:opacity-10 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-1000 ease-out pointer-events-none">
+          <svg width="400" height="400" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.644 1.59a.75.75 0 01.712 0l9.75 5.625c.334.193.544.55.544.935v11.25c0 .385-.21.742-.544.935l-9.75 5.625a.75.75 0 01-.712 0l-9.75-5.625a.75.75 0 01-.544-.935V8.15c0-.385.21-.742.544-.935l9.75-5.625z" />
+          </svg>
         </div>
-        <div className="photo-card floaty">
-          <img src={heroAthlete} alt="Weightlifting illustration" />
+        <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <div className="inline-block px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-gray-300 tracking-wider uppercase mb-4 shadow-sm">Today is a good day</div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mt-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+              {user ? `Welcome back, ${user.name}` : 'Build power, not excuses.'}
+            </h1>
+            <p className="mt-4 text-lg text-gray-400 max-w-xl leading-relaxed">Track your lifts, fuel your performance, and see real progress. This dashboard is built for daily wins.</p>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link to="/forge" className="bg-[#ff5a1f] hover:bg-[#e04814] text-white px-6 py-3 rounded-xl font-medium transition-all shadow-lg shadow-[#ff5a1f]/30 hover:-translate-y-0.5">Log workout</Link>
+              <Link to="/fuel" className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 px-6 py-3 rounded-xl font-medium transition-all hover:-translate-y-0.5">Log meal</Link>
+              {!user && <Link to="/auth" className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 px-6 py-3 rounded-xl font-medium transition-all hover:-translate-y-0.5">Create account</Link>}
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <span className="px-3 py-1.5 rounded-lg bg-black/40 border border-white/5 text-sm flex items-center gap-2"><svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> Goal: {user?.goal || 'Build strength'}</span>
+              <span className="px-3 py-1.5 rounded-lg bg-black/40 border border-white/5 text-sm flex items-center gap-2"><svg className="w-4 h-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" /></svg> Streak: {streak} day{streak === 1 ? '' : 's'}</span>
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card p-4 reveal" style={{ '--d': '0.1s' }}>
-          <div className="tag muted">Calories</div>
-          <div className="text-2xl font-bold mt-1">{stats.calories}</div>
+        <div className="card bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 reveal group" style={{ '--d': '0.1s' }}>
+          <div className="flex items-center gap-3 muted font-medium text-sm">
+            <div className="p-2 bg-orange-50 text-orange-500 rounded-lg group-hover:scale-110 transition-transform"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.866 8.21 8.21 0 003 2.48z" /></svg></div> Calories
+          </div>
+          <div className="text-3xl font-extrabold mt-3">{stats.calories}</div>
           <div className="muted text-sm">from meals today</div>
         </div>
-        <div className="card p-4 reveal" style={{ '--d': '0.15s' }}>
-          <div className="tag muted">Protein</div>
-          <div className="text-2xl font-bold mt-1">{stats.protein}g</div>
+        <div className="card bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 reveal group" style={{ '--d': '0.15s' }}>
+          <div className="flex items-center gap-3 muted font-medium text-sm">
+            <div className="p-2 bg-blue-50 text-blue-500 rounded-lg group-hover:scale-110 transition-transform"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg></div> Protein
+          </div>
+          <div className="text-3xl font-extrabold mt-3">{stats.protein}g</div>
           <div className="muted text-sm">muscle repair fuel</div>
         </div>
-        <div className="card p-4 reveal" style={{ '--d': '0.2s' }}>
-          <div className="tag muted">Workouts</div>
-          <div className="text-2xl font-bold mt-1">{stats.workouts}</div>
+        <div className="card bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 reveal group" style={{ '--d': '0.2s' }}>
+          <div className="flex items-center gap-3 muted font-medium text-sm">
+            <div className="p-2 bg-emerald-50 text-emerald-500 rounded-lg group-hover:scale-110 transition-transform"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg></div> Workouts
+          </div>
+          <div className="text-3xl font-extrabold mt-3">{stats.workouts}</div>
           <div className="muted text-sm">sessions today</div>
         </div>
-        <div className="card p-4 reveal" style={{ '--d': '0.25s' }}>
-          <div className="tag muted">Total sets</div>
-          <div className="text-2xl font-bold mt-1">{stats.totalSets}</div>
+        <div className="card bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 reveal group" style={{ '--d': '0.25s' }}>
+          <div className="flex items-center gap-3 muted font-medium text-sm">
+            <div className="p-2 bg-purple-50 text-purple-500 rounded-lg group-hover:scale-110 transition-transform"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg></div> Total sets
+          </div>
+          <div className="text-3xl font-extrabold mt-3">{stats.totalSets}</div>
           <div className="muted text-sm">volume logged</div>
         </div>
       </section>
 
       <section className="grid md:grid-cols-3 gap-4">
-        <div className="card p-5 reveal" style={{ '--d': '0.3s' }}>
-          <div className="tag muted">Weekly progress</div>
-          <div className="mt-2 text-3xl font-bold">{weekProgress}%</div>
+        <div className="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 reveal" style={{ '--d': '0.3s' }}>
+          <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Weekly progress</div>
+          <div className="text-4xl font-extrabold text-gray-900">{weekProgress}%</div>
           <div className="muted text-sm">{completedDays} of 5 training days</div>
-          <div className="h-2 bg-black/10 rounded mt-3">
-            <div className="h-2 accent-fill rounded" style={{ width: `${weekProgress}%` }} />
+          <div className="h-2 bg-gray-100 rounded-full mt-4 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-[#ff5a1f] to-orange-400 rounded-full transition-all duration-1000" style={{ width: `${weekProgress}%` }} />
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+          <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
             {defaultWeekPlan.map(d => (
-              <div key={d.day} className="flex items-center gap-2">
-                <span className="chip" style={{ borderColor: daysWithWorkout.has(d.dayIndex) ? 'rgba(255,90,31,0.7)' : 'rgba(16,20,24,0.12)' }}>{d.day.slice(0,3)}</span>
-                <span className="muted">{d.group}</span>
+              <div key={d.day} className="flex flex-col gap-1 p-2 rounded-lg bg-gray-50 border border-gray-100">
+                <span className={`font-semibold ${daysWithWorkout.has(d.dayIndex) ? 'text-[#ff5a1f]' : 'text-gray-400'}`}>{d.day.slice(0,3)}</span>
+                <span className="text-xs text-gray-500">{d.group}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="card p-5 reveal" style={{ '--d': '0.35s' }}>
-          <div className="tag muted">Daily tip</div>
-          <div className="mt-2 text-lg">{tip || 'Power comes from consistency, not perfection.'}</div>
-          <div className="mt-4 photo-card">
-            <img src={mealArt} alt="Nutrition illustration" />
+        <div className="card relative overflow-hidden bg-[#ff5a1f] text-white p-6 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 reveal group" style={{ '--d': '0.35s' }}>
+          <div className="absolute top-0 right-0 -mr-8 -mt-8 opacity-20 group-hover:opacity-30 group-hover:scale-110 transition-transform duration-500">
+            <svg width="150" height="150" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+          </div>
+          <div className="relative z-10">
+            <div className="font-semibold uppercase tracking-wide text-xs mb-2 text-white/80">Daily tip</div>
+            <div className="text-xl font-medium leading-relaxed">{tip || 'Power comes from consistency, not perfection.'}</div>
           </div>
         </div>
 
-        <div className="card p-5 reveal" style={{ '--d': '0.4s' }}>
-          <div className="tag muted">Fuel snapshot</div>
-          <div className="mt-2 text-3xl font-bold">{stats.calories} kcal</div>
+        <div className="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 reveal" style={{ '--d': '0.4s' }}>
+          <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Fuel snapshot</div>
+          <div className="text-4xl font-extrabold text-gray-900">{stats.calories} <span className="text-lg text-gray-400 font-medium">kcal</span></div>
           <div className="muted text-sm">today's intake</div>
-          <div className="mt-4">
+          <div className="mt-6">
             <div className="flex items-center justify-between text-sm">
-              <span>Protein</span>
-              <strong>{stats.protein}g</strong>
+              <span className="font-medium text-gray-600">Protein</span>
+              <strong className="text-gray-900">{stats.protein}g</strong>
             </div>
-            <div className="h-2 bg-black/10 rounded mt-2">
-              <div className="h-2 accent-fill rounded" style={{ width: `${Math.min(100, stats.protein)}%` }} />
+            <div className="h-2 bg-gray-100 rounded-full mt-2 overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, stats.protein)}%` }} />
             </div>
           </div>
         </div>
       </section>
 
-      <section className="card p-5 reveal" style={{ '--d': '0.45s' }}>
-        <h3 className="text-xl">Recent workouts</h3>
+      <section className="card bg-white p-6 rounded-2xl shadow-sm border border-gray-100 reveal" style={{ '--d': '0.45s' }}>
+        <h3 className="text-xl font-bold text-gray-900">Recent workouts</h3>
         {recentWorkouts.length === 0 ? (
-          <div className="card-soft p-4 mt-3">
-            <div className="muted">No workouts yet. Start with a quick entry in Forge.</div>
+          <div className="bg-gray-50 border border-gray-100 rounded-xl p-6 mt-4 text-center">
+            <div className="muted">No workouts yet. Start by building your first routine in Forge!</div>
           </div>
         ) : (
-          <ul className="mt-3 space-y-3">
+          <ul className="mt-4 space-y-3">
             {recentWorkouts.map(w => (
-              <li key={w._id || w.id} className="flex items-center justify-between">
-                <div>
-                  <div className="font-semibold">{w.name}</div>
-                  <div className="muted text-sm">{w.category} — {w.sets}x{w.reps}</div>
+              <li key={w._id || w.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-xl hover:bg-white hover:shadow-md hover:border-gray-200 hover:-translate-y-0.5 transition-all duration-300 group cursor-default">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-white rounded-lg shadow-sm group-hover:text-[#ff5a1f] transition-colors"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg></div>
+                  <div>
+                    <div className="font-semibold text-gray-900">{w.name}</div>
+                    <div className="text-gray-500 text-sm mt-0.5">{w.category} • <span className="font-medium">{w.sets}</span> sets × <span className="font-medium">{w.reps}</span> reps</div>
+                  </div>
                 </div>
-                <div className="muted text-sm">{new Date(w.log_date).toLocaleDateString()}</div>
+                <div className="text-gray-400 text-sm mt-2 sm:mt-0 font-medium bg-gray-100 px-3 py-1 rounded-md self-start sm:self-auto">{new Date(w.log_date).toLocaleDateString()}</div>
               </li>
             ))}
           </ul>

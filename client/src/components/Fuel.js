@@ -2,9 +2,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
-import mealArt from '../assets/fish-svgrepo-com.svg';
-import bgAvocado from '../assets/avocado-svgrepo-com.svg';
-import bgWatermelon from '../assets/watermelon-svgrepo-com.svg';
 
 const presets = [
   { name: 'Power oats', type: 'Breakfast', calories: 420, protein: 25, carbs: 55, fat: 10 },
@@ -43,6 +40,7 @@ export default function Fuel() {
   async function addOrUpdateMeal() {
     if (!isAuthed) {
       setMsg('Please sign in to log meals.');
+      setTimeout(() => setMsg(''), 4000);
       return;
     }
     try {
@@ -55,7 +53,8 @@ export default function Fuel() {
         setMeals(prev => [res.data || res, ...prev]);
       }
       setForm({ name: '', type: 'Lunch', calories: 0, protein: 0, carbs: 0, fat: 0, date: getTodayKey() });
-      setMsg('Meal saved.');
+      setMsg(editingId ? 'Meal updated successfully! 🥗' : 'Meal logged successfully! 🥑');
+      setTimeout(() => setMsg(''), 4000);
     } catch (err) { console.error('Save meal failed', err); }
   }
 
@@ -69,9 +68,10 @@ export default function Fuel() {
   async function deleteMeal(id) {
     if (!isAuthed) {
       setMsg('Please sign in to manage meals.');
+      setTimeout(() => setMsg(''), 4000);
       return;
     }
-    if (!confirm('Delete this meal?')) return;
+    if (!window.confirm('Delete this meal?')) return;
     try {
       await api.delete(`/meals/${id}`);
       setMeals(prev => prev.filter(m => (m._id || m.id) !== id));
@@ -92,92 +92,94 @@ export default function Fuel() {
   const calorieGoal = user?.calorieGoal || 2200;
 
   return (
-    <div className="mt-6 space-y-6 page page-shell">
-      <img src={bgAvocado} alt="" aria-hidden="true" className="bg-ornament bg-ornament--left" />
-      <img src={bgWatermelon} alt="" aria-hidden="true" className="bg-ornament bg-ornament--right" />
+    <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+      {msg && (
+        <div className="fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-2xl bg-gray-900 text-white font-medium z-50 transition-all duration-300 transform translate-y-0">
+          {msg}
+        </div>
+      )}
       {!isAuthed && (
-        <div className="card-soft p-4">
-          <div className="tag muted">Sign in required</div>
-          <div className="mt-2">Create an account to save meals, track macros, and see your history.</div>
-          <div className="mt-3">
-            <Link to="/auth" className="btn-primary">Sign in</Link>
+        <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl">
+          <div className="font-semibold text-emerald-800 uppercase tracking-wide text-xs mb-2">Sign in required</div>
+          <div className="text-emerald-900 mt-1">Create an account to save meals, track macros, and see your history.</div>
+          <div className="mt-4">
+            <Link to="/auth" className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-sm inline-block">Sign in</Link>
           </div>
         </div>
       )}
       <section className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 card p-5">
+        <div className="md:col-span-2 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <div className="tag muted">Nutrition log</div>
-              <h2 className="text-3xl">Fuel your day</h2>
+              <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Nutrition log</div>
+              <h2 className="text-3xl font-extrabold text-gray-900">Fuel your day</h2>
             </div>
-            <span className="chip">Smart presets</span>
+            <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-500">Smart presets</span>
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
             {presets.map(p => (
-              <button key={p.name} className="chip" onClick={() => applyPreset(p)}>{p.name}</button>
+              <button key={p.name} className="px-4 py-2 rounded-full border border-gray-200 bg-gray-50 text-sm font-medium hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 transition-all cursor-pointer" onClick={() => applyPreset(p)}>{p.name}</button>
             ))}
           </div>
 
           <div className="mt-4 grid sm:grid-cols-2 gap-3">
-            <input name="name" placeholder="Meal name" value={form.name} onChange={onChange} className="input" />
-            <select name="type" value={form.type} onChange={onChange} className="input">
+            <input name="name" placeholder="Meal name" value={form.name} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <select name="type" value={form.type} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all">
               <option>Breakfast</option>
               <option>Lunch</option>
               <option>Dinner</option>
               <option>Snack</option>
             </select>
-            <input name="calories" type="number" placeholder="kcal" value={form.calories} onChange={onChange} className="input" />
-            <input name="protein" type="number" placeholder="protein" value={form.protein} onChange={onChange} className="input" />
-            <input name="carbs" type="number" placeholder="carbs" value={form.carbs} onChange={onChange} className="input" />
-            <input name="fat" type="number" placeholder="fat" value={form.fat} onChange={onChange} className="input" />
-            <input name="date" type="date" value={form.date} onChange={onChange} className="input" />
+            <input name="calories" type="number" placeholder="kcal" value={form.calories} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input name="protein" type="number" placeholder="Protein (g)" value={form.protein} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input name="carbs" type="number" placeholder="Carbs (g)" value={form.carbs} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input name="fat" type="number" placeholder="Fat (g)" value={form.fat} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input name="date" type="date" value={form.date} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all sm:col-span-2" />
           </div>
 
           <div className="mt-4 flex flex-wrap gap-3">
-            <button onClick={addOrUpdateMeal} className="btn-primary" disabled={!isAuthed}>{editingId ? 'Save' : 'Add meal'}</button>
-            {editingId && <button onClick={() => { setEditingId(null); setForm({ name: '', type: 'Lunch', calories: 0, protein: 0, carbs: 0, fat: 0, date: getTodayKey() }); }} className="btn-secondary">Cancel</button>}
+            <button onClick={addOrUpdateMeal} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0" disabled={!isAuthed}>{editingId ? 'Save Meal' : 'Add Meal'}</button>
+            {editingId && <button onClick={() => { setEditingId(null); setForm({ name: '', type: 'Lunch', calories: 0, protein: 0, carbs: 0, fat: 0, date: getTodayKey() }); }} className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-3 rounded-xl font-medium transition-colors">Cancel</button>}
           </div>
-          {msg && <div className="text-sm mt-2" style={{ color: msg.toLowerCase().includes('sign in') ? '#b45309' : '#15803d' }}>{msg}</div>}
         </div>
 
-        <aside className="card p-5">
-          <div className="tag muted">Today</div>
-          <h3 className="text-2xl">{totals.calories} kcal</h3>
-          <div className="muted text-sm">Goal: {calorieGoal} kcal</div>
-          <div className="h-2 bg-black/10 rounded mt-3">
-            <div className="h-2 accent-fill rounded" style={{ width: `${Math.min(100, Math.round((totals.calories / calorieGoal) * 100))}%` }} />
+        <aside className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Today's Intake</div>
+          <h3 className="text-4xl font-extrabold text-gray-900">{totals.calories} <span className="text-lg text-gray-400 font-medium">kcal</span></h3>
+          <div className="text-sm text-gray-500 font-medium mt-1">Goal: {calorieGoal} kcal</div>
+          <div className="h-3 bg-gray-100 rounded-full mt-4 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, Math.round((totals.calories / calorieGoal) * 100))}%` }} />
           </div>
-          <div className="mt-4 space-y-2 text-sm">
-            <div className="flex items-center justify-between"><span>Protein</span><strong>{totals.protein}g</strong></div>
-            <div className="flex items-center justify-between"><span>Carbs</span><strong>{totals.carbs}g</strong></div>
-            <div className="flex items-center justify-between"><span>Fat</span><strong>{totals.fat}g</strong></div>
-          </div>
-          <div className="photo-card mt-4">
-            <img src={mealArt} alt="Fish illustration" />
+          <div className="mt-6 space-y-3 text-sm">
+            <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Protein</span><strong className="text-gray-900">{totals.protein}g</strong></div>
+            <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Carbs</span><strong className="text-gray-900">{totals.carbs}g</strong></div>
+            <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Fat</span><strong className="text-gray-900">{totals.fat}g</strong></div>
           </div>
         </aside>
       </section>
 
-      <section className="card p-5">
+      <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between">
-          <h3 className="text-2xl">Meal history</h3>
-          {loading && <span className="muted text-sm">Loading…</span>}
+          <h3 className="text-2xl font-bold text-gray-900">Meal history</h3>
         </div>
-        {meals.length === 0 ? (
-          <div className="card-soft p-4 mt-3">No meals yet. Add your first meal above.</div>
+        {loading ? (
+          <div className="mt-3 space-y-3 animate-pulse">
+            {[1, 2, 3].map(i => <div key={i} className="h-20 bg-black/5 rounded-xl w-full"></div>)}
+          </div>
+        ) : meals.length === 0 ? (
+          <div className="bg-gray-50 border border-gray-100 rounded-xl p-6 mt-4 text-center text-gray-500">No meals yet. Add your first meal above.</div>
         ) : (
-          <div className="mt-3 space-y-3">
+          <div className="mt-4 space-y-3">
             {meals.map(m => (
-              <div key={m._id || m.id} className="card-soft p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div key={m._id || m.id} className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-white hover:shadow-md hover:border-gray-200 hover:-translate-y-0.5 transition-all duration-300">
                 <div>
-                  <div className="font-semibold">{m.name}</div>
-                  <div className="muted text-sm">{m.type} — {m.calories} kcal — P:{m.protein} C:{m.carbs} F:{m.fat}</div>
+                  <div className="font-semibold text-gray-900">{m.name}</div>
+                  <div className="text-gray-500 text-sm mt-0.5"><span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-xs font-medium mr-2">{m.type}</span> {m.calories} kcal • P: <span className="font-medium">{m.protein}</span> C: <span className="font-medium">{m.carbs}</span> F: <span className="font-medium">{m.fat}</span></div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => startEdit(m)} className="btn-secondary">Edit</button>
-                  <button onClick={() => deleteMeal(m._id || m.id)} className="btn-secondary">Delete</button>
+                <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                  <button onClick={() => startEdit(m)} className="text-gray-600 hover:text-gray-900 bg-gray-200 hover:bg-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">Edit</button>
+                  <button onClick={() => deleteMeal(m._id || m.id)} className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">Delete</button>
                 </div>
               </div>
             ))}

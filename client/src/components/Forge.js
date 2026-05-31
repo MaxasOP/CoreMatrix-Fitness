@@ -2,9 +2,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
-import boxingArt from '../assets/boxing-svgrepo-com.svg';
-import bgDumbbel from '../assets/dumbbel-svgrepo-com.svg';
-import bgRings from '../assets/gymnastics-ring-svgrepo-com.svg';
 
 const templates = [
   { name: 'Bench Press', category: 'Chest', sets: 4, reps: 8, weight: 60, intensity: 'high' },
@@ -43,6 +40,7 @@ export default function Forge() {
   async function addWorkout() {
     if (!isAuthed) {
       setMsg('Please sign in to log workouts.');
+      setTimeout(() => setMsg(''), 4000);
       return;
     }
     try {
@@ -51,16 +49,18 @@ export default function Forge() {
       // prepend created workout
       setWorkouts(prev => [res.data || res, ...prev]);
       setForm({ name: '', category: 'Chest', sets: 3, reps: 10, weight: 0, intensity: 'medium', date: getTodayKey() });
-      setMsg('Workout logged.');
+      setMsg('Workout logged successfully! 🎉');
+      setTimeout(() => setMsg(''), 4000);
     } catch (err) { console.error('Add workout failed', err); }
   }
 
   async function deleteWorkout(id) {
     if (!isAuthed) {
       setMsg('Please sign in to manage workouts.');
+      setTimeout(() => setMsg(''), 4000);
       return;
     }
-    if (!confirm('Delete this workout?')) return;
+    if (!window.confirm('Delete this workout?')) return;
     try {
       await api.delete(`/workouts/${id}`);
       setWorkouts(prev => prev.filter(w => (w._id || w.id) !== id));
@@ -68,37 +68,40 @@ export default function Forge() {
   }
 
   return (
-    <div className="mt-6 space-y-6 page page-shell">
-      <img src={bgDumbbel} alt="" aria-hidden="true" className="bg-ornament bg-ornament--left" />
-      <img src={bgRings} alt="" aria-hidden="true" className="bg-ornament bg-ornament--right" />
+    <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+      {msg && (
+        <div className="fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-2xl bg-gray-900 text-white font-medium z-50 transition-all duration-300 transform translate-y-0">
+          {msg}
+        </div>
+      )}
       {!isAuthed && (
-        <div className="card-soft p-4">
-          <div className="tag muted">Sign in required</div>
-          <div className="mt-2">Create an account to save workouts, track progress, and see your history.</div>
-          <div className="mt-3">
-            <Link to="/auth" className="btn-primary">Sign in</Link>
+        <div className="bg-orange-50 border border-orange-100 p-6 rounded-2xl">
+          <div className="font-semibold text-orange-800 uppercase tracking-wide text-xs mb-2">Sign in required</div>
+          <div className="text-orange-900 mt-1">Create an account to save workouts, track progress, and see your history.</div>
+          <div className="mt-4">
+            <Link to="/auth" className="bg-orange-600 hover:bg-orange-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-sm inline-block">Sign in</Link>
           </div>
         </div>
       )}
       <section className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 card p-5">
+        <div className="md:col-span-2 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <div className="tag muted">Workout builder</div>
-              <h2 className="text-3xl">Forge a session</h2>
+              <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Workout builder</div>
+              <h2 className="text-3xl font-extrabold text-gray-900">Forge a session</h2>
             </div>
-            <span className="chip">Mobile-first logging</span>
+            <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-500">Mobile-first logging</span>
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
             {templates.map(t => (
-              <button key={t.name} className="chip" onClick={() => applyTemplate(t)}>{t.name}</button>
+              <button key={t.name} className="px-4 py-2 rounded-full border border-gray-200 bg-gray-50 text-sm font-medium hover:border-[#ff5a1f] hover:text-[#ff5a1f] hover:bg-orange-50 transition-all cursor-pointer" onClick={() => applyTemplate(t)}>{t.name}</button>
             ))}
           </div>
 
           <div className="mt-4 grid sm:grid-cols-2 gap-3">
-            <input name="name" placeholder="Exercise name" value={form.name} onChange={onChange} className="input" />
-            <select name="category" value={form.category} onChange={onChange} className="input">
+            <input name="name" placeholder="Exercise name" value={form.name} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
+            <select name="category" value={form.category} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
               <option>Chest</option>
               <option>Back</option>
               <option>Legs</option>
@@ -107,51 +110,55 @@ export default function Forge() {
               <option>Core</option>
               <option>Cardio</option>
             </select>
-            <input name="sets" type="number" value={form.sets} onChange={onChange} className="input" />
-            <input name="reps" type="number" value={form.reps} onChange={onChange} className="input" />
-            <input name="weight" type="number" value={form.weight} onChange={onChange} className="input" />
-            <select name="intensity" value={form.intensity} onChange={onChange} className="input">
+            <input name="sets" type="number" placeholder="Sets" value={form.sets} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
+            <input name="reps" type="number" placeholder="Reps" value={form.reps} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
+            <input name="weight" type="number" placeholder="Weight (kg)" value={form.weight} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
+            <select name="intensity" value={form.intensity} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
               <option value="low">low</option>
               <option value="medium">medium</option>
               <option value="high">high</option>
             </select>
-            <input name="date" type="date" value={form.date} onChange={onChange} className="input" />
+            <input name="date" type="date" value={form.date} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all sm:col-span-2" />
           </div>
 
           <div className="mt-4">
-            <button onClick={addWorkout} className="btn-primary" disabled={!isAuthed}>Add workout</button>
-            {msg && <div className="text-sm mt-2" style={{ color: msg.toLowerCase().includes('sign in') ? '#b45309' : '#15803d' }}>{msg}</div>}
+            <button onClick={addWorkout} className="bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0" disabled={!isAuthed}>Add workout</button>
           </div>
         </div>
 
-        <aside className="card p-5">
-          <div className="tag muted">Focus</div>
-          <h3 className="text-2xl">Train with intent</h3>
-          <p className="muted mt-2">Use templates to speed up logging. Capture sets, reps, and intensity in under 10 seconds.</p>
-          <div className="photo-card mt-4">
-            <img src={boxingArt} alt="Boxing illustration" />
+        <aside className="bg-gray-900 text-white rounded-2xl p-6 shadow-lg relative overflow-hidden group">
+          <div className="absolute -bottom-10 -right-10 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-transform duration-700">
+            <svg width="200" height="200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+          </div>
+          <div className="relative z-10">
+            <div className="font-semibold text-gray-400 uppercase tracking-wide text-xs mb-2">Focus</div>
+            <h3 className="text-2xl font-extrabold text-white">Train with intent</h3>
+            <p className="text-gray-300 mt-3 leading-relaxed">Use templates to speed up logging. Capture sets, reps, and intensity in under 10 seconds.</p>
           </div>
         </aside>
       </section>
 
-      <section className="card p-5">
+      <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between">
-          <h3 className="text-2xl">Recent sessions</h3>
-          {loading && <span className="muted text-sm">Loading…</span>}
+          <h3 className="text-2xl font-bold text-gray-900">Recent sessions</h3>
         </div>
-        {workouts.length === 0 ? (
-          <div className="card-soft p-4 mt-3">No workouts yet. Add your first session above.</div>
+        {loading ? (
+          <div className="mt-3 space-y-3 animate-pulse">
+            {[1, 2, 3].map(i => <div key={i} className="h-20 bg-black/5 rounded-xl w-full"></div>)}
+          </div>
+        ) : workouts.length === 0 ? (
+          <div className="bg-gray-50 border border-gray-100 rounded-xl p-6 mt-4 text-center text-gray-500">No workouts yet. Add your first session above.</div>
         ) : (
-          <div className="mt-3 space-y-3">
+          <div className="mt-4 space-y-3">
             {workouts.map(w => (
-              <div key={w._id || w.id} className="card-soft p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div key={w._id || w.id} className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-white hover:shadow-md hover:border-gray-200 hover:-translate-y-0.5 transition-all duration-300">
                 <div>
-                  <div className="font-semibold">{w.name}</div>
-                  <div className="muted text-sm">{w.category} — {w.sets}x{w.reps} @ {w.weight}kg — {w.intensity}</div>
+                  <div className="font-semibold text-gray-900">{w.name}</div>
+                  <div className="text-gray-500 text-sm mt-0.5">{w.category} • <span className="font-medium">{w.sets}</span>x<span className="font-medium">{w.reps}</span> @ {w.weight}kg • {w.intensity}</div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="muted text-sm">{new Date(w.log_date).toLocaleDateString()}</div>
-                  <button onClick={() => deleteWorkout(w._id || w.id)} className="btn-secondary">Delete</button>
+                <div className="flex items-center gap-3 mt-2 sm:mt-0">
+                  <div className="text-gray-400 text-sm font-medium bg-gray-100 px-3 py-1 rounded-md">{new Date(w.log_date).toLocaleDateString()}</div>
+                  <button onClick={() => deleteWorkout(w._id || w.id)} className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">Delete</button>
                 </div>
               </div>
             ))}
