@@ -20,9 +20,18 @@ const Leaderboards = () => {
         `${process.env.REACT_APP_API_URL}/leaderboards/${scope}/${category}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setLeaderboard(response.data);
+      const data = response.data;
+      const list = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.leaderboard)
+          ? data.leaderboard
+          : Array.isArray(data?.data)
+            ? data.data
+            : [];
+      setLeaderboard(list);
     } catch (error) {
       console.error('Error:', error);
+      setLeaderboard([]);
     } finally {
       setLoading(false);
     }

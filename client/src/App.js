@@ -12,6 +12,7 @@ import Setup from './components/Setup';
 
 // Import the new Super App features (Assuming they are in a 'pages' folder)
 import AIDietician from './pages/AIDietician';
+import AIWorkout from './pages/AIWorkout';
 import Supplements from './pages/Supplements';
 import Leaderboards from './pages/Leaderboards';
 import Challenges from './pages/Challenges';
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/progress" element={<Progress />} />
           <Route path="/logs" element={<Logs />} />
           <Route path="/ai-dietician" element={<AIDietician />} />
+          <Route path="/ai-workout" element={<AIWorkout />} />
           <Route path="/supplements" element={<Supplements />} />
           <Route path="/leaderboards" element={<Leaderboards />} />
           <Route path="/challenges" element={<Challenges />} />

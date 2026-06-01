@@ -7,7 +7,6 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const SocketService = require('./services/socketService');
-const localizationMiddleware = require('./middleware/localizationMiddleware');
 
 dotenv.config();
 
@@ -38,8 +37,9 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Localization middleware
-app.use(localizationMiddleware);
+// Localization middleware (Temporarily disabled to fix Render deployment crash)
+// const localizationMiddleware = require('./middleware/localizationMiddleware');
+// app.use(localizationMiddleware);
 
 // Optional auth middleware
 app.use(authOptional);
