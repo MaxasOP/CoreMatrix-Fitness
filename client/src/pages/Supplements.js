@@ -22,9 +22,17 @@ const Supplements = () => {
         `${process.env.REACT_APP_API_URL}/supplements`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setSupplements(response.data);
+      // Backend may return an object (e.g., { supplements: [...] }) or an error payload.
+      const data = response.data;
+      const list = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.supplements)
+          ? data.supplements
+          : [];
+      setSupplements(list);
     } catch (error) {
       console.error('Error:', error);
+      setSupplements([]);
     }
   };
 
