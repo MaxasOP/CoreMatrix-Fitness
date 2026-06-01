@@ -5,6 +5,9 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
+const SocketService = require('./services/socketService');
+const localizationMiddleware = require('./middleware/localizationMiddleware');
 
 dotenv.config();
 
@@ -16,17 +19,27 @@ const supplementRoutes = require('./routes/supplements');
 const leaderboardRoutes = require('./routes/leaderboards');
 const challengeRoutes = require('./routes/challenges');
 const reelRoutes = require('./routes/reels');
+const paymentRoutes = require('./routes/payments');
+const videoRoutes = require('./routes/video');
+const analyticsRoutes = require('./routes/analytics');
 
 const { authOptional } = require('./middleware/authMiddleware');
 
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 4000;
+
+// Initialize Socket.io
+const socketService = new SocketService(server);
 
 // Security headers
 app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Localization middleware
+app.use(localizationMiddleware);
 
 // Optional auth middleware
 app.use(authOptional);
@@ -39,6 +52,9 @@ app.use('/api/supplements', supplementRoutes);
 app.use('/api/leaderboards', leaderboardRoutes);
 app.use('/api/challenges', challengeRoutes);
 app.use('/api/reels', reelRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/video', videoRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ 
@@ -80,8 +96,9 @@ async function start() {
     console.error('MongoDB connection error:', err.message);
   }
 
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`CoreMatrix backend listening on http://localhost:${PORT}`);
+    console.log('🚀 WebSocket server active (Socket.io)');
     console.log('Available endpoints:');
     console.log('  - /api/auth (register, login)');
     console.log('  - /api/workouts (workout tracking)');
@@ -91,6 +108,9 @@ async function start() {
     console.log('  - /api/leaderboards (rankings)');
     console.log('  - /api/challenges (fitness challenges)');
     console.log('  - /api/reels (progress posts)');
+    console.log('  - /api/payments (payments & transactions)');
+    console.log('  - /api/video (form analysis)');
+    console.log('  - /api/analytics (user analytics)');
   });
 }
 

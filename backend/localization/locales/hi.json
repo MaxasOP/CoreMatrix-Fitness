@@ -1,0 +1,17 @@
+{
+  "auth": {
+    "welcome": "CoreMatrix में आपका स्वागत है",
+    "login": "लॉगिन",
+    "signup": "साइन अप",
+    "email": "ईमेल",
+    "password": "पासवर्ड"
+  },
+  "dashboard": {
+    "welcome": "स्वागत है",
+    "health_score": "स्वास्थ्य स्कोर",
+    "current_streak": "वर्तमान स्ट्रीक",
+    "total_workouts": "कुल वर्कआउट",
+    "log_workout": "वर्कआउट लॉग करें",
+    "log_meal": "भोजन लॉग करें"
+  }
+}
