@@ -18,7 +18,8 @@ const supplementRoutes = require('./routes/supplements');
 const leaderboardRoutes = require('./routes/leaderboards');
 const challengeRoutes = require('./routes/challenges');
 const reelRoutes = require('./routes/reels');
-const paymentRoutes = require('./routes/payments');
+// Temporarily disabled to prevent Razorpay crash on Render
+// const paymentRoutes = require('./routes/payments');
 const videoRoutes = require('./routes/video');
 const analyticsRoutes = require('./routes/analytics');
 
@@ -52,7 +53,8 @@ app.use('/api/supplements', supplementRoutes);
 app.use('/api/leaderboards', leaderboardRoutes);
 app.use('/api/challenges', challengeRoutes);
 app.use('/api/reels', reelRoutes);
-app.use('/api/payments', paymentRoutes);
+// Temporarily disabled
+// app.use('/api/payments', paymentRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
