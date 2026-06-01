@@ -1,10 +1,13 @@
 // backend/services/aiService.js
-// AI integration service for OpenAI API
+// AI integration service for Gemini API
+
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 class AIService {
   constructor() {
-    this.apiKey = process.env.OPENAI_API_KEY;
-    this.model = 'gpt-4';
+    this.apiKey = process.env.GEMINI_API_KEY;
+    this.genAI = this.apiKey ? new GoogleGenerativeAI(this.apiKey) : null;
+    this.model = 'gemini-1.5-flash';
   }
 
   /**
@@ -57,10 +60,67 @@ Format the response as JSON with the following structure:
 }`;
 
     try {
-      const response = await this.callOpenAI(prompt);
+      const response = await this.callGemini(prompt);
       return JSON.parse(response);
     } catch (error) {
       console.error('Error generating meal plan:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Generate personalized workout plan
+   * @param {Object} userProfile - User's profile data
+   * @returns {Promise<Object>} Generated workout plan
+   */
+  async generateWorkoutPlan(userProfile) {
+    const {
+      age,
+      weight_kg,
+      height_cm,
+      activity_level,
+      goal,
+      experience_level = 'beginner',
+      days_per_week = 4,
+      equipment_available = 'full_gym'
+    } = userProfile;
+
+    const prompt = `You are an expert fitness coach. Generate a detailed personalized workout plan based on these criteria:
+
+User Profile:
+- Age: ${age} years
+- Weight: ${weight_kg} kg
+- Height: ${height_cm} cm
+- Activity Level: ${activity_level}
+- Goal: ${goal}
+- Experience Level: ${experience_level}
+- Days per Week: ${days_per_week}
+- Equipment Available: ${equipment_available}
+
+Format the response strictly as JSON with the following structure:
+{
+  "plan_name": "",
+  "goal_focus": "",
+  "days_per_week": 0,
+  "weekly_routine": [
+    {
+      "day": "Day 1",
+      "target_muscle_group": "",
+      "exercises": [
+        { "name": "", "sets": 0, "reps": "", "rest_seconds": 0, "notes": "" }
+      ]
+    }
+  ],
+  "warmup_routine": [],
+  "cooldown_routine": [],
+  "expert_tips": []
+}`;
+
+    try {
+      const response = await this.callGemini(prompt);
+      return JSON.parse(response);
+    } catch (error) {
+      console.error('Error generating workout plan:', error);
       throw error;
     }
   }
@@ -92,7 +152,7 @@ Recommend 4-6 supplements that would be most beneficial, and for each provide:
 Format as JSON array with objects containing: name, category, explanation, dosage, timing, benefits`;
 
     try {
-      const response = await this.callOpenAI(prompt);
+      const response = await this.callGemini(prompt);
       return JSON.parse(response);
     } catch (error) {
       console.error('Error recommending supplements:', error);
@@ -151,7 +211,7 @@ Format as JSON:
 }`;
 
     try {
-      const response = await this.callOpenAI(prompt);
+      const response = await this.callGemini(prompt);
       return JSON.parse(response);
     } catch (error) {
       console.error('Error calculating health scores:', error);
@@ -196,7 +256,7 @@ Format as JSON:
 }`;
 
     try {
-      const response = await this.callOpenAI(prompt);
+      const response = await this.callGemini(prompt);
       return JSON.parse(response);
     } catch (error) {
       console.error('Error analyzing meal:', error);
@@ -205,28 +265,30 @@ Format as JSON:
   }
 
   /**
-   * Call OpenAI API
-   * @param {String} prompt - Prompt for OpenAI
+   * Call Gemini API
+   * @param {String} prompt - Prompt for Gemini
    * @returns {Promise<String>} API response
    */
-  async callOpenAI(prompt) {
+  async callGemini(prompt) {
     try {
-      // TODO: Implement actual OpenAI API call using openai package
-      // Example implementation:
-      // const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-      //   model: this.model,
-      //   messages: [{ role: 'user', content: prompt }]
-      // }, {
-      //   headers: { 'Authorization': `Bearer ${this.apiKey}` }
-      // });
-      // return response.data.choices[0].message.content;
+      if (!this.genAI) {
+        console.log('Gemini API call placeholder - GEMINI_API_KEY is missing');
+        return JSON.stringify({
+          status: 'placeholder',
+          message: 'Add GEMINI_API_KEY to your backend .env file'
+        });
+      }
+
+      const model = this.genAI.getGenerativeModel({ model: this.model });
+      const result = await model.generateContent(prompt);
+      let text = result.response.text();
       
-      console.log('OpenAI API call placeholder - implement actual API integration');
-      return JSON.stringify({
-        status: 'placeholder',
-        message: 'Implement actual OpenAI API integration'
-      });
+      // Clean up markdown code blocks if the model wraps the JSON (e.g. ```json ... ```)
+      text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      
+      return text;
     } catch (error) {
+      console.error('Gemini API Error:', error);
       throw error;
     }
   }

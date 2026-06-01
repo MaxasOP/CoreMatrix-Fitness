@@ -96,6 +96,44 @@ router.get('/meal-plan/:mealPlanId', authMiddleware, async (req, res) => {
 });
 
 /**
+ * POST /api/ai/workout-plan
+ * Generate personalized workout plan
+ */
+router.post('/workout-plan', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Generate workout plan using AI
+    const workoutPlanData = await aiService.generateWorkoutPlan({
+      age: user.age_years,
+      weight_kg: user.weight_kg,
+      height_cm: user.height_cm,
+      activity_level: user.activity_level,
+      goal: user.goal,
+      experience_level: req.body.experience_level || 'intermediate',
+      days_per_week: req.body.days_per_week || 4,
+      equipment_available: req.body.equipment_available || 'full_gym'
+    });
+
+    res.status(201).json({
+      message: 'Workout plan generated successfully',
+      workoutPlan: workoutPlanData
+    });
+  } catch (error) {
+    console.error('Error generating workout plan:', error);
+    res.status(500).json({ error: 'Failed to generate workout plan' });
+  }
+});
+
+/**
  * POST /api/ai/health-twin
  * Calculate health twin scores
  */
