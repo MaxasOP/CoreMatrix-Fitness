@@ -1,18 +1,32 @@
 {
   "name": "corematrix-client",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "dependencies": {
     "axios": "^1.4.0",
+    "chart.js": "^4.5.1",
+    "firebase": "^10.7.0",
+    "immer": "^10.0.3",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.12.0",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.14.1",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "socket.io-client": "^4.7.2",
+    "zustand": "^4.4.6"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.0"
   },
   "proxy": "http://localhost:4000",
   "browserslist": {

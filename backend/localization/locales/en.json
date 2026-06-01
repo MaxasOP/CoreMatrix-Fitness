@@ -1,0 +1,17 @@
+{
+  "auth": {
+    "welcome": "Welcome to CoreMatrix",
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password"
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "health_score": "Health Score",
+    "current_streak": "Current Streak",
+    "total_workouts": "Total Workouts",
+    "log_workout": "Log Workout",
+    "log_meal": "Log Meal"
+  }
+}
