@@ -21,6 +21,15 @@ export default function Layout({ children }){
     { to: '/logs', label: 'Logs', icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="currentColor" strokeWidth="1.5"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
     ) },
+    { to: '/ai-dietician', label: 'AI Coach', icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    ) },
+    { to: '/supplements', label: 'Store', icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    ) },
+    { to: '/leaderboards', label: 'Ranks', icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0v-8.25c0-.621-.503-1.125-1.125-1.125H9.497c-.621 0-1.125.504-1.125 1.125v8.25m5.007 0H9.497" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    ) },
   ];
   return (
     <div className="min-h-screen text-gray-900 font-sans selection:bg-[#ff5a1f]/20 relative z-0">
@@ -72,15 +81,15 @@ export default function Layout({ children }){
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-safe">
-        <div className="bg-white/90 backdrop-blur-xl border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] px-6 py-3 flex items-center justify-between">
+        <div className="bg-white/90 backdrop-blur-xl border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] px-4 py-3 flex items-center gap-6 overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {nav.map(n => {
             const isActive = location.pathname === n.to;
             return (
-              <Link key={n.to} to={n.to} className={`flex flex-col items-center gap-1.5 w-16 transition-colors ${isActive ? 'text-[#ff5a1f]' : 'text-gray-400 hover:text-gray-600'}`}>
+              <Link key={n.to} to={n.to} className={`flex flex-col items-center gap-1.5 min-w-[4.5rem] transition-colors ${isActive ? 'text-[#ff5a1f]' : 'text-gray-400 hover:text-gray-600'}`}>
                 <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-orange-50' : 'bg-transparent'}`}>
                   {n.icon}
                 </div>
-                <span className="text-[10px] font-semibold tracking-wide">{n.label}</span>
+                <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap">{n.label}</span>
               </Link>
             );
           })}
