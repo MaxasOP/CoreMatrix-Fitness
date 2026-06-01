@@ -3,7 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middleware/authMiddleware');
+const { authOptional: authMiddleware } = require('../middleware/authMiddleware');
 const Challenge = require('../models/Challenge');
 const User = require('../models/User');
 const FitnessWallet = require('../models/FitnessWallet');
