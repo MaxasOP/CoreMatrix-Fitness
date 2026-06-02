@@ -3,7 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { authOptional: authMiddleware } = require('../middleware/authMiddleware');
+const { authOptional: authMiddleware, authRequired } = require('../middleware/authMiddleware');
 const ProgressReel = require('../models/ProgressReel');
 const User = require('../models/User');
 const aiService = require('../services/aiService');
@@ -12,7 +12,7 @@ const aiService = require('../services/aiService');
  * POST /api/reels
  * Create new progress reel
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const {
@@ -73,7 +73,7 @@ router.post('/', authMiddleware, async (req, res) => {
  * GET /api/reels
  * Get reels for user (home feed)
  */
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const { limit = 20, offset = 0 } = req.query;
@@ -136,7 +136,7 @@ router.get('/:reelId', async (req, res) => {
  * POST /api/reels/:reelId/like
  * Like a reel
  */
-router.post('/:reelId/like', authMiddleware, async (req, res) => {
+router.post('/:reelId/like', authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const reelId = req.params.reelId;
@@ -174,7 +174,7 @@ router.post('/:reelId/like', authMiddleware, async (req, res) => {
  * POST /api/reels/:reelId/comment
  * Add comment to reel
  */
-router.post('/:reelId/comment', authMiddleware, async (req, res) => {
+router.post('/:reelId/comment', authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const { comment_text } = req.body;
@@ -213,7 +213,7 @@ router.post('/:reelId/comment', authMiddleware, async (req, res) => {
  * DELETE /api/reels/:reelId
  * Delete reel (owner only)
  */
-router.delete('/:reelId', authMiddleware, async (req, res) => {
+router.delete('/:reelId', authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const reel = await ProgressReel.findById(req.params.reelId);
@@ -237,15 +237,16 @@ router.delete('/:reelId', authMiddleware, async (req, res) => {
 });
 
 /**
- * GET /api/reels/user/:userId
- * Get user's reels
+ * GET /api/reels/my-reels
+ * Get authenticated user's reels
  */
-router.get('/user/:userId', async (req, res) => {
+router.get('/my-reels', authRequired, async (req, res) => {
   try {
     const { limit = 20 } = req.query;
+    const userId = req.user.id; // Use req.user.id
 
     const reels = await ProgressReel.find({
-      user_id: req.params.userId,
+      user_id: userId,
       is_deleted: false
     })
       .sort({ created_at: -1 })

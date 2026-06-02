@@ -148,7 +148,7 @@ router.get('/company/:companyName/:category', async (req, res) => {
  * GET /api/leaderboards/my-rank
  * Get user's current rank across categories
  */
-router.get('/my-rank', authMiddleware, async (req, res) => {
+router.get('/my-rank', authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);

@@ -1,9 +1,6 @@
-// backend/routes/ai.js
-// AI features: meal plans, form analysis, health twin scores
-
 const express = require('express');
 const router = express.Router();
-const { authOptional: authMiddleware } = require('../middleware/authMiddleware');
+const { authOptional: authMiddleware, authRequired } = require('../middleware/authMiddleware'); // Import authRequired
 const User = require('../models/User');
 const MealPlan = require('../models/MealPlan');
 const aiService = require('../services/aiService');
@@ -232,12 +229,12 @@ router.post('/health-twin', authMiddleware, async (req, res) => {
 });
 
 /**
- * GET /api/ai/health-twin/:userId
- * Get health twin scores
+ * GET /api/ai/health-twin
+ * Get health twin scores for the authenticated user
  */
-router.get('/health-twin/:userId', async (req, res) => {
+router.get('/health-twin', authRequired, async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
+    const user = await User.findById(req.user.id); // Use req.user.id
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
