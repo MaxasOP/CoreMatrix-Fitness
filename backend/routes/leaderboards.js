@@ -3,7 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { authOptional: authMiddleware } = require('../middleware/authMiddleware');
+const { authOptional: authMiddleware, authRequired } = require('../middleware/authMiddleware');
 const User = require('../models/User');
 const Leaderboard = require('../models/Leaderboard');
 const Workout = require('../models/Workout');
