@@ -13,10 +13,14 @@ class NotificationService {
       }
     });
 
-    this.twilioClient = twilio(
-      process.env.TWILIO_ACCOUNT_SID,
-      process.env.TWILIO_AUTH_TOKEN
-    );
+    // Twilio throws at require-time if credentials are missing.
+    // Allow server to boot even if notifications are not configured yet.
+    const twilioSid = process.env.TWILIO_ACCOUNT_SID;
+    const twilioToken = process.env.TWILIO_AUTH_TOKEN;
+    this.twilioClient = (twilioSid && twilioToken)
+      ? twilio(twilioSid, twilioToken)
+      : null;
+
   }
 
   async sendEmail(to, subject, htmlContent) {

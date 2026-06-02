@@ -5,11 +5,16 @@ const razorpay = require('razorpay');
 
 class PaymentService {
   constructor() {
-    this.razorpayInstance = new razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET
-    });
+    // Razorpay throws at require-time if credentials are missing.
+    // Keep the service from crashing the whole server when payments are not configured yet.
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    this.razorpayInstance = (keyId && keySecret)
+      ? new razorpay({ key_id: keyId, key_secret: keySecret })
+      : null;
   }
+
 
   // Stripe Payment
   async createStripePayment(amount, currency = 'INR') {

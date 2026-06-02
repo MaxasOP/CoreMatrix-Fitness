@@ -3,11 +3,12 @@
 const express = require('express');
 const router = express.Router();
 const videoController = require('../controllers/videoController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { authOptional: authMiddleware } = require('../middleware/authMiddleware');
 const { aiLimiter } = require('../middleware/rateLimiter');
 const multer = require('multer');
 
-const upload = multer({ dest: 'uploads/videos/', limits: { fileSize: 100 * 1024 * 1024 } });
+const upload = multer({ dest: (process.env.VIDEO_UPLOAD_DIR || 'uploads/videos/'), limits: { fileSize: 100 * 1024 * 1024 } });
+
 
 // Upload and analyze workout video
 router.post('/analyze', authMiddleware, aiLimiter, upload.single('video'), videoController.uploadWorkoutVideo);

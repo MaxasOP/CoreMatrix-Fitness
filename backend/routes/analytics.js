@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const analyticsController = require('../controllers/analyticsController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { authOptional: authMiddleware } = require('../middleware/authMiddleware');
 
 // Get user analytics
 router.get('/user-analytics', authMiddleware, analyticsController.getUserAnalytics);
