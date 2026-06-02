@@ -30,16 +30,16 @@ export default function App() {
           <Route path="/auth" element={<Auth />} />
           <Route path="/setup" element={<Setup />} />
           {/* Protected Routes */}
-          <ProtectedRoute path="/forge" element={<Forge />} />
-          <ProtectedRoute path="/fuel" element={<Fuel />} />
-          <ProtectedRoute path="/progress" element={<Progress />} />
-          <ProtectedRoute path="/logs" element={<Logs />} />
-          <ProtectedRoute path="/ai-dietician" element={<AIDietician />} />
-          <ProtectedRoute path="/ai-workout" element={<AIWorkout />} />
-          <ProtectedRoute path="/supplements" element={<Supplements />} />
-          <ProtectedRoute path="/leaderboards" element={<Leaderboards />} />
-          <ProtectedRoute path="/challenges" element={<Challenges />} />
-          <ProtectedRoute path="/reels" element={<ProgressReels />} />
+          <Route path="/forge" element={<ProtectedRoute><Forge /></ProtectedRoute>} />
+          <Route path="/fuel" element={<ProtectedRoute><Fuel /></ProtectedRoute>} />
+          <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
+          <Route path="/logs" element={<ProtectedRoute><Logs /></ProtectedRoute>} />
+          <Route path="/ai-dietician" element={<ProtectedRoute><AIDietician /></ProtectedRoute>} />
+          <Route path="/ai-workout" element={<ProtectedRoute><AIWorkout /></ProtectedRoute>} />
+          <Route path="/supplements" element={<ProtectedRoute><Supplements /></ProtectedRoute>} />
+          <Route path="/leaderboards" element={<ProtectedRoute><Leaderboards /></ProtectedRoute>} />
+          <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
+          <Route path="/reels" element={<ProtectedRoute><ProgressReels /></ProtectedRoute>} />
         </Routes>
       </Layout>
     </BrowserRouter>
