@@ -31,8 +31,10 @@ const AIWorkout = () => {
       setWorkoutPlan(response.data.workoutPlan);
     } catch (error) {
       console.error('Error:', error);
-      alert('Error generating workout plan');
+      const msg = error?.response?.data?.error || error?.message || 'Error generating workout plan';
+      alert(msg);
     } finally {
+
       setLoading(false);
     }
   };

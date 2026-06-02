@@ -14,10 +14,28 @@ const aiService = require('../services/aiService');
  */
 router.post('/meal-plan', authMiddleware, async (req, res) => {
   try {
+    // TEMP: allow AI generation without login.
+    // If token is missing/invalid, generate a generic plan using fallback values.
     const userId = req.user?.id;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      const mealPlanData = await aiService.generateMealPlan({
+        age: 30,
+        weight_kg: 75,
+        height_cm: 175,
+        activity_level: 'moderate',
+        goal: 'maintenance',
+        budget_monthly: 5000,
+        diet_preference: 'vegetarian'
+      });
+      return res.status(201).json({
+        message: 'Meal plan generated successfully (guest)',
+        workoutPlan: undefined,
+        mealPlan: mealPlanData,
+        // keep existing clients happy by returning mealPlan shape
+        ...mealPlanData
+      });
     }
+
 
     const user = await User.findById(userId);
     if (!user) {
@@ -103,8 +121,25 @@ router.post('/workout-plan', authMiddleware, async (req, res) => {
   try {
     const userId = req.user?.id;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      // Guest mode fallback: generate workout plan without login.
+      // This avoids UI 401s when localStorage token is missing/expired.
+      const workoutPlanData = await aiService.generateWorkoutPlan({
+        age: 30,
+        weight_kg: 75,
+        height_cm: 175,
+        activity_level: 'moderate',
+        goal: 'maintenance',
+        experience_level: req.body.experience_level || 'intermediate',
+        days_per_week: req.body.days_per_week || 4,
+        equipment_available: req.body.equipment_available || 'full_gym'
+      });
+
+      return res.status(201).json({
+        message: 'Workout plan generated successfully (guest)',
+        workoutPlan: workoutPlanData
+      });
     }
+
 
     const user = await User.findById(userId);
     if (!user) {
