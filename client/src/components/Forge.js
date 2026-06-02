@@ -3,6 +3,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
+import { ReactComponent as DumbbellIcon } from '../assets/dumbbell.svg'; // Import the SVG
 
 const templates = [
   { name: 'Bench Press', category: 'Chest', sets: 4, reps: 8, weight: 60, intensity: 'high' },
@@ -22,6 +23,7 @@ export default function Forge() {
   const [form, setForm] = useState({ name: '', category: 'Chest', sets: 3, reps: 10, weight: 0, intensity: 'medium', date: getTodayKey() });
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
+  const [validationErrors, setValidationErrors] = useState({}); // New state for validation errors
 
   const isAuthed = Boolean(user);
 
@@ -29,13 +31,40 @@ export default function Forge() {
 
   async function fetchWorkouts() {
     setLoading(true);
-    try { const res = await api.get('/workouts'); setWorkouts(res.data || []); } catch (err) { console.warn(err); } finally { setLoading(false); }
+    try { 
+      const res = await api.get('/workouts'); 
+      setWorkouts(res.data || []); 
+    } catch (err) { 
+      console.error('Failed to fetch workouts', err); 
+      setMsg(`Error fetching workouts: ${err.response?.data?.error || err.message}`);
+      setTimeout(() => setMsg(''), 5000);
+    } finally { 
+      setLoading(false); 
+    }
   }
 
-  function onChange(e) { setForm({ ...form, [e.target.name]: e.target.value }); }
+  function onChange(e) { 
+    setForm({ ...form, [e.target.name]: e.target.value }); 
+    // Clear validation error for the field being changed
+    setValidationErrors(prevErrors => ({ ...prevErrors, [e.target.name]: undefined }));
+  }
 
   function applyTemplate(t) {
     setForm({ ...form, name: t.name, category: t.category, sets: t.sets, reps: t.reps, weight: t.weight, intensity: t.intensity });
+    setValidationErrors({}); // Clear errors when applying a template
+  }
+
+  function validateForm() {
+    const errors = {};
+    if (!form.name.trim()) errors.name = 'Workout name is required';
+    else if (form.name.trim().length < 2 || form.name.trim().length > 100) errors.name = 'Workout name must be between 2 and 100 characters';
+    
+    if (form.sets <= 0 || form.sets > 50) errors.sets = 'Sets must be between 1 and 50'; // Assuming reasonable limits
+    if (form.reps <= 0 || form.reps > 200) errors.reps = 'Reps must be between 1 and 200'; // Assuming reasonable limits
+    if (form.weight < 0 || form.weight > 1000) errors.weight = 'Weight must be between 0 and 1000 kg'; // Assuming reasonable limits
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   }
 
   async function addWorkout() {
@@ -44,15 +73,27 @@ export default function Forge() {
       setTimeout(() => setMsg(''), 4000);
       return;
     }
+    
+    if (!validateForm()) { // Run client-side validation
+      setMsg('Please correct the errors in the form.');
+      setTimeout(() => setMsg(''), 4000);
+      return;
+    }
+
     try {
       const payload = { ...form };
       const res = await api.post('/workouts', payload);
       // prepend created workout
       setWorkouts(prev => [res.data || res, ...prev]);
       setForm({ name: '', category: 'Chest', sets: 3, reps: 10, weight: 0, intensity: 'medium', date: getTodayKey() });
+      setValidationErrors({}); // Clear errors on successful submission
       setMsg('Workout logged successfully! 🎉');
       setTimeout(() => setMsg(''), 4000);
-    } catch (err) { console.error('Add workout failed', err); }
+    } catch (err) { 
+      console.error('Add workout failed', err); 
+      setMsg(`Error logging workout: ${err.response?.data?.error || err.message}`);
+      setTimeout(() => setMsg(''), 5000); // Display error for 5 seconds
+    }
   }
 
   async function deleteWorkout(id) {
@@ -65,7 +106,11 @@ export default function Forge() {
     try {
       await api.delete(`/workouts/${id}`);
       setWorkouts(prev => prev.filter(w => (w._id || w.id) !== id));
-    } catch (err) { console.error('Delete failed', err); }
+    } catch (err) { 
+      console.error('Delete failed', err); 
+      setMsg(`Error deleting workout: ${err.response?.data?.error || err.message}`);
+      setTimeout(() => setMsg(''), 5000);
+    }
   }
 
   return (
@@ -108,7 +153,10 @@ export default function Forge() {
           </div>
 
           <div className="mt-4 grid sm:grid-cols-2 gap-3">
-            <input name="name" placeholder="Exercise name" value={form.name} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
+            <div>
+              <input name="name" placeholder="Exercise name" value={form.name} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.name ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              {validationErrors.name && <p className="text-red-500 text-xs mt-1">{validationErrors.name}</p>}
+            </div>
             <select name="category" value={form.category} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
               <option>Chest</option>
               <option>Back</option>
@@ -118,9 +166,18 @@ export default function Forge() {
               <option>Core</option>
               <option>Cardio</option>
             </select>
-            <input name="sets" type="number" placeholder="Sets" value={form.sets} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
-            <input name="reps" type="number" placeholder="Reps" value={form.reps} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
-            <input name="weight" type="number" placeholder="Weight (kg)" value={form.weight} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
+            <div>
+              <input name="sets" type="number" placeholder="Sets" value={form.sets} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.sets ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              {validationErrors.sets && <p className="text-red-500 text-xs mt-1">{validationErrors.sets}</p>}
+            </div>
+            <div>
+              <input name="reps" type="number" placeholder="Reps" value={form.reps} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.reps ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              {validationErrors.reps && <p className="text-red-500 text-xs mt-1">{validationErrors.reps}</p>}
+            </div>
+            <div>
+              <input name="weight" type="number" placeholder="Weight (kg)" value={form.weight} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.weight ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              {validationErrors.weight && <p className="text-red-500 text-xs mt-1">{validationErrors.weight}</p>}
+            </div>
             <select name="intensity" value={form.intensity} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
               <option value="low">low</option>
               <option value="medium">medium</option>
@@ -130,7 +187,7 @@ export default function Forge() {
           </div>
 
           <div className="mt-4">
-            <button onClick={addWorkout} className="bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0" disabled={!isAuthed}>Add workout</button>
+            <button onClick={addWorkout} className="bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md hover:-translate-y-0.5 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100" disabled={!isAuthed}>Add workout</button>
           </div>
         </div>
 
@@ -157,7 +214,7 @@ export default function Forge() {
         ) : workouts.length === 0 ? (
           <div className="card-soft py-12 mt-4 flex flex-col items-center justify-center text-center">
             <div className="w-20 h-20 mb-4 bg-gradient-to-br from-orange-100 to-orange-50 text-orange-500 rounded-full flex items-center justify-center shadow-inner">
-              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              <DumbbellIcon className="w-10 h-10" />
             </div>
             <div className="text-gray-900 font-extrabold text-lg">No workouts yet</div>
             <div className="muted mt-1 text-sm">Your journey starts here. Add your first session above!</div>

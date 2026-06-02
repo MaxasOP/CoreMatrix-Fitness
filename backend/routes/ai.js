@@ -86,8 +86,10 @@ router.post('/meal-plan', authMiddleware, async (req, res) => {
     });
   } catch (error) {
     console.error('Error generating meal plan:', error);
-    res.status(500).json({ error: 'Failed to generate meal plan' });
+    const detail = error?.response?.data || error?.message;
+    res.status(500).json({ error: 'Failed to generate meal plan', detail });
   }
+
 });
 
 /**

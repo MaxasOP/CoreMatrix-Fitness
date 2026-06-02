@@ -3,7 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { authOptional: authMiddleware } = require('../middleware/authMiddleware');
+const { authOptional, authRequired } = require('../middleware/authMiddleware'); // Import both authOptional and authRequired
 const Challenge = require('../models/Challenge');
 const User = require('../models/User');
 const FitnessWallet = require('../models/FitnessWallet');
@@ -65,7 +65,7 @@ router.get('/:challengeId', async (req, res) => {
  * POST /api/challenges
  * Create new challenge (admin)
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authRequired, async (req, res) => {
   try {
     // TODO: Add admin verification
     const challengeData = req.body;
@@ -91,7 +91,7 @@ router.post('/', authMiddleware, async (req, res) => {
  * POST /api/challenges/:challengeId/join
  * Join a challenge
  */
-router.post('/:challengeId/join', authMiddleware, async (req, res) => {
+router.post('/:challengeId/join', authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const { challengeId } = req.params;
@@ -144,7 +144,7 @@ router.post('/:challengeId/join', authMiddleware, async (req, res) => {
  * POST /api/challenges/:challengeId/update-progress
  * Update user's progress in challenge
  */
-router.post('/:challengeId/update-progress', authMiddleware, async (req, res) => {
+router.post('/:challengeId/update-progress', authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const { challengeId } = req.params;
@@ -236,12 +236,12 @@ router.get('/:challengeId/leaderboard', async (req, res) => {
 });
 
 /**
- * GET /api/challenges/user/:userId
+ * GET /api/challenges/user-challenges
  * Get user's challenge participation
  */
-router.get('/user/:userId', async (req, res) => {
+router.get('/user-challenges', authRequired, async (req, res) => { // Apply authRequired and change route
   try {
-    const userId = req.params.userId;
+    const userId = req.user.id; // Use req.user.id
 
     const challenges = await Challenge.find(
       { participants: userId }

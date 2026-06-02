@@ -76,6 +76,19 @@ if (process.env.NODE_ENV === 'production' && fs.existsSync(clientBuildPath)) {
   app.get('/', (req, res) => res.send('CoreMatrix MERN backend v0.2.0'));
 }
 
+// Centralized Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error('Unhandled Error:', err); // Log the error for debugging
+  // Check if headers have already been sent to prevent errors
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(err.statusCode || 500).json({
+    message: err.message || 'An unexpected error occurred',
+    error: process.env.NODE_ENV === 'production' ? {} : err.stack // Send stack trace in development
+  });
+});
+
 async function start() {
   // Require critical env vars in production
   if (process.env.NODE_ENV === 'production') {

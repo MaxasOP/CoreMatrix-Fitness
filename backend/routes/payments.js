@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const paymentController = require('../controllers/paymentController');
-const { authOptional: authMiddleware } = require('../middleware/authMiddleware');
+const { authRequired: authMiddleware } = require('../middleware/authMiddleware');
 const { limiter, strictLimiter } = require('../middleware/rateLimiter');
 
 // Create supplement order

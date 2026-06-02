@@ -1,18 +1,20 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 
 export default function Layout({ children }){
   const { user, logout } = useContext(AuthContext);
   const location = useLocation();
+  const [showMoreNav, setShowMoreNav] = useState(false); // State for mobile "More" menu
+
   const nav = [
     { to: '/', label: 'Dashboard', icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 12l9-9 9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M5 10v10h14V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
     ) },
-    { to: '/forge', label: 'Forge', icon: (
+    { to: '/forge', label: 'Workout', icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" stroke="currentColor" strokeWidth="1.5"/></svg>
     ) },
-    { to: '/fuel', label: 'Fuel', icon: (
+    { to: '/fuel', label: 'Meal', icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 4h12v4H6zM4 10h16l-2 10H6L4 10z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
     ) },
     { to: '/progress', label: 'Progress', icon: (
@@ -21,10 +23,10 @@ export default function Layout({ children }){
     { to: '/logs', label: 'Logs', icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="currentColor" strokeWidth="1.5"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
     ) },
-    { to: '/ai-dietician', label: 'AI Coach', icon: (
+    { to: '/ai-dietician', label: 'Dietician', icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
     ) },
-    { to: '/ai-workout', label: 'AI Workout', icon: (
+    { to: '/ai-workout', label: 'Planner', icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M7 8v8M17 8v8M4 10v4M20 10v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
     ) },
     { to: '/supplements', label: 'Store', icon: (
@@ -34,6 +36,10 @@ export default function Layout({ children }){
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0v-8.25c0-.621-.503-1.125-1.125-1.125H9.497c-.621 0-1.125.504-1.125 1.125v8.25m5.007 0H9.497" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
     ) },
   ];
+
+  const visibleNavItems = nav.slice(0, 4); // First 4 items
+  const moreNavItems = nav.slice(4); // Remaining items
+
   return (
     <div className="min-h-screen text-gray-900 font-sans selection:bg-[#ff5a1f]/20 relative z-0">
       {/* Animated Background Blobs */}
@@ -51,7 +57,7 @@ export default function Layout({ children }){
             </div>
             <div>
               <div className="font-extrabold text-xl tracking-tight text-gray-900">CoreMatrix</div>
-              <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest leading-none">Forge & Fuel</div>
+              <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest leading-none">Workout & Meal</div>
             </div>
           </Link>
 
@@ -83,12 +89,13 @@ export default function Layout({ children }){
         {children}
       </main>
 
+      {/* Mobile Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-safe">
-        <div className="bg-white/90 backdrop-blur-xl border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] px-4 py-3 flex items-center gap-6 overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {nav.map(n => {
+        <div className="bg-white/90 backdrop-blur-xl border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] px-4 py-3 flex items-center justify-around"> {/* Changed to justify-around */}
+          {visibleNavItems.map(n => {
             const isActive = location.pathname === n.to;
             return (
-              <Link key={n.to} to={n.to} className={`flex flex-col items-center gap-1.5 min-w-[4.5rem] transition-colors ${isActive ? 'text-[#ff5a1f]' : 'text-gray-400 hover:text-gray-600'}`}>
+              <Link key={n.to} to={n.to} className={`flex flex-col items-center gap-1.5 transition-colors ${isActive ? 'text-[#ff5a1f]' : 'text-gray-400 hover:text-gray-600'}`} onClick={() => setShowMoreNav(false)}> {/* Close "More" on nav item click */}
                 <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-orange-50' : 'bg-transparent'}`}>
                   {n.icon}
                 </div>
@@ -96,8 +103,42 @@ export default function Layout({ children }){
               </Link>
             );
           })}
+          {/* More button */}
+          <button onClick={() => setShowMoreNav(true)} className={`flex flex-col items-center gap-1.5 min-w-[4.5rem] transition-colors ${showMoreNav ? 'text-[#ff5a1f]' : 'text-gray-400 hover:text-gray-600'}`}>
+            <div className={`p-1.5 rounded-xl transition-colors ${showMoreNav ? 'bg-orange-50' : 'bg-transparent'}`}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+            </div>
+            <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap">More</span>
+          </button>
         </div>
       </nav>
+
+      {/* More Navigation Overlay */}
+      {showMoreNav && (
+        <div className="fixed inset-0 z-50 md:hidden bg-black/50 backdrop-blur-sm flex items-end justify-center animate-fade-in" onClick={() => setShowMoreNav(false)}>
+          <div className="bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.1)] w-full max-h-[80vh] overflow-y-auto pb-safe p-6 animate-slide-up" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-gray-900">More Options</h3>
+              <button onClick={() => setShowMoreNav(false)} className="text-gray-400 hover:text-gray-600">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-4"> {/* Display in a grid */}
+              {moreNavItems.map(n => {
+                const isActive = location.pathname === n.to;
+                return (
+                  <Link key={n.to} to={n.to} className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-colors ${isActive ? 'bg-orange-50 text-[#ff5a1f]' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`} onClick={() => setShowMoreNav(false)}>
+                    <div className="p-1.5 rounded-xl">
+                      {n.icon}
+                    </div>
+                    <span className="text-xs font-semibold text-center">{n.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

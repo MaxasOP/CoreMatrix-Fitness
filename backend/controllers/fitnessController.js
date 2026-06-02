@@ -2,18 +2,11 @@ const Workout = require('../models/Workout');
 const Meal = require('../models/Meal');
 const mongoose = require('mongoose');
 
-function resolveUserId(req) {
-  if (req.user && req.user.id) return req.user.id;
-  if (req.body && req.body.userId) return req.body.userId;
-  if (req.query && req.query.userId) return req.query.userId;
-  return null;
-}
+
 
 async function getAllWorkouts(req, res) {
   try {
-    const userId = resolveUserId(req);
-    // Don't expose other users' data to anonymous requests
-    if (!userId) return res.json([]);
+    const userId = req.user.id;
     const filter = {};
     try {
       filter.user_id = mongoose.Types.ObjectId(userId);
@@ -28,8 +21,7 @@ async function getAllWorkouts(req, res) {
 
 async function createWorkout(req, res) {
   try {
-    const userId = resolveUserId(req);
-    if (!userId) return res.status(400).json({ error: 'userId required' });
+    const userId = req.user.id;
     const w = new Workout({ ...req.body, user_id: userId, log_date: req.body.date || Date.now() });
     await w.save();
     res.status(201).json(w);
@@ -39,7 +31,7 @@ async function createWorkout(req, res) {
 async function updateWorkout(req, res) {
   try {
     const { id } = req.params;
-    const userId = resolveUserId(req);
+    const userId = req.user.id;
     const doc = await Workout.findOneAndUpdate({ _id: id, user_id: userId }, { ...req.body, log_date: req.body.date }, { new: true });
     if (!doc) return res.status(404).json({ error: 'Not found' });
     res.json(doc);
@@ -49,7 +41,7 @@ async function updateWorkout(req, res) {
 async function deleteWorkout(req, res) {
   try {
     const { id } = req.params;
-    const userId = resolveUserId(req);
+    const userId = req.user.id;
     const doc = await Workout.findOneAndDelete({ _id: id, user_id: userId });
     if (!doc) return res.status(404).json({ error: 'Not found' });
     res.json({ success: true, id: doc._id });
@@ -59,9 +51,7 @@ async function deleteWorkout(req, res) {
 // Meals
 async function getAllMeals(req, res) {
   try {
-    const userId = resolveUserId(req);
-    // Don't expose other users' data to anonymous requests
-    if (!userId) return res.json([]);
+    const userId = req.user.id;
     const filter = {};
     try {
       filter.user_id = mongoose.Types.ObjectId(userId);
@@ -75,8 +65,7 @@ async function getAllMeals(req, res) {
 
 async function createMeal(req, res) {
   try {
-    const userId = resolveUserId(req);
-    if (!userId) return res.status(400).json({ error: 'userId required' });
+    const userId = req.user.id;
     const m = new Meal({ ...req.body, user_id: userId, log_date: req.body.date || Date.now() });
     await m.save();
     res.status(201).json(m);
@@ -86,7 +75,7 @@ async function createMeal(req, res) {
 async function updateMeal(req, res) {
   try {
     const { id } = req.params;
-    const userId = resolveUserId(req);
+    const userId = req.user.id;
     const doc = await Meal.findOneAndUpdate({ _id: id, user_id: userId }, { ...req.body, log_date: req.body.date }, { new: true });
     if (!doc) return res.status(404).json({ error: 'Not found' });
     res.json(doc);
@@ -96,7 +85,7 @@ async function updateMeal(req, res) {
 async function deleteMeal(req, res) {
   try {
     const { id } = req.params;
-    const userId = resolveUserId(req);
+    const userId = req.user.id;
     const doc = await Meal.findOneAndDelete({ _id: id, user_id: userId });
     if (!doc) return res.status(404).json({ error: 'Not found' });
     res.json({ success: true, id: doc._id });

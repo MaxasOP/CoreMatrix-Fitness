@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const videoController = require('../controllers/videoController');
-const { authOptional: authMiddleware } = require('../middleware/authMiddleware');
+const { authRequired: authMiddleware } = require('../middleware/authMiddleware');
 const { aiLimiter } = require('../middleware/rateLimiter');
 const multer = require('multer');
 

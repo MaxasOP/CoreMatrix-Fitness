@@ -3,7 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { authOptional: authMiddleware } = require('../middleware/authMiddleware');
+const { authOptional, authRequired } = require('../middleware/authMiddleware'); // Import both authOptional and authRequired
 const User = require('../models/User');
 const Supplement = require('../models/Supplement');
 const aiService = require('../services/aiService');
@@ -12,7 +12,7 @@ const aiService = require('../services/aiService');
  * POST /api/supplements/recommend
  * Get supplement recommendations based on user profile
  */
-router.post('/recommend', authMiddleware, async (req, res) => {
+router.post('/recommend', authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);
@@ -193,7 +193,7 @@ router.get('/:supplementId/authenticity', async (req, res) => {
  * POST /api/supplements (Admin)
  * Add new supplement to database
  */
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authRequired, async (req, res) => {
   try {
     // TODO: Add admin verification
     const supplementData = req.body;

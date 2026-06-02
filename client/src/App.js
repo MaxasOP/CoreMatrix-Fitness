@@ -9,6 +9,7 @@ import Progress from './components/Progress';
 import Logs from './components/Logs';
 import Layout from './components/Layout';
 import Setup from './components/Setup';
+import ProtectedRoute from './components/ProtectedRoute'; // Import ProtectedRoute
 
 // Import the new Super App features (Assuming they are in a 'pages' folder)
 import AIDietician from './pages/AIDietician';
@@ -28,16 +29,17 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/setup" element={<Setup />} />
-          <Route path="/forge" element={<Forge />} />
-          <Route path="/fuel" element={<Fuel />} />
-          <Route path="/progress" element={<Progress />} />
-          <Route path="/logs" element={<Logs />} />
-          <Route path="/ai-dietician" element={<AIDietician />} />
-          <Route path="/ai-workout" element={<AIWorkout />} />
-          <Route path="/supplements" element={<Supplements />} />
-          <Route path="/leaderboards" element={<Leaderboards />} />
-          <Route path="/challenges" element={<Challenges />} />
-          <Route path="/reels" element={<ProgressReels />} />
+          {/* Protected Routes */}
+          <ProtectedRoute path="/forge" element={<Forge />} />
+          <ProtectedRoute path="/fuel" element={<Fuel />} />
+          <ProtectedRoute path="/progress" element={<Progress />} />
+          <ProtectedRoute path="/logs" element={<Logs />} />
+          <ProtectedRoute path="/ai-dietician" element={<AIDietician />} />
+          <ProtectedRoute path="/ai-workout" element={<AIWorkout />} />
+          <ProtectedRoute path="/supplements" element={<Supplements />} />
+          <ProtectedRoute path="/leaderboards" element={<Leaderboards />} />
+          <ProtectedRoute path="/challenges" element={<Challenges />} />
+          <ProtectedRoute path="/reels" element={<ProgressReels />} />
         </Routes>
       </Layout>
     </BrowserRouter>
