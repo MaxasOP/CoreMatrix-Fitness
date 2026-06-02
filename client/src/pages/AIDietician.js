@@ -1,16 +1,19 @@
 // AI Dietician Page
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import { AuthContext } from '../AuthContext'; // Import AuthContext
 
 const AIDietician = () => {
+  const { user } = useContext(AuthContext); // Access user from AuthContext
+
   const [formData, setFormData] = useState({
-    age: '',
-    weight: '',
-    height: '',
-    activity_level: 'moderate',
-    goal: 'weight_loss',
-    budget: 'medium',
-    diet_preference: 'vegetarian'
+    age: user?.age_years || '',
+    weight: user?.weight_kg || '',
+    height: user?.height_cm || '',
+    activity_level: user?.activity_level || 'moderate',
+    goal: user?.goal || 'weight_loss',
+    budget: user?.budget_monthly ? (user.budget_monthly < 3000 ? 'low' : user.budget_monthly < 7000 ? 'medium' : 'high') : 'medium', // Map budget to categories
+    diet_preference: user?.diet_preference || 'vegetarian'
   });
   const [mealPlan, setMealPlan] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -26,7 +29,15 @@ const AIDietician = () => {
       const token = localStorage.getItem('token');
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/ai/meal-plan`,
-        formData,
+        {
+          age: Number(formData.age),
+          weight_kg: Number(formData.weight),
+          height_cm: Number(formData.height),
+          activity_level: formData.activity_level,
+          goal: formData.goal,
+          budget_monthly: formData.budget === 'low' ? 2000 : formData.budget === 'medium' ? 5000 : 8000, // Map back to numbers for backend
+          diet_preference: formData.diet_preference
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setMealPlan(response.data);
@@ -41,7 +52,7 @@ const AIDietician = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">AI Dietician</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Dietician</h1>
         <p className="text-gray-600 mb-8">Get your personalized meal plan in seconds</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -54,9 +65,8 @@ const AIDietician = () => {
                   type="number"
                   name="age"
                   value={formData.age}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  readOnly // Make read-only
+                  className="mt-1 w-full px-4 py-2 border rounded-lg bg-gray-100 cursor-not-allowed" // Add styling
                 />
               </div>
 
@@ -66,9 +76,8 @@ const AIDietician = () => {
                   type="number"
                   name="weight"
                   value={formData.weight}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  readOnly // Make read-only
+                  className="mt-1 w-full px-4 py-2 border rounded-lg bg-gray-100 cursor-not-allowed" // Add styling
                 />
               </div>
 
@@ -78,9 +87,8 @@ const AIDietician = () => {
                   type="number"
                   name="height"
                   value={formData.height}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  readOnly // Make read-only
+                  className="mt-1 w-full px-4 py-2 border rounded-lg bg-gray-100 cursor-not-allowed" // Add styling
                 />
               </div>
 

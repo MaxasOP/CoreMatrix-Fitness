@@ -42,12 +42,12 @@ const AIWorkout = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">AI Workout Builder</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Workout Planner</h1>
         <p className="text-gray-600 mb-8">Generate a custom routine tailored to your equipment and schedule.</p>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Form */}
-          <div className="lg:col-span-1 bg-white rounded-2xl shadow-lg p-6 h-fit sticky top-24">
+          <div className="lg:col-span-1 bg-white rounded-2xl shadow-lg p-6 h-fit lg:sticky top-24">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Experience Level</label>
