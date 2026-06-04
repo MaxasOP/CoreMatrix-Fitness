@@ -29,10 +29,11 @@ class VideoAnalysisService {
     };
   }
 
-  async analyzeExerciseForm(videoPath) {
+  async analyzeExerciseForm(videoPath, exerciseName = 'squat') {
     try {
       console.log('--- Video Analysis Diagnostics ---');
       console.log('Video Path:', videoPath);
+      console.log('Exercise Name:', exerciseName);
       if (videoPath) {
         const exists = fs.existsSync(videoPath);
         console.log('File exists:', exists);
@@ -49,6 +50,7 @@ class VideoAnalysisService {
       const fileStream = fs.createReadStream(videoPath);
       const formData = new FormData();
       formData.append('video', fileStream);
+      formData.append('exercise_name', exerciseName);
 
       const targetUrl = `${this.pythonServiceUrl}/analyze`;
       console.log('Calling Python service at:', targetUrl);
