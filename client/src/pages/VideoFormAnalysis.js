@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 const VideoFormAnalysis = () => {
   const [file, setFile] = useState(null);
@@ -27,14 +27,12 @@ const VideoFormAnalysis = () => {
     formData.append("exercise_name", exercise);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/video/analyze`,
+      const response = await api.post(
+        `/video/analyze`,
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`
+            'Content-Type': 'multipart/form-data'
           }
         }
       );
