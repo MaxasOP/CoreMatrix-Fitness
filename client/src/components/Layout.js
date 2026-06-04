@@ -29,6 +29,9 @@ export default function Layout({ children }){
     { to: '/ai-workout', label: 'Planner', icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M7 8v8M17 8v8M4 10v4M20 10v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
     ) },
+    { to: '/form-analysis', label: 'Analysis', icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 10l-4 4-2-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5"/></svg>
+    ) },
     { to: '/supplements', label: 'Store', icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
     ) },

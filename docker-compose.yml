@@ -7,4 +7,16 @@ services:
       - '4000:4000'
     env_file:
       - backend/.env
+    environment:
+      - PYTHON_SERVICE_URL=http://ai-service:5000
+    depends_on:
+      - ai-service
+    restart: always
+
+  ai-service:
+    build:
+      context: .
+      dockerfile: ai_service/Dockerfile
+    ports:
+      - '5000:5000'
     restart: always

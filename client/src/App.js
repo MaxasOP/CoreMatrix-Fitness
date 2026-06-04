@@ -18,6 +18,7 @@ import Supplements from './pages/Supplements';
 import Leaderboards from './pages/Leaderboards';
 import Challenges from './pages/Challenges';
 import ProgressReels from './pages/ProgressReels';
+import VideoFormAnalysis from './pages/VideoFormAnalysis';
 
 export default function App() {
   const { user, logout } = useContext(AuthContext);
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/logs" element={<ProtectedRoute><Logs /></ProtectedRoute>} />
           <Route path="/ai-dietician" element={<ProtectedRoute><AIDietician /></ProtectedRoute>} />
           <Route path="/ai-workout" element={<ProtectedRoute><AIWorkout /></ProtectedRoute>} />
+          <Route path="/form-analysis" element={<ProtectedRoute><VideoFormAnalysis /></ProtectedRoute>} />
           <Route path="/supplements" element={<ProtectedRoute><Supplements /></ProtectedRoute>} />
           <Route path="/leaderboards" element={<ProtectedRoute><Leaderboards /></ProtectedRoute>} />
           <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
