@@ -36,6 +36,7 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
         shutil.copyfileobj(video.file, temp_video)
         temp_path = temp_video.name
 
+    print(f"--- Processing {exercise_name} ---")
     try:
         cap = cv2.VideoCapture(temp_path)
         
@@ -45,13 +46,15 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
         angles = []
         
         frame_count = 0
+        landmarks_detected_count = 0
+        
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
                 break
             
             frame_count += 1
-            if frame_count % 3 != 0:
+            if frame_count % 2 != 0: # Process every 2nd frame
                 continue
 
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -59,6 +62,7 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
             results = pose.process(image)
             
             if results.pose_landmarks:
+                landmarks_detected_count += 1
                 landmarks = results.pose_landmarks.landmark
                 
                 if exercise_name == "squat":
@@ -69,13 +73,12 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
                     angle = calculate_angle(hip, knee, ankle)
                     angles.append(angle)
                     
-                    if angle > 160: stage = "up"
-                    if angle < 100 and stage == 'up':
+                    # More lenient logic for squats
+                    if angle > 150: stage = "up"
+                    if angle < 115 and stage == 'up':
                         stage = "down"
                         rep_count += 1
-                        
-                    if angle < 70:
-                        if "too_deep_risk" not in issues: issues.append("too_deep_risk")
+                        print(f"Rep detected! Count: {rep_count}, Angle: {angle:.1f}")
 
                 elif exercise_name == "pushup":
                     shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
@@ -85,8 +88,8 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
                     angle = calculate_angle(shoulder, elbow, wrist)
                     angles.append(angle)
                     
-                    if angle > 160: stage = "up"
-                    if angle < 90 and stage == 'up':
+                    if angle > 150: stage = "up"
+                    if angle < 110 and stage == 'up':
                         stage = "down"
                         rep_count += 1
 
@@ -98,65 +101,45 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
                     back_angle = calculate_angle(shoulder, hip, knee)
                     angles.append(back_angle)
                     
-                    if back_angle < 130: stage = "down"
-                    if back_angle > 160 and stage == 'down':
+                    if back_angle < 145: stage = "down"
+                    if back_angle > 165 and stage == "down":
                         stage = "up"
                         rep_count += 1
                 
                 else:
-                    # Generic rep counter for other exercises based on movement of joints
-                    # Just to ensure we capture SOME movement
                     nose = [landmarks[mp_pose.PoseLandmark.NOSE.value].x, landmarks[mp_pose.PoseLandmark.NOSE.value].y]
-                    angles.append(nose[1]) # Just track vertical movement of nose as a proxy
-
+                    angles.append(nose[1])
 
         cap.release()
         
-        # If no landmarks detected across the whole video
-        if not angles:
+        print(f"Analysis Complete: {frame_count} frames, {landmarks_detected_count} detections, {rep_count} reps")
+
+        if landmarks_detected_count == 0:
             return {
                 "exercise": exercise_name,
                 "form_issues": ["no_person_detected"],
                 "rep_count": 0,
                 "form_score": 0,
-                "recommendations": ["Ensure your full body is visible in the frame", "Use a side-view for better analysis"]
+                "recommendations": ["Ensure your full body is visible in the frame"]
             }
 
-        form_score = 70 + (min(rep_count, 10) * 3) # Basic score starting point
-        if len(issues) > 0:
-            form_score -= 10 * len(issues)
+        # Dynamic scoring
+        base_score = 65
+        rep_bonus = min(rep_count, 10) * 3.5
+        form_score = base_score + rep_bonus
         
-        recommendations = []
-        if exercise_name == "squat":
-            recommendations = ["Keep your chest up", "Maintain a neutral spine"]
-            if rep_count > 0:
-                avg_angle = sum(angles) / len(angles)
-                if avg_angle > 110:
-                    issues.append("shallow_depth")
-                    recommendations.append("Try to squat deeper (thighs parallel to floor)")
-        
-        elif exercise_name == "pushup":
-            recommendations = ["Keep your core tight", "Don't let your hips sag"]
-            if rep_count > 0:
-                avg_angle = sum(angles) / len(angles)
-                if avg_angle > 120:
-                    issues.append("limited_range_of_motion")
-                    recommendations.append("Lower your chest closer to the ground")
-        
-        elif exercise_name == "deadlift":
-            recommendations = ["Keep the bar close to your shins", "Don't round your lower back"]
-            if any(a < 140 for a in angles):
-                # This is a very basic check for back rounding if angle gets too acute
-                pass
-
-        if not recommendations:
-            recommendations = ["Focus on controlled movements", "Ensure proper breathing"]
+        recommendations = ["Keep your chest up", "Maintain a neutral spine"]
+        if exercise_name == "squat" and rep_count > 0:
+            avg_angle = sum(angles) / len(angles)
+            if avg_angle > 120:
+                issues.append("shallow_depth")
+                recommendations.append("Try to squat deeper")
 
         return {
             "exercise": exercise_name,
             "form_issues": issues,
             "rep_count": rep_count,
-            "form_score": max(0, min(100, form_score)),
+            "form_score": max(0, min(100, int(form_score))),
             "recommendations": recommendations
         }
 

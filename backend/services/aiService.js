@@ -177,19 +177,27 @@ Format as JSON: { dish, calories, protein, carbs, fat, fiber, health_rating, rec
   async callGemini(prompt) {
     try {
       if (!this.genAI) {
+        console.error('CRITICAL: genAI object is not initialized. Check GEMINI_API_KEY.');
         throw new Error('GEMINI_API_KEY is missing');
       }
 
+      console.log('--- Sending Prompt to Gemini ---');
       const model = this.genAI.getGenerativeModel({ model: this.model });
       const result = await model.generateContent(prompt);
       let text = result.response.text();
       
+      console.log('Gemini Raw Response:', text);
+
       // Clean up markdown code blocks
       text = text.replace(/```json/g, '').replace(/```/g, '').trim();
       
       return text;
     } catch (error) {
-      console.error('Gemini API Error:', error);
+      console.error('Gemini API Error Detail:', {
+        message: error.message,
+        stack: error.stack,
+        apiKeyPresent: !!this.apiKey
+      });
       throw error;
     }
   }
