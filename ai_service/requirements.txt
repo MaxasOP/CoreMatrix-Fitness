@@ -6,3 +6,4 @@ numpy
 python-multipart
 pydantic
 openai
+gunicorn

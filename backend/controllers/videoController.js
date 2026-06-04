@@ -16,7 +16,7 @@ exports.uploadWorkoutVideo = async (req, res) => {
 
     // 1. Analyze video directly from temporary storage
     const analysis = await videoAnalysisService.analyzeExerciseForm(req.file.path);
-    const feedbackData = videoAnalysisService.generateFeedback(analysis);
+    const feedbackData = await videoAnalysisService.generateFeedback(analysis);
 
     // 2. Save only results to MongoDB
     const formAnalysis = new FormAnalysis({
@@ -66,7 +66,7 @@ exports.analyzeFormFromUrl = async (req, res) => {
 
     // Analyze
     const analysis = await videoAnalysisService.analyzeExerciseForm(tempPath);
-    const feedbackData = videoAnalysisService.generateFeedback(analysis);
+    const feedbackData = await videoAnalysisService.generateFeedback(analysis);
 
     const formAnalysis = new FormAnalysis({
       userId: req.user.id,

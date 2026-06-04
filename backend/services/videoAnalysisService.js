@@ -3,6 +3,7 @@
 const FormData = require('form-data');
 const axios = require('axios');
 const fs = require('fs');
+const aiService = require('./aiService');
 
 class VideoAnalysisService {
   constructor() {
@@ -59,24 +60,8 @@ class VideoAnalysisService {
     }
   }
 
-  generateFeedback(analysisResult) {
-    const feedback = {
-      overall: `Your form score is ${analysisResult.form_score || 0}%`,
-      issues: analysisResult.form_issues || [],
-      recommendations: analysisResult.recommendations || [],
-      next_steps: []
-    };
-
-    if (analysisResult.form_score < 70) {
-      feedback.next_steps.push('Work on your form in the next session');
-    }
-    if (analysisResult.depth_percentage) {
-      feedback.next_steps.push(
-        `Increase depth by ${100 - analysisResult.depth_percentage}% for full range of motion`
-      );
-    }
-
-    return feedback;
+  async generateFeedback(analysisResult) {
+    return await aiService.generateFormFeedback(analysisResult);
   }
 }
 
