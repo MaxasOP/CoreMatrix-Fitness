@@ -107,6 +107,10 @@ async function start() {
       console.error('JWT_SECRET must be set to a secure value in production');
       process.exit(1);
     }
+    if (!process.env.PYTHON_SERVICE_URL) {
+      console.error('PYTHON_SERVICE_URL is required in production (python video analysis service endpoint)');
+      process.exit(1);
+    }
   }
 
   const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/corematrix';

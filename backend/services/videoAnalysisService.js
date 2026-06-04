@@ -8,18 +8,42 @@ const aiService = require('./aiService');
 class VideoAnalysisService {
   constructor() {
     this.pythonServiceUrl = process.env.PYTHON_SERVICE_URL || 'http://localhost:5000';
+    this.requestTimeoutMs = Number(process.env.PYTHON_SERVICE_TIMEOUT_MS || 180000); // 3 minutes
+  }
+
+  _formatAxiosError(error) {
+    if (!error) return null;
+
+    const isAxios = !!error.isAxiosError;
+    const status = isAxios && error.response ? error.response.status : undefined;
+    const data = isAxios && error.response ? error.response.data : undefined;
+
+    return {
+      message: error.message,
+      code: error.code,
+      status,
+      pythonServiceUrl: this.pythonServiceUrl,
+      responseData: typeof data === 'string' ? data.slice(0, 5000) : data,
+      // Avoid circular structures in logs
+      stack: process.env.NODE_ENV === 'production' ? undefined : error.stack
+    };
   }
 
   async analyzeExerciseForm(videoPath) {
-    try {
-      const fileStream = fs.createReadStream(videoPath);
-      const formData = new FormData();
-      formData.append('video', fileStream);
+    const fileStream = fs.createReadStream(videoPath);
+    const formData = new FormData();
+    formData.append('video', fileStream);
 
+    try {
       const response = await axios.post(
         `${this.pythonServiceUrl}/analyze`,
         formData,
-        { headers: formData.getHeaders() }
+        {
+          headers: formData.getHeaders(),
+          timeout: this.requestTimeoutMs,
+          maxBodyLength: Infinity,
+          maxContentLength: Infinity
+        }
       );
 
       return {
@@ -31,8 +55,14 @@ class VideoAnalysisService {
         recommendations: response.data.recommendations
       };
     } catch (error) {
-      console.error('Video analysis error:', error);
-      throw new Error('Unable to analyze video');
+      const formatted = this._formatAxiosError(error);
+      console.error('Video analysis error:', formatted || error);
+
+      const err = new Error(
+        'Unable to analyze video (python service call failed)'
+      );
+      err.pythonServiceError = formatted;
+      throw err;
     }
   }
 

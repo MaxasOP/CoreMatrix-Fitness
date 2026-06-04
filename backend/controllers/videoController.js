@@ -53,7 +53,19 @@ exports.uploadWorkoutVideo = async (req, res) => {
         console.error('Error deleting temp video file after error:', err);
       }
     }
-    res.status(500).json({ error: error.message });
+    const pythonServiceError = error.pythonServiceError;
+    res.status(500).json({
+      error: error.message,
+      pythonServiceError: pythonServiceError
+        ? {
+            message: pythonServiceError.message,
+            code: pythonServiceError.code,
+            status: pythonServiceError.status,
+            pythonServiceUrl: pythonServiceError.pythonServiceUrl,
+            responseData: pythonServiceError.responseData
+          }
+        : undefined
+    });
   }
 };
 
@@ -96,7 +108,19 @@ exports.analyzeFormFromUrl = async (req, res) => {
       feedback: feedbackData
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    const pythonServiceError = error.pythonServiceError;
+    res.status(500).json({
+      error: error.message,
+      pythonServiceError: pythonServiceError
+        ? {
+            message: pythonServiceError.message,
+            code: pythonServiceError.code,
+            status: pythonServiceError.status,
+            pythonServiceUrl: pythonServiceError.pythonServiceUrl,
+            responseData: pythonServiceError.responseData
+          }
+        : undefined
+    });
   }
 };
 
