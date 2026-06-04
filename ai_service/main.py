@@ -1,19 +1,21 @@
 import os
 import cv2
-import mediapipe as mp
 import numpy as np
+import mediapipe as mp
 from fastapi import FastAPI, UploadFile, File, Form
 from pydantic import BaseModel
 import tempfile
 import shutil
 
-import mediapipe as mp
-from mediapipe.solutions import pose as mp_pose
-from mediapipe.solutions import drawing_utils as mp_drawing
-
 app = FastAPI()
 
-pose = mp_pose.Pose(static_image_mode=False, min_detection_confidence=0.5, min_tracking_confidence=0.5)
+# Robust access to MediaPipe solutions
+mp_pose = mp.solutions.pose
+pose = mp_pose.Pose(
+    static_image_mode=False, 
+    min_detection_confidence=0.5, 
+    min_tracking_confidence=0.5
+)
 
 def calculate_angle(a, b, c):
     a = np.array(a)
@@ -30,7 +32,6 @@ def calculate_angle(a, b, c):
 
 @app.post("/analyze")
 async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form("squat")):
-    # Save uploaded file to temp
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_video:
         shutil.copyfileobj(video.file, temp_video)
         temp_path = temp_video.name
@@ -39,7 +40,7 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
         cap = cv2.VideoCapture(temp_path)
         
         rep_count = 0
-        stage = None # "down", "up"
+        stage = None
         issues = []
         angles = []
         
@@ -50,20 +51,16 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
                 break
             
             frame_count += 1
-            if frame_count % 3 != 0: # Process every 3rd frame for speed
+            if frame_count % 3 != 0:
                 continue
 
-            # Recolor image to RGB
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image.flags.writeable = False
-            
-            # Make detection
             results = pose.process(image)
             
             if results.pose_landmarks:
                 landmarks = results.pose_landmarks.landmark
                 
-                # Get coordinates for squat analysis
                 if exercise_name == "squat":
                     hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
                     knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x, landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
@@ -72,24 +69,18 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
                     angle = calculate_angle(hip, knee, ankle)
                     angles.append(angle)
                     
-                    # Logic for rep counting
                     if angle > 160:
                         stage = "up"
                     if angle < 90 and stage == 'up':
                         stage = "down"
                         rep_count += 1
                         
-                    # Basic issue detection
                     if angle < 70:
-                        if "butt_wink_risk" not in issues: issues.append("too_deep_risk")
-                
-                # Add more exercise logic here (deadlift, bench, etc.)
+                        if "too_deep_risk" not in issues: issues.append("too_deep_risk")
 
         cap.release()
         
-        # Mocking LLM feedback for now
-        # In real scenario, send data to OpenAI
-        form_score = 85 # Default high score
+        form_score = 85
         if len(issues) > 0:
             form_score -= 15 * len(issues)
         
