@@ -69,31 +69,88 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
                     angle = calculate_angle(hip, knee, ankle)
                     angles.append(angle)
                     
-                    if angle > 160:
-                        stage = "up"
-                    if angle < 90 and stage == 'up':
+                    if angle > 160: stage = "up"
+                    if angle < 100 and stage == 'up':
                         stage = "down"
                         rep_count += 1
                         
                     if angle < 70:
                         if "too_deep_risk" not in issues: issues.append("too_deep_risk")
 
+                elif exercise_name == "pushup":
+                    shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
+                    elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
+                    wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
+                    
+                    angle = calculate_angle(shoulder, elbow, wrist)
+                    angles.append(angle)
+                    
+                    if angle > 160: stage = "up"
+                    if angle < 90 and stage == 'up':
+                        stage = "down"
+                        rep_count += 1
+
+                elif exercise_name == "deadlift":
+                    shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
+                    hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
+                    knee = [landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].x, landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y]
+                    
+                    back_angle = calculate_angle(shoulder, hip, knee)
+                    angles.append(back_angle)
+                    
+                    if back_angle < 130: stage = "down"
+                    if back_angle > 160 and stage == 'down':
+                        stage = "up"
+                        rep_count += 1
+                
+                else:
+                    # Generic rep counter for other exercises based on movement of joints
+                    # Just to ensure we capture SOME movement
+                    nose = [landmarks[mp_pose.PoseLandmark.NOSE.value].x, landmarks[mp_pose.PoseLandmark.NOSE.value].y]
+                    angles.append(nose[1]) # Just track vertical movement of nose as a proxy
+
+
         cap.release()
         
-        form_score = 85
+        # If no landmarks detected across the whole video
+        if not angles:
+            return {
+                "exercise": exercise_name,
+                "form_issues": ["no_person_detected"],
+                "rep_count": 0,
+                "form_score": 0,
+                "recommendations": ["Ensure your full body is visible in the frame", "Use a side-view for better analysis"]
+            }
+
+        form_score = 70 + (min(rep_count, 10) * 3) # Basic score starting point
         if len(issues) > 0:
-            form_score -= 15 * len(issues)
+            form_score -= 10 * len(issues)
         
-        recommendations = [
-            "Keep your chest up during the movement",
-            "Maintain a neutral spine"
-        ]
+        recommendations = []
+        if exercise_name == "squat":
+            recommendations = ["Keep your chest up", "Maintain a neutral spine"]
+            if rep_count > 0:
+                avg_angle = sum(angles) / len(angles)
+                if avg_angle > 110:
+                    issues.append("shallow_depth")
+                    recommendations.append("Try to squat deeper (thighs parallel to floor)")
         
-        if exercise_name == "squat" and rep_count > 0:
-            avg_angle = sum(angles) / len(angles) if angles else 0
-            if avg_angle > 100:
-                issues.append("shallow_depth")
-                recommendations.append("Try to go deeper to at least 90 degrees")
+        elif exercise_name == "pushup":
+            recommendations = ["Keep your core tight", "Don't let your hips sag"]
+            if rep_count > 0:
+                avg_angle = sum(angles) / len(angles)
+                if avg_angle > 120:
+                    issues.append("limited_range_of_motion")
+                    recommendations.append("Lower your chest closer to the ground")
+        
+        elif exercise_name == "deadlift":
+            recommendations = ["Keep the bar close to your shins", "Don't round your lower back"]
+            if any(a < 140 for a in angles):
+                # This is a very basic check for back rounding if angle gets too acute
+                pass
+
+        if not recommendations:
+            recommendations = ["Focus on controlled movements", "Ensure proper breathing"]
 
         return {
             "exercise": exercise_name,

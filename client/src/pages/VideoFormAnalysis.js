@@ -40,7 +40,12 @@ const VideoFormAnalysis = () => {
       setResult(response.data);
     } catch (error) {
       console.error("Error analyzing video:", error);
-      alert(error.response?.data?.error || "Error analyzing video. Make sure the AI service is running.");
+      const data = error.response?.data;
+      const python = data?.pythonServiceError;
+      const pythonDetail = python
+        ? `\nPython service: ${python.status || 'unknown status'} ${python.code || ''}\nURL: ${python.pythonServiceUrl || 'unknown'}\n${python.message ? `Message: ${python.message}` : ''}\n${python.responseData ? `Response: ${typeof python.responseData === 'string' ? python.responseData : JSON.stringify(python.responseData)}` : ''}`
+        : '';
+      alert(data?.error ? `${data.error}${pythonDetail}` : "Error analyzing video. Make sure the AI service is running.");
     } finally {
       setLoading(false);
     }

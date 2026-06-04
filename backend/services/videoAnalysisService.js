@@ -30,13 +30,31 @@ class VideoAnalysisService {
   }
 
   async analyzeExerciseForm(videoPath) {
-    const fileStream = fs.createReadStream(videoPath);
-    const formData = new FormData();
-    formData.append('video', fileStream);
-
     try {
+      console.log('--- Video Analysis Diagnostics ---');
+      console.log('Video Path:', videoPath);
+      if (videoPath) {
+        const exists = fs.existsSync(videoPath);
+        console.log('File exists:', exists);
+        if (exists) {
+          const stats = fs.statSync(videoPath);
+          console.log('File size:', stats.size, 'bytes');
+        }
+      }
+
+      if (!videoPath || !fs.existsSync(videoPath)) {
+        throw new Error(`Video file not found at path: ${videoPath}`);
+      }
+
+      const fileStream = fs.createReadStream(videoPath);
+      const formData = new FormData();
+      formData.append('video', fileStream);
+
+      const targetUrl = `${this.pythonServiceUrl}/analyze`;
+      console.log('Calling Python service at:', targetUrl);
+
       const response = await axios.post(
-        `${this.pythonServiceUrl}/analyze`,
+        targetUrl,
         formData,
         {
           headers: formData.getHeaders(),
@@ -45,6 +63,9 @@ class VideoAnalysisService {
           maxContentLength: Infinity
         }
       );
+
+      console.log('Python service raw response status:', response.status);
+      console.log('Python service response data:', response.data);
 
       return {
         exercise: response.data.exercise,
@@ -56,10 +77,10 @@ class VideoAnalysisService {
       };
     } catch (error) {
       const formatted = this._formatAxiosError(error);
-      console.error('Video analysis error:', formatted || error);
+      console.error('Video analysis detailed error:', formatted || error);
 
       const err = new Error(
-        'Unable to analyze video (python service call failed)'
+        `Unable to analyze video: ${error.message}`
       );
       err.pythonServiceError = formatted;
       throw err;
