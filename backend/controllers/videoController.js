@@ -24,7 +24,7 @@ exports.uploadWorkoutVideo = async (req, res) => {
       exercise: analysis.exercise || exercise_name || 'unknown',
       score: analysis.form_score || 0,
       issues: analysis.form_issues || [],
-      feedback: feedbackData.overall + '. ' + feedbackData.recommendations.join(' '),
+      feedback: (feedbackData.overall || '') + '. ' + (feedbackData.cues ? feedbackData.cues.join(' ') : ''),
       reps: analysis.rep_count || 0
     });
 
@@ -73,7 +73,7 @@ exports.analyzeFormFromUrl = async (req, res) => {
       exercise: analysis.exercise || exercise_name || 'unknown',
       score: analysis.form_score || 0,
       issues: analysis.form_issues || [],
-      feedback: feedbackData.overall + '. ' + feedbackData.recommendations.join(' '),
+      feedback: (feedbackData.overall || '') + '. ' + (feedbackData.cues ? feedbackData.cues.join(' ') : ''),
       reps: analysis.rep_count || 0
     });
 
