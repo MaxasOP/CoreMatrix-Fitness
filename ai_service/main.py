@@ -7,9 +7,12 @@ from pydantic import BaseModel
 import tempfile
 import shutil
 
+import mediapipe as mp
+from mediapipe.solutions import pose as mp_pose
+from mediapipe.solutions import drawing_utils as mp_drawing
+
 app = FastAPI()
 
-mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(static_image_mode=False, min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
 def calculate_angle(a, b, c):
