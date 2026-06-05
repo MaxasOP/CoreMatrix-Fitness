@@ -7,7 +7,7 @@ class AIService {
   constructor() {
     this.apiKey = process.env.GEMINI_API_KEY;
     this.genAI = this.apiKey ? new GoogleGenerativeAI(this.apiKey) : null;
-    this.model = 'gemini-1.5-flash-latest';
+    this.model = 'gemini-2.5-flash';
   }
 
   /**
