@@ -7,7 +7,7 @@ class AIService {
   constructor() {
     this.apiKey = process.env.GEMINI_API_KEY;
     this.genAI = this.apiKey ? new GoogleGenerativeAI(this.apiKey) : null;
-    this.model = 'gemini-1.5-flash';
+    this.model = 'gemini-1.5-flash-latest';
   }
 
   /**
@@ -37,7 +37,8 @@ Format the response as JSON:
   "issues_breakdown": [],
   "cues": [],
   "encouragement": ""
-}`;
+} \n
+(Keep technical terms and focus on Indian context if applicable)`;
 
     try {
       const response = await this.callGemini(prompt);
@@ -182,7 +183,7 @@ Format as JSON: { dish, calories, protein, carbs, fat, fiber, health_rating, rec
       }
 
       console.log('--- Sending Prompt to Gemini ---');
-      const model = this.genAI.getGenerativeModel({ model: this.model });
+      const model = this.genAI.getGenerativeModel({ model: this.model }, { apiVersion: 'v1' });
       const result = await model.generateContent(prompt);
       let text = result.response.text();
       
