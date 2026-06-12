@@ -80,7 +80,17 @@ export default function Home() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => { fetchAll(); }, []);
+  useEffect(() => {
+    if (user) {
+      fetchAll();
+    } else {
+      setWorkouts([]);
+      setMeals([]);
+      setTip('');
+      setError('');
+      setIsLoading(false);
+    }
+  }, [user]);
 
   async function fetchAll() {
     try {

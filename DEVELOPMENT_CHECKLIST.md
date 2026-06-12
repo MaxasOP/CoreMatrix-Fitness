@@ -283,7 +283,7 @@
 - [ ] Security scanning
 
 ### SEO
-- [ ] Sitemap
+- [x] Sitemap
 - [ ] Meta tags
 - [ ] Schema markup
 - [ ] Mobile optimization
