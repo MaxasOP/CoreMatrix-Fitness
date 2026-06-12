@@ -3,6 +3,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 export default function Auth() {
   const [mode, setMode] = useState('login');
@@ -10,6 +11,11 @@ export default function Auth() {
   const [msg, setMsg] = useState('');
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useDocumentMetadata({
+    title: mode === 'login' ? 'Sign In' : 'Join Program',
+    description: 'Access your CoreMatrix account to log workouts, track progress, and customize your diet and fitness goals.'
+  });
 
   function onChange(e) { setForm({ ...form, [e.target.name]: e.target.value }); }
 
@@ -37,19 +43,19 @@ export default function Auth() {
             <div className="w-16 h-16 bg-gradient-to-br from-gray-900 to-black rounded-2xl mx-auto mb-4 shadow-lg flex items-center justify-center transform -rotate-3">
               <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
             </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">{mode === 'login' ? 'Welcome back 👋' : 'Join the program 🚀'}</h2>
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">{mode === 'login' ? 'Welcome back 👋' : 'Join the program 🚀'}</h1>
             <div className="text-gray-500 mt-2 font-medium">{mode === 'login' ? 'Log in and keep the momentum going.' : 'Create a free account and start tracking today.'}</div>
           </div>
 
           <div className="space-y-4">
-            {mode !== 'login' && <input name="name" placeholder="Full Name" value={form.name} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />}
-            <input name="email" type="email" placeholder="Email Address" value={form.email} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
-            <input name="password" type="password" placeholder="Password" value={form.password} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
+            {mode !== 'login' && <input id="auth-name" name="name" placeholder="Full Name" value={form.name} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />}
+            <input id="auth-email" name="email" type="email" placeholder="Email Address" value={form.email} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
+            <input id="auth-password" name="password" type="password" placeholder="Password" value={form.password} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all" />
           </div>
 
           <div className="mt-8 flex flex-col gap-3">
-            <button onClick={submit} className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-black text-white px-6 py-3.5 rounded-xl font-bold transition-all shadow-xl shadow-gray-900/20 hover:-translate-y-0.5 active:scale-95">{mode === 'login' ? 'Sign In' : 'Create Account'}</button>
-            <button onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="w-full bg-white/50 hover:bg-white/80 text-gray-700 px-6 py-3.5 rounded-xl font-bold transition-all border border-gray-200 active:scale-95">{mode === 'login' ? 'Need an account? Sign up' : 'Already have an account? Sign in'}</button>
+            <button id="btn-auth-submit" onClick={submit} className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-black text-white px-6 py-3.5 rounded-xl font-bold transition-all shadow-xl shadow-gray-900/20 hover:-translate-y-0.5 active:scale-95">{mode === 'login' ? 'Sign In' : 'Create Account'}</button>
+            <button id="btn-auth-switch-mode" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="w-full bg-white/50 hover:bg-white/80 text-gray-700 px-6 py-3.5 rounded-xl font-bold transition-all border border-gray-200 active:scale-95">{mode === 'login' ? 'Need an account? Sign up' : 'Already have an account? Sign in'}</button>
           </div>
 
           {msg && <div className={`mt-6 p-4 rounded-xl text-sm font-medium text-center ${msg.toLowerCase().includes('error') || msg.toLowerCase().includes('failed') ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-700 border border-green-100'}`}>{msg}</div>}

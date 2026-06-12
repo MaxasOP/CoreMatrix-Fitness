@@ -3,6 +3,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 import { ReactComponent as StrongArmIcon } from '../assets/strong-arm.svg';
 import { ReactComponent as DumbbellIcon } from '../assets/dumbbell.svg'; // Import the SVG
 
@@ -69,6 +70,10 @@ function computeStreak(items) {
 
 export default function Home() {
   const { user } = useContext(AuthContext);
+  useDocumentMetadata({
+    title: 'Dashboard',
+    description: 'Track your workouts, log your meals, monitor your daily calories, and follow your fitness streak on the CoreMatrix dashboard.'
+  });
   const [workouts, setWorkouts] = useState([]);
   const [meals, setMeals] = useState([]);
   const [tip, setTip] = useState('');
@@ -150,9 +155,9 @@ export default function Home() {
             </h1>
             <p className="mt-4 text-lg text-gray-400 max-w-xl leading-relaxed">Track your lifts, fuel your performance, and see real progress. This dashboard is built for daily wins.</p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link to="/forge" className="bg-gradient-to-r from-[#ff5a1f] to-orange-500 hover:from-orange-500 hover:to-pink-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-orange-500/30 hover:-translate-y-0.5 active:scale-95">Log workout</Link>
-              <Link to="/fuel" className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 px-6 py-3 rounded-xl font-bold transition-all hover:-translate-y-0.5 active:scale-95">Log meal</Link>
-              {!user && <Link to="/auth" className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 px-6 py-3 rounded-xl font-bold transition-all hover:-translate-y-0.5 active:scale-95">Create account</Link>}
+              <Link id="btn-home-log-workout" to="/forge" className="bg-gradient-to-r from-[#ff5a1f] to-orange-500 hover:from-orange-500 hover:to-pink-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-orange-500/30 hover:-translate-y-0.5 active:scale-95">Log workout</Link>
+              <Link id="btn-home-log-meal" to="/fuel" className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 px-6 py-3 rounded-xl font-bold transition-all hover:-translate-y-0.5 active:scale-95">Log meal</Link>
+              {!user && <Link id="btn-home-create-account" to="/auth" className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 px-6 py-3 rounded-xl font-bold transition-all hover:-translate-y-0.5 active:scale-95">Create account</Link>}
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
               <span className="px-3 py-1.5 rounded-lg bg-black/40 border border-white/5 text-sm flex items-center gap-2 shadow-inner"><svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> Goal: {user?.goal || 'Build strength'}</span>

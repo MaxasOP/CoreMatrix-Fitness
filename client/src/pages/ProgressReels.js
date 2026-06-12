@@ -1,8 +1,14 @@
 // Progress Reels / Social Feed
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 const ProgressReels = () => {
+  useDocumentMetadata({
+    title: 'Progress Reels',
+    description: 'Share your fitness journey and inspire others by posting video or photo Reels of your workouts.'
+  });
+
   const [reels, setReels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
@@ -71,6 +77,7 @@ const ProgressReels = () => {
 
         {/* Upload Section */}
         <button
+          id="btn-reels-toggle-upload"
           onClick={() => setShowUpload(!showUpload)}
           className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 mb-8 font-semibold"
         >
@@ -81,6 +88,7 @@ const ProgressReels = () => {
           <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
             <form onSubmit={handleSubmit} className="space-y-4">
               <input
+                id="reels-title"
                 type="text"
                 placeholder="Title (e.g., Week 4 Transformation)"
                 value={formData.title}
@@ -89,6 +97,7 @@ const ProgressReels = () => {
                 required
               />
               <textarea
+                id="reels-description"
                 placeholder="Tell your story..."
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -97,6 +106,7 @@ const ProgressReels = () => {
                 required
               />
               <input
+                id="reels-image-url"
                 type="url"
                 placeholder="Image URL"
                 value={formData.image_url}
@@ -105,6 +115,7 @@ const ProgressReels = () => {
                 required
               />
               <button
+                id="btn-reels-submit"
                 type="submit"
                 className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700"
               >

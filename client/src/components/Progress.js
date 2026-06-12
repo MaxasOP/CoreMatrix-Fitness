@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 const weekPlan = [
   { day: 'Monday',    group: 'PUSH', dayIndex: 1 },
@@ -31,6 +32,10 @@ function parseLocalDate(value) {
 
 export default function Progress() {
   const { user } = useContext(AuthContext);
+  useDocumentMetadata({
+    title: 'Weekly Fitness Progress',
+    description: 'View your weekly workout completion rates, body metric logs, and top exercise categories.'
+  });
   const [workouts, setWorkouts] = useState([]);
 
   useEffect(() => { fetchWorkouts(); }, []);
@@ -65,7 +70,7 @@ export default function Progress() {
     <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
       <section className="card p-6">
         <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Consistency</div>
-        <h2 className="text-3xl font-extrabold text-gray-900">Weekly progress</h2>
+        <h1 className="text-3xl font-extrabold text-gray-900">Weekly progress</h1>
         <div className="mt-4 text-6xl font-black flex items-center gap-4"><span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 animate-gradient-x">{weekProgress}%</span> {weekProgress === 100 && <span className="text-5xl animate-bounce">🏆</span>}</div>
         <div className="text-gray-500 font-medium mt-1">{completed} training days completed</div>
         <div className="h-3 bg-gray-100 rounded-full mt-5 overflow-hidden">

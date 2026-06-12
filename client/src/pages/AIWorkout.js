@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 const AIWorkout = () => {
+  useDocumentMetadata({
+    title: 'AI Workout Planner',
+    description: 'Generate custom, goal-oriented workout routines tailored to your target muscles, equipment, and experience.'
+  });
+
   const [formData, setFormData] = useState({
     experience_level: 'beginner',
     days_per_week: 4,
@@ -52,6 +58,7 @@ const AIWorkout = () => {
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Experience Level</label>
                 <select
+                  id="workout-experience-level"
                   name="experience_level"
                   value={formData.experience_level}
                   onChange={handleChange}
@@ -66,6 +73,7 @@ const AIWorkout = () => {
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Days Per Week</label>
                 <input
+                  id="workout-days-per-week"
                   type="number"
                   name="days_per_week"
                   min="1"
@@ -79,6 +87,7 @@ const AIWorkout = () => {
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Available Equipment</label>
                 <select
+                  id="workout-equipment-available"
                   name="equipment_available"
                   value={formData.equipment_available}
                   onChange={handleChange}
@@ -92,6 +101,7 @@ const AIWorkout = () => {
               </div>
 
               <button
+                id="btn-workout-submit"
                 type="submit"
                 disabled={loading}
                 className="w-full mt-4 bg-gradient-to-r from-[#ff5a1f] to-orange-500 text-white font-bold py-3 rounded-xl hover:shadow-lg hover:shadow-orange-500/30 transition-all disabled:opacity-60"

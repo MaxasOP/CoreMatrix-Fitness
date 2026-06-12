@@ -1,11 +1,16 @@
 // Cache-busting comment to force Vercel to rebuild this file
 import React, { useEffect, useState } from 'react';
 import api from '../api';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 export default function Logs() {
   const [items, setItems] = useState([]);
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+  useDocumentMetadata({
+    title: 'Workout & Meal History Logs',
+    description: 'Search, filter, and review your historical logged workouts and nutrition entries over time.'
+  });
 
   useEffect(() => { fetchAll(); }, []);
 
@@ -28,12 +33,12 @@ export default function Logs() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">History</div>
-            <h2 className="text-3xl font-extrabold text-gray-900">Logs</h2>
+            <h1 className="text-3xl font-extrabold text-gray-900">Logs</h1>
           </div>
           <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-xl border border-gray-100">
-            <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'all' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`} onClick={() => setFilter('all')}>All</button>
-            <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'workout' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`} onClick={() => setFilter('workout')}>Workouts</button>
-            <button className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'meal' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`} onClick={() => setFilter('meal')}>Meals</button>
+            <button id="btn-logs-filter-all" className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'all' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`} onClick={() => setFilter('all')}>All</button>
+            <button id="btn-logs-filter-workouts" className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'workout' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`} onClick={() => setFilter('workout')}>Workouts</button>
+            <button id="btn-logs-filter-meals" className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'meal' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`} onClick={() => setFilter('meal')}>Meals</button>
           </div>
         </div>
 

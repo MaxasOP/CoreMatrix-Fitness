@@ -2,9 +2,14 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../AuthContext'; // Import AuthContext
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 const AIDietician = () => {
   const { user } = useContext(AuthContext); // Access user from AuthContext
+  useDocumentMetadata({
+    title: 'AI Dietician & Meal Planner',
+    description: 'Receive personalized meal plans and nutrition guidance from our state-of-the-art AI-powered dietician.'
+  });
 
   const [formData, setFormData] = useState({
     age: user?.age_years || '',
@@ -95,6 +100,7 @@ const AIDietician = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Activity Level</label>
                 <select
+                  id="dietician-activity-level"
                   name="activity_level"
                   value={formData.activity_level}
                   onChange={handleChange}
@@ -111,6 +117,7 @@ const AIDietician = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Goal</label>
                 <select
+                  id="dietician-goal"
                   name="goal"
                   value={formData.goal}
                   onChange={handleChange}
@@ -126,6 +133,7 @@ const AIDietician = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Budget</label>
                 <select
+                  id="dietician-budget"
                   name="budget"
                   value={formData.budget}
                   onChange={handleChange}
@@ -140,6 +148,7 @@ const AIDietician = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Diet Preference</label>
                 <select
+                  id="dietician-diet-preference"
                   name="diet_preference"
                   value={formData.diet_preference}
                   onChange={handleChange}
@@ -153,6 +162,7 @@ const AIDietician = () => {
               </div>
 
               <button
+                id="btn-dietician-submit"
                 type="submit"
                 disabled={loading}
                 className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"

@@ -1,8 +1,14 @@
 // Challenges Page
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 const Challenges = () => {
+  useDocumentMetadata({
+    title: 'Fitness Challenges',
+    description: 'Join exciting fitness challenges, push your limits, and earn rewards for hitting training milestones.'
+  });
+
   const [challenges, setChallenges] = useState([]);
   const [userChallenges, setUserChallenges] = useState([]);
   const [loading, setLoading] = useState(false);

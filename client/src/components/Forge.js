@@ -1,8 +1,8 @@
-// Cache-busting comment to force Vercel to rebuild this file v2
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 import { ReactComponent as DumbbellIcon } from '../assets/dumbbell.svg'; // Import the SVG
 
 const templates = [
@@ -15,6 +15,10 @@ const templates = [
 
 export default function Forge() {
   const { user } = useContext(AuthContext);
+  useDocumentMetadata({
+    title: 'Forge Workout Session',
+    description: 'Log your daily exercises, sets, reps, weight, and intensity using our fast mobile-friendly workout tracker.'
+  });
   const [workouts, setWorkouts] = useState([]);
   function getTodayKey() {
     const now = new Date();
@@ -141,7 +145,7 @@ export default function Forge() {
           <div className="flex items-center justify-between">
             <div>
               <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Workout builder</div>
-              <h2 className="text-3xl font-extrabold text-gray-900">Forge a session</h2>
+              <h1 className="text-3xl font-extrabold text-gray-900">Forge a session</h1>
             </div>
             <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-500">Mobile-first logging</span>
           </div>
@@ -154,10 +158,10 @@ export default function Forge() {
 
           <div className="mt-4 grid sm:grid-cols-2 gap-3">
             <div>
-              <input name="name" placeholder="Exercise name" value={form.name} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.name ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              <input id="forge-exercise-name" name="name" placeholder="Exercise name" value={form.name} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.name ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
               {validationErrors.name && <p className="text-red-500 text-xs mt-1">{validationErrors.name}</p>}
             </div>
-            <select name="category" value={form.category} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
+            <select id="forge-category" name="category" value={form.category} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
               <option>Chest</option>
               <option>Back</option>
               <option>Legs</option>
@@ -167,27 +171,27 @@ export default function Forge() {
               <option>Cardio</option>
             </select>
             <div>
-              <input name="sets" type="number" placeholder="Sets" value={form.sets} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.sets ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              <input id="forge-sets" name="sets" type="number" placeholder="Sets" value={form.sets} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.sets ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
               {validationErrors.sets && <p className="text-red-500 text-xs mt-1">{validationErrors.sets}</p>}
             </div>
             <div>
-              <input name="reps" type="number" placeholder="Reps" value={form.reps} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.reps ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              <input id="forge-reps" name="reps" type="number" placeholder="Reps" value={form.reps} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.reps ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
               {validationErrors.reps && <p className="text-red-500 text-xs mt-1">{validationErrors.reps}</p>}
             </div>
             <div>
-              <input name="weight" type="number" placeholder="Weight (kg)" value={form.weight} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.weight ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              <input id="forge-weight" name="weight" type="number" placeholder="Weight (kg)" value={form.weight} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.weight ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
               {validationErrors.weight && <p className="text-red-500 text-xs mt-1">{validationErrors.weight}</p>}
             </div>
-            <select name="intensity" value={form.intensity} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
+            <select id="forge-intensity" name="intensity" value={form.intensity} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
               <option value="low">low</option>
               <option value="medium">medium</option>
               <option value="high">high</option>
             </select>
-            <input name="date" type="date" value={form.date} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all sm:col-span-2" />
+            <input id="forge-date" name="date" type="date" value={form.date} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all sm:col-span-2" />
           </div>
 
           <div className="mt-4">
-            <button onClick={addWorkout} className="bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md hover:-translate-y-0.5 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100" disabled={!isAuthed}>Add workout</button>
+            <button id="btn-forge-add-workout" onClick={addWorkout} className="bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md hover:-translate-y-0.5 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100" disabled={!isAuthed}>Add workout</button>
           </div>
         </div>
 

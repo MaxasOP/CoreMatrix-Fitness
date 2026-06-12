@@ -1,8 +1,8 @@
-// Cache-busting comment to force Vercel to rebuild this file v2
 import React, { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 const presets = [
   { name: 'Power oats', type: 'Breakfast', calories: 420, protein: 25, carbs: 55, fat: 10 },
@@ -13,6 +13,10 @@ const presets = [
 
 export default function Fuel() {
   const { user } = useContext(AuthContext);
+  useDocumentMetadata({
+    title: 'Fuel Your Day - Nutrition Log',
+    description: 'Track your daily food intake, search presets for meals, and manage your protein, fat, and carbohydrate macronutrient targets.'
+  });
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(false);
   function getTodayKey() {
@@ -120,7 +124,7 @@ export default function Fuel() {
           <div className="flex items-center justify-between">
             <div>
               <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Nutrition log</div>
-              <h2 className="text-3xl font-extrabold text-gray-900">Fuel your day</h2>
+              <h1 className="text-3xl font-extrabold text-gray-900">Fuel your day</h1>
             </div>
             <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-500">Smart presets</span>
           </div>
@@ -132,22 +136,22 @@ export default function Fuel() {
           </div>
 
           <div className="mt-4 grid sm:grid-cols-2 gap-3">
-            <input name="name" placeholder="Meal name" value={form.name} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
-            <select name="type" value={form.type} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all">
+            <input id="fuel-meal-name" name="name" placeholder="Meal name" value={form.name} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <select id="fuel-meal-type" name="type" value={form.type} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all">
               <option>Breakfast</option>
               <option>Lunch</option>
               <option>Dinner</option>
               <option>Snack</option>
             </select>
-            <input name="calories" type="number" placeholder="kcal" value={form.calories} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
-            <input name="protein" type="number" placeholder="Protein (g)" value={form.protein} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
-            <input name="carbs" type="number" placeholder="Carbs (g)" value={form.carbs} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
-            <input name="fat" type="number" placeholder="Fat (g)" value={form.fat} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
-            <input name="date" type="date" value={form.date} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all sm:col-span-2" />
+            <input id="fuel-calories" name="calories" type="number" placeholder="kcal" value={form.calories} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input id="fuel-protein" name="protein" type="number" placeholder="Protein (g)" value={form.protein} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input id="fuel-carbs" name="carbs" type="number" placeholder="Carbs (g)" value={form.carbs} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input id="fuel-fat" name="fat" type="number" placeholder="Fat (g)" value={form.fat} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input id="fuel-date" name="date" type="date" value={form.date} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all sm:col-span-2" />
           </div>
 
           <div className="mt-4 flex flex-wrap gap-3">
-            <button onClick={addOrUpdateMeal} className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-teal-400 hover:to-emerald-400 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:active:scale-100" disabled={!isAuthed}>{editingId ? 'Save Meal' : 'Add Meal'}</button>
+            <button id="btn-fuel-save-meal" onClick={addOrUpdateMeal} className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-teal-400 hover:to-emerald-400 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:active:scale-100" disabled={!isAuthed}>{editingId ? 'Save Meal' : 'Add Meal'}</button>
             {editingId && <button onClick={() => { setEditingId(null); setForm({ name: '', type: 'Lunch', calories: 0, protein: 0, carbs: 0, fat: 0, date: getTodayKey() }); }} className="bg-white/50 hover:bg-white/80 text-gray-800 px-6 py-3 rounded-xl font-bold transition-colors active:scale-95 border border-gray-200">Cancel</button>}
           </div>
         </div>

@@ -1,8 +1,14 @@
 // Supplements Page
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 const Supplements = () => {
+  useDocumentMetadata({
+    title: 'Supplement Store',
+    description: 'Browse high-quality fitness supplements and receive personalized suggestions based on your profile and goals.'
+  });
+
   const [supplements, setSupplements] = useState([]);
   const [formData, setFormData] = useState({
     weight: '',
@@ -64,6 +70,7 @@ const Supplements = () => {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Get Recommendations</h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <input
+              id="supp-weight"
               type="number"
               placeholder="Your weight (kg)"
               value={formData.weight}
@@ -71,6 +78,7 @@ const Supplements = () => {
               className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
             <select
+              id="supp-goal"
               value={formData.goal}
               onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
               className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -81,6 +89,7 @@ const Supplements = () => {
               <option value="recovery">Recovery</option>
             </select>
             <button
+              id="btn-supp-recommend"
               onClick={getRecommendations}
               disabled={loading}
               className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"

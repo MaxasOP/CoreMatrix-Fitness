@@ -1,8 +1,14 @@
 // Leaderboards Page
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 const Leaderboards = () => {
+  useDocumentMetadata({
+    title: 'Leaderboards & Rankings',
+    description: 'See how you rank against other members in workouts, streak duration, and overall fitness consistency.'
+  });
+
   const [scope, setScope] = useState('national');
   const [category, setCategory] = useState('fat_loss');
   const [leaderboard, setLeaderboard] = useState([]);
@@ -49,6 +55,7 @@ const Leaderboards = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Scope</label>
               <select
+                id="leaderboard-scope"
                 value={scope}
                 onChange={(e) => setScope(e.target.value)}
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -62,6 +69,7 @@ const Leaderboards = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
               <select
+                id="leaderboard-category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"

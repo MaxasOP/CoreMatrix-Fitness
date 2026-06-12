@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import api from '../api';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 const VideoFormAnalysis = () => {
+  useDocumentMetadata({
+    title: 'AI Video Form Analysis',
+    description: 'Upload videos of your exercises to receive instant AI feedback on your lifting form, posture, and safety.'
+  });
+
   const [file, setFile] = useState(null);
   const [exercise, setExercise] = useState('squat');
   const [loading, setLoading] = useState(false);
@@ -60,6 +66,7 @@ const VideoFormAnalysis = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Select Exercise</label>
             <select 
+              id="analysis-exercise-select"
               value={exercise} 
               onChange={(e) => setExercise(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all"
@@ -90,6 +97,7 @@ const VideoFormAnalysis = () => {
           </div>
 
           <button
+            id="btn-analysis-submit"
             onClick={onAnalyze}
             disabled={loading || !file}
             className={`w-full py-4 rounded-xl font-bold text-white transition-all shadow-lg text-lg ${

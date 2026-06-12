@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 import api from '../api';
+import useDocumentMetadata from '../hooks/useDocumentMetadata';
 
 const goalOptions = [
   { label: 'Build Muscle', value: 'Build Muscle' },
@@ -21,6 +22,10 @@ const activityOptions = [
 export default function Setup() {
   const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  useDocumentMetadata({
+    title: 'Personalize Your Goals',
+    description: 'Set your fitness goals, log your body metrics, and personalize your daily calorie and protein targets.'
+  });
   const [form, setForm] = useState({
     goal: user?.goal || 'Build Muscle',
     weightKg: user?.weight || '',
@@ -74,10 +79,10 @@ export default function Setup() {
       <div className="mt-6 page page-shell">
         <div className="card-soft p-5">
           <div className="tag muted">Sign in required</div>
-          <h2 className="text-3xl mt-2">Set your goals</h2>
+          <h1 className="text-3xl mt-2 font-bold text-gray-900">Set your goals</h1>
           <p className="mt-2 muted">Create an account to unlock personalized calories, protein targets, and training plans.</p>
           <div className="mt-4">
-            <Link to="/auth" className="btn-primary">Sign in</Link>
+            <Link id="btn-setup-signin" to="/auth" className="btn-primary">Sign in</Link>
           </div>
         </div>
       </div>
@@ -95,7 +100,7 @@ export default function Setup() {
         <div className="mt-4 grid sm:grid-cols-2 gap-4">
           <div>
             <label className="text-sm muted">Goal</label>
-            <select name="goal" value={form.goal} onChange={onChange} className="input mt-1">
+            <select id="setup-goal" name="goal" value={form.goal} onChange={onChange} className="input mt-1">
               {goalOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -103,7 +108,7 @@ export default function Setup() {
           </div>
           <div>
             <label className="text-sm muted">Activity level</label>
-            <select name="activityLevel" value={form.activityLevel} onChange={onChange} className="input mt-1">
+            <select id="setup-activity-level" name="activityLevel" value={form.activityLevel} onChange={onChange} className="input mt-1">
               {activityOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -111,23 +116,23 @@ export default function Setup() {
           </div>
           <div>
             <label className="text-sm muted">Weight (kg)</label>
-            <input name="weightKg" type="number" min="0" step="0.1" value={form.weightKg} onChange={onChange} className="input mt-1" />
+            <input id="setup-weight-kg" name="weightKg" type="number" min="0" step="0.1" value={form.weightKg} onChange={onChange} className="input mt-1" />
           </div>
           <div>
             <label className="text-sm muted">Height (cm)</label>
-            <input name="heightCm" type="number" min="0" step="0.1" value={form.heightCm} onChange={onChange} className="input mt-1" />
+            <input id="setup-height-cm" name="heightCm" type="number" min="0" step="0.1" value={form.heightCm} onChange={onChange} className="input mt-1" />
           </div>
           <div>
             <label className="text-sm muted">Age (years)</label>
-            <input name="ageYears" type="number" min="0" step="1" value={form.ageYears} onChange={onChange} className="input mt-1" />
+            <input id="setup-age-years" name="ageYears" type="number" min="0" step="1" value={form.ageYears} onChange={onChange} className="input mt-1" />
           </div>
         </div>
 
         <div className="mt-5 flex flex-wrap gap-3 items-center">
-          <button onClick={saveProfile} className="btn-primary" disabled={saving}>
+          <button id="btn-setup-save" onClick={saveProfile} className="btn-primary" disabled={saving}>
             {saving ? 'Saving...' : 'Save & continue'}
           </button>
-          <Link to="/" className="btn-secondary">Skip for now</Link>
+          <Link id="btn-setup-skip" to="/" className="btn-secondary">Skip for now</Link>
           {msg && <span className="text-sm" style={{ color: msg.toLowerCase().includes('failed') ? '#b91c1c' : '#15803d' }}>{msg}</span>}
         </div>
       </section>
