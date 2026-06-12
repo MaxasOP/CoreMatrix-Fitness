@@ -6,20 +6,25 @@
 
 ---
 
+<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/0088cb17-0962-4cb9-b826-c9c0e2e56ca0" />
+
 ## 🎯 What is CoreMatrix?
 
 CoreMatrix is not just another fitness app. It's an **integrated health & wellness ecosystem** that combines:
 
-- **💪 Fitness Tracking** - Workouts with AI form correction
-- **🍽️ Nutrition Planning** - AI dietician with Indian alternatives
-- **💊 Supplement Intelligence** - Smart recommendations with price comparison
-- **👥 Social Community** - Progress reels, leaderboards, challenges
-- **🏋️ Trainer Marketplace** - Book certified trainers & specialists
-- **🏪 Gym Discovery** - Find gyms with real-time crowd tracking
-- **🎮 Gamification** - Challenges, streaks, rewards, leaderboards
-- **🌍 Indian-First** - Everything designed for Indian users
+- **🌍 Indian-First** - Everything designed keeping Indian user's special needs in mind
+- **💪 Fitness Tracking** - Workouts with AI/ML form correction (including Yoga poses and exercises)
+- **🍽️ Nutrition Planning** - AI dietician with Indian alternatives (scanning Thalis as whole for cal count)
+- **💊 Supplement Intelligence** - Smart recommendations with price comparison (shows lowest among sites)
+- **👥 Social Community** - Progress reels, leaderboards, challenges (motivate one-another)
+- **🏋️ Trainer Marketplace** - Book certified trainers & specialists (both online/offline bookings)
+- **🏪 Gym Discovery** - Find gyms near you (google map integration)
+- **🎮 Gamification** - Challenges,streaks,rewards,leaderboards (weekly challenges and real time scoreboards)
 
 ---
+
+<img width="2946" height="1641" alt="Screenshot 2026-06-05 125401" src="https://github.com/user-attachments/assets/1e578fe6-f133-4efc-88cc-ba043e2cdb95" />
+
 
 ## 📊 Project Statistics
 
@@ -39,7 +44,7 @@ CoreMatrix is not just another fitness app. It's an **integrated health & wellne
 ```
 Backend:    Node.js, Express, MongoDB, Mongoose
 Frontend:   React 18, React Router, Tailwind CSS
-AI:         OpenAI API
+AI:         Gemini
 Media:      Cloudinary
 Email:      SendGrid
 Database:   MongoDB Atlas (production ready)
@@ -48,6 +53,9 @@ Real-time:  Socket.io (ready)
 ```
 
 ---
+
+<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/8be4011a-ff11-4e40-ab90-980122e158c6" />
+
 
 ## 🎁 Key Features
 
@@ -102,6 +110,9 @@ Authenticity: 95/100 ✅ Verified Sellers
 - Most Consistent
 - Longest Streak
 
+<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/7d567523-90db-45f2-97fd-0985b0c80d0c" />
+
+
 ### 🏆 Fitness Challenges
 ✅ Engaging community challenges:
 - 10,000 Steps Challenge
@@ -137,6 +148,9 @@ Authenticity: 95/100 ✅ Verified Sellers
 7. **Overall Health Score** (0-100)
 
 ---
+
+<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/41df44ff-848d-4be3-ac6a-cc8866de1207" />
+
 
 ## 📁 Project Structure
 
@@ -346,8 +360,10 @@ MIT License - See [LICENSE](./LICENSE) file for details
 
 ## 🚀 Let's Build!
 
-CoreMatrix has the potential to become **India's #1 Fitness & Wellness Platform**.
+CoreMatrix has the potential to become **India's #1 Fitness & Wellness Platform**.Completely open to suggestions and your valuable input.
 
 We're just getting started! 💪
 
-**Current Status**: Backend MVP Complete ✅ | Frontend Development 🚀 | Let's Go! 🔥
+**Current Status**: Backend MVP Complete ✅ | Frontend Development 🚀 | Let's Go! 🔥 
+Integration of some features is pending!! 
+Kindly provide your love and support if possible <3
