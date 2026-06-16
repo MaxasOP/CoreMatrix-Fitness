@@ -111,17 +111,33 @@ textarea:focus-visible {
 }
 
 .card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+:root[data-theme='dark'] .card {
+  background-color: rgba(15, 23, 42, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
 .card-soft {
-  background: var(--card-soft);
-  border: 1px dashed var(--line);
-  border-radius: 16px;
-  box-shadow: var(--shadow-soft);
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+:root[data-theme='dark'] .card-soft {
+  background-color: rgba(15, 23, 42, 0.5);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
 .card,
@@ -250,7 +266,7 @@ button:disabled {
 
 /* animations */
 @keyframes floaty { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
-@keyframes reveal { 0% { opacity: 0; transform: translateY(14px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
 @keyframes pageIn { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
 @keyframes blob {
@@ -265,7 +281,7 @@ button:disabled {
 }
 
 .floaty { animation: floaty 6s ease-in-out infinite; }
-.reveal { animation: reveal 0.6s ease both; animation-delay: var(--d, 0s); }
+.reveal { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--d, 0s); }
 .pulse { animation: pulse 4s ease-in-out infinite; }
 .page { animation: pageIn 0.5s ease both; }
 .page-shell { position: relative; }
