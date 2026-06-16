@@ -1,16 +1,31 @@
-import React, { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
+'use client';
+
+import React, { useContext, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AuthContext } from '../AuthContext';
 
-function ProtectedRoute({ children }) { // Accepts children directly
-  const { user } = useContext(AuthContext);
+function ProtectedRoute({ children }) {
+  const { user, authLoading } = useContext(AuthContext);
+  const router = useRouter();
 
-  if (!user) {
-    // User not authenticated, redirect to login page
-    return <Navigate to="/auth" replace />;
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/auth');
+    }
+  }, [user, authLoading, router]);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-orange-500"></div>
+      </div>
+    );
   }
 
-  // User authenticated, render the children (the protected element)
+  if (!user) {
+    return null;
+  }
+
   return children;
 }
 

@@ -1,27 +1,36 @@
-# CoreMatrix React Client
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-Quick start (from repository root):
+## Getting Started
+
+First, run the development server:
 
 ```bash
-cd client
-npm install
-npm start
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-The client proxies API requests to `http://localhost:4000` by default (`proxy` in package.json).
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Vercel Deployment
+You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
-Deploy this app on Vercel with the project root set to `client/`.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-Why:
+## Learn More
 
-- `client/package.json` is the app entry point for Vercel builds.
-- `client/public/index.html` is the HTML entry file Vercel serves.
-- `client/vercel.json` rewrites React Router routes back to `index.html`.
+To learn more about Next.js, take a look at the following resources:
 
-Backend note:
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-- Do not deploy the Express backend to Vercel.
-- Keep the API on Render or another Node host, then point the client to that API URL.
-- Set `REACT_APP_API_URL=https://corematrix-fitness.onrender.com/api` in the Vercel project environment variables.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

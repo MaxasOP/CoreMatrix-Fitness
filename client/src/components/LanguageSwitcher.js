@@ -1,5 +1,5 @@
-// client/src/components/LanguageSwitcher.js
-// Multi-language selector component
+'use client';
+
 import React from 'react';
 import useLocalization from '../hooks/useLocalization';
 
