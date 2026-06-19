@@ -43,8 +43,8 @@ CoreMatrix is not just another fitness app. It's an **integrated health & wellne
 
 ```
 Backend:    Node.js, Express, MongoDB, Mongoose
-Frontend:   React 18, React Router, Tailwind CSS
-AI:         Gemini
+Frontend:   Next.js 14, Tailwind CSS
+AI:         Gemini 2.5 Flash
 Media:      Cloudinary
 Email:      SendGrid
 Database:   MongoDB Atlas (production ready)
@@ -168,6 +168,10 @@ CoreMatrix-Fitness/
 │   └── .env.example ✅
 ├── client/
 │   ├── src/
+│   │   ├── app/         # Next.js App Router (15+ pages)
+│   │   ├── components/  # Shared UI components
+│   │   ├── hooks/       # Custom React hooks
+│   │   └── api.js       # Axios API client
 │   ├── public/
 │   └── package.json
 ├── FEATURES.md ✅ (Comprehensive API docs)
@@ -188,7 +192,7 @@ CoreMatrix-Fitness/
 - npm installed
 - MongoDB instance (local or Atlas)
 - Redis instance (local or cloud) - for caching, real-time features
-- Basic API keys from services (OpenAI, Razorpay/Stripe, SendGrid)
+- Basic API keys from services (Gemini, Razorpay/Stripe, SendGrid)
 
 ### 1️⃣ Clone & Setup
 
@@ -219,16 +223,15 @@ cp .env.example .env
 # - JWT_SECRET
 # - NODE_ENV=development
 # - PORT=4000
-# - OPENAI_API_KEY (for AI features)
+# - GEMINI_API_KEY (for AI features)
 # - RAZORPAY_KEY_ID & RAZORPAY_KEY_SECRET (for payments)
 # - SENDGRID_API_KEY (for email)
 
 nano .env
 
 # For the frontend, create client/.env.local (if not using Vercel env vars)
-# This will be automatically picked up by Create React App
 cat > client/.env.local << EOF
-REACT_APP_API_URL=http://localhost:4000/api
+NEXT_PUBLIC_API_URL=http://localhost:4000/api
 EOF
 ```
 
@@ -244,7 +247,7 @@ npm run dev
 #### Terminal 2: Frontend
 ```bash
 cd client
-npm start
+npm run dev
 # Frontend runs on http://localhost:3000
 ```
 

@@ -199,7 +199,7 @@ function ForgeContent() {
           </div>
 
           <div className="mt-4">
-            <button id="btn-forge-add-workout" onClick={addWorkout} className="bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md hover:-translate-y-0.5 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100" disabled={!isAuthed}>Add workout</button>
+            <button id="btn-forge-add-workout" onClick={addWorkout} className="bg-[#ff5a1f] hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md shadow-orange-500/20 hover:-translate-y-0.5 hover:scale-105 hover:shadow-orange-500/30 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100" disabled={!isAuthed}>Add workout</button>
           </div>
         </div>
 

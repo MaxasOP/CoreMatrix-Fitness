@@ -186,53 +186,167 @@ function DieticianContent() {
           </div>
 
           {mealPlan && (
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Meal Plan</h2>
-              
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Breakfast</h3>
-                  <p className="text-gray-700">{mealPlan.breakfast}</p>
-                </div>
+            <div className="space-y-6">
+              {/* Header Card */}
+              <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl shadow-lg p-6 text-white">
+                <h2 className="text-2xl font-bold mb-1">Your Personalized Meal Plan</h2>
+                <p className="text-orange-100 text-sm">Tailored to your goals, preferences & budget</p>
+                {mealPlan.daily_macros?.calories > 0 && (
+                  <div className="mt-4 flex items-center gap-2">
+                    <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium">
+                      {mealPlan.daily_macros.calories} kcal/day
+                    </span>
+                  </div>
+                )}
+              </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Lunch</h3>
-                  <p className="text-gray-700">{mealPlan.lunch}</p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Dinner</h3>
-                  <p className="text-gray-700">{mealPlan.dinner}</p>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Snacks</h3>
-                  <p className="text-gray-700">{mealPlan.snacks}</p>
-                </div>
-
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Macro Breakdown</h3>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <p className="text-sm text-gray-600">Protein</p>
-                      <p className="text-2xl font-bold text-blue-600">{mealPlan.macros?.protein}g</p>
+              {/* Meal Cards */}
+              <div className="grid grid-cols-1 gap-4">
+                {['breakfast', 'lunch', 'dinner'].map((mealKey) => {
+                  const meal = mealPlan[mealKey];
+                  if (!meal || !meal.meal_name) return null;
+                  const mealColors = {
+                    breakfast: { bg: 'bg-amber-50', border: 'border-amber-200', accent: 'text-amber-600', badge: 'bg-amber-100 text-amber-700' },
+                    lunch: { bg: 'bg-emerald-50', border: 'border-emerald-200', accent: 'text-emerald-600', badge: 'bg-emerald-100 text-emerald-700' },
+                    dinner: { bg: 'bg-indigo-50', border: 'border-indigo-200', accent: 'text-indigo-600', badge: 'bg-indigo-100 text-indigo-700' }
+                  };
+                  const colors = mealColors[mealKey];
+                  return (
+                    <div key={mealKey} className={`${colors.bg} border ${colors.border} rounded-xl p-5 shadow-sm`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-lg font-bold text-gray-900 capitalize">{mealKey}</h3>
+                        <span className={`${colors.badge} text-xs font-semibold px-2.5 py-1 rounded-full`}>
+                          {meal.calories} kcal
+                        </span>
+                      </div>
+                      <p className="text-gray-800 font-semibold text-base mb-1">{meal.meal_name}</p>
+                      {meal.quantity && (
+                        <p className="text-gray-500 text-sm mb-3">{meal.quantity}</p>
+                      )}
+                      <div className="flex gap-3 mb-3">
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                          <span className="text-xs text-gray-600">P: {meal.protein}g</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
+                          <span className="text-xs text-gray-600">C: {meal.carbs}g</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+                          <span className="text-xs text-gray-600">F: {meal.fat}g</span>
+                        </div>
+                      </div>
+                      {meal.indian_alternatives && meal.indian_alternatives.length > 0 && (
+                        <div>
+                          <p className="text-xs text-gray-500 mb-1.5">Indian Alternatives:</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {meal.indian_alternatives.map((alt, i) => (
+                              <span key={i} className="bg-white border border-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">
+                                {alt}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <div className="text-center">
-                      <p className="text-sm text-gray-600">Carbs</p>
-                      <p className="text-2xl font-bold text-green-600">{mealPlan.macros?.carbs}g</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-sm text-gray-600">Fats</p>
-                      <p className="text-2xl font-bold text-orange-600">{mealPlan.macros?.fats}g</p>
-                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Snacks */}
+              {mealPlan.snacks && mealPlan.snacks.length > 0 && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                  <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                    <span className="text-xl">🥜</span> Snacks
+                  </h3>
+                  <div className="space-y-2">
+                    {mealPlan.snacks.map((snack, i) => (
+                      <div key={i} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <p className="text-sm font-medium text-gray-800">{snack.item || snack.name || snack}</p>
+                          {snack.quantity && <p className="text-xs text-gray-500">{snack.quantity}</p>}
+                        </div>
+                        {snack.calories > 0 && (
+                          <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">
+                            {snack.calories} kcal
+                          </span>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
+              )}
 
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-600">Monthly Cost Estimate</p>
-                  <p className="text-2xl font-bold text-green-600">₹{mealPlan.monthly_cost}</p>
+              {/* Daily Macros Bar Chart */}
+              {mealPlan.daily_macros && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">Daily Macros</h3>
+                  <div className="space-y-3">
+                    {[
+                      { key: 'protein', label: 'Protein', color: 'bg-red-500', bgColor: 'bg-red-100' },
+                      { key: 'carbs', label: 'Carbs', color: 'bg-yellow-500', bgColor: 'bg-yellow-100' },
+                      { key: 'fat', label: 'Fat', color: 'bg-blue-500', bgColor: 'bg-blue-100' }
+                    ].map(({ key, label, color, bgColor }) => {
+                      const value = mealPlan.daily_macros[key] || 0;
+                      const total = (mealPlan.daily_macros.protein || 0) + (mealPlan.daily_macros.carbs || 0) + (mealPlan.daily_macros.fat || 0);
+                      const pct = total > 0 ? (value / total) * 100 : 0;
+                      return (
+                        <div key={key}>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="font-medium text-gray-700">{label}</span>
+                            <span className="text-gray-500">{value}g ({pct.toFixed(0)}%)</span>
+                          </div>
+                          <div className={`w-full h-3 ${bgColor} rounded-full overflow-hidden`}>
+                            <div className={`h-full ${color} rounded-full transition-all duration-500`} style={{ width: `${pct}%` }}></div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
+                    <span className="text-sm text-gray-500">Total Calories</span>
+                    <span className="text-xl font-bold text-gray-900">{mealPlan.daily_macros.calories || 0} kcal</span>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Cost Estimate */}
+              {mealPlan.estimated_monthly_cost > 0 && (
+                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl shadow-sm border border-emerald-100 p-5">
+                  <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
+                    <span className="text-xl">💰</span> Monthly Cost Estimate
+                  </h3>
+                  <p className="text-3xl font-extrabold text-emerald-600 mb-4">₹{mealPlan.estimated_monthly_cost.toLocaleString()}</p>
+                  {mealPlan.cost_breakdown && (
+                    <div className="grid grid-cols-2 gap-2">
+                      {['breakfast', 'lunch', 'dinner', 'snacks'].map((key) => (
+                        <div key={key} className="flex justify-between items-center bg-white/70 rounded-lg px-3 py-2">
+                          <span className="text-sm text-gray-600 capitalize">{key}</span>
+                          <span className="text-sm font-semibold text-gray-800">₹{(mealPlan.cost_breakdown[key] || 0).toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Nutrition Tips */}
+              {mealPlan.nutrition_tips && mealPlan.nutrition_tips.length > 0 && (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                  <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                    <span className="text-xl">💡</span> Nutrition Tips
+                  </h3>
+                  <ul className="space-y-2">
+                    {mealPlan.nutrition_tips.map((tip, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="text-orange-500 mt-0.5 flex-shrink-0">•</span>
+                        <span className="text-sm text-gray-700">{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           )}
         </div>

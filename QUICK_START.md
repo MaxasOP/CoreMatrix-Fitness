@@ -34,8 +34,8 @@ cp .env.example .env
 # Minimum required for basic setup:
 # - MONGO_URI
 # - JWT_SECRET
+# - GEMINI_API_KEY
 # - RAZORPAY_KEY_ID & RAZORPAY_KEY_SECRET
-# - OPENAI_API_KEY
 # - SENDGRID_API_KEY
 
 nano .env
@@ -103,7 +103,7 @@ FRONTEND_URL=http://localhost:3000
 
 **AI Features**:
 ```env
-OPENAI_API_KEY=sk-...
+GEMINI_API_KEY=your_gemini_key_here
 ```
 
 **Payments**:
@@ -180,11 +180,25 @@ backend/
 client/
 ├── public/          # Static files
 ├── src/
-│   ├── pages/       # Page components (8 pages)
+│   ├── app/         # Next.js App Router pages
+│   │   ├── ai-dietician/
+│   │   ├── ai-workout/
+│   │   ├── auth/
+│   │   ├── challenges/
+│   │   ├── forge/
+│   │   ├── form-analysis/
+│   │   ├── fuel/
+│   │   ├── leaderboards/
+│   │   ├── logs/
+│   │   ├── progress/
+│   │   ├── reels/
+│   │   ├── setup/
+│   │   ├── supplements/
+│   │   ├── trainer-marketplace/
+│   │   └── yoga/
 │   ├── components/  # Reusable components
 │   ├── hooks/       # Custom hooks
-│   ├── services/    # API calls
-│   └── App.js       # Main app
+│   └── api.js       # Axios API client
 └── package.json
 ```
 

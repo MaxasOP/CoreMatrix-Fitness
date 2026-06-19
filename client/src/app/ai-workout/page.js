@@ -148,6 +148,57 @@ function WorkoutPlannerContent() {
                     </div>
                   </div>
                 ))}
+
+                {workoutPlan.warmup_routine?.length > 0 && (
+                  <div className="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-blue-500">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="bg-blue-100 text-blue-600 font-bold px-3 py-1 rounded-lg text-sm">Warmup</span>
+                      <h3 className="text-lg font-bold text-gray-900">Pre-Workout Routine</h3>
+                    </div>
+                    <ul className="space-y-2">
+                      {workoutPlan.warmup_routine.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
+                          <span className="bg-blue-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">{idx + 1}</span>
+                          <span className="text-gray-700 font-medium">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {workoutPlan.cooldown_routine?.length > 0 && (
+                  <div className="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-purple-500">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="bg-purple-100 text-purple-600 font-bold px-3 py-1 rounded-lg text-sm">Cooldown</span>
+                      <h3 className="text-lg font-bold text-gray-900">Post-Workout Routine</h3>
+                    </div>
+                    <ul className="space-y-2">
+                      {workoutPlan.cooldown_routine.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-3 p-3 bg-purple-50 rounded-xl border border-purple-100">
+                          <span className="bg-purple-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">{idx + 1}</span>
+                          <span className="text-gray-700 font-medium">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {workoutPlan.expert_tips?.length > 0 && (
+                  <div className="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-[#ff5a1f]">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="bg-orange-100 text-[#ff5a1f] font-bold px-3 py-1 rounded-lg text-sm">Expert Tips</span>
+                      <h3 className="text-lg font-bold text-gray-900">Pro Advice</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {workoutPlan.expert_tips.map((tip, idx) => (
+                        <div key={idx} className="flex items-start gap-3 p-4 bg-orange-50 rounded-xl border border-orange-100">
+                          <span className="bg-[#ff5a1f] text-white text-xs font-bold w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5">{idx + 1}</span>
+                          <p className="text-gray-700 font-medium">{tip}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </>
             ) : (
               <div className="bg-white/50 border-2 border-dashed border-gray-200 rounded-2xl p-12 text-center text-gray-400">
