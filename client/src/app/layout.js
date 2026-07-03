@@ -15,7 +15,7 @@ const bebasNeue = Bebas_Neue({
 });
 
 export const metadata = {
-  title: "CoreMatrix - Premium Fitness & Nutrition Tracker",
+  title: "CoreMatrix",
   description: "CoreMatrix is a premium fitness and nutrition dashboard featuring workout logging, meal planning, AI dietician, AI workout generator, video form analysis, and progress tracking.",
 };
 
