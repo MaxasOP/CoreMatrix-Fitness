@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const WorkoutSchema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   name: { type: String, required: true },
-  category: { type: String, required: true }, // Strength, Cardio, Yoga, Flexibility, Sports
+  category: { type: String, default: 'General' }, // Strength, Cardio, Yoga, Flexibility, Sports
   body_parts_targeted: [String], // ['chest', 'triceps', 'shoulders']
   sets: { type: Number, default: 3 },
   reps: { type: Number, default: 10 },

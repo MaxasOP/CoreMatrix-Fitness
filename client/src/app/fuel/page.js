@@ -63,7 +63,12 @@ function FuelContent() {
       setForm({ name: '', type: 'Lunch', calories: 0, protein: 0, carbs: 0, fat: 0, date: getTodayKey() });
       setMsg(editingId ? 'Meal updated successfully! 🥗' : 'Meal logged successfully! 🥑');
       setTimeout(() => setMsg(''), 4000);
-    } catch (err) { console.error('Save meal failed', err); }
+    } catch (err) { 
+      console.error('Save meal failed', err);
+      const errMsg = err.response?.data?.error || err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || err.message;
+      setMsg(`Error saving meal: ${errMsg}`);
+      setTimeout(() => setMsg(''), 5000);
+    }
   }
 
   function startEdit(m) {
@@ -82,8 +87,13 @@ function FuelContent() {
     if (!window.confirm('Delete this meal?')) return;
     try {
       await api.delete(`/meals/${id}`);
-      setWorkouts ? setWorkouts(prev => prev.filter(m => (m._id || m.id) !== id)) : setMeals(prev => prev.filter(m => (m._id || m.id) !== id));
-    } catch (err) { console.error('Delete meal failed', err); }
+      setMeals(prev => prev.filter(m => (m._id || m.id) !== id));
+    } catch (err) { 
+      console.error('Delete meal failed', err);
+      const errMsg = err.response?.data?.error || err.response?.data?.message || err.message;
+      setMsg(`Error deleting meal: ${errMsg}`);
+      setTimeout(() => setMsg(''), 5000);
+    }
   }
 
   const todayKey = getTodayKey();

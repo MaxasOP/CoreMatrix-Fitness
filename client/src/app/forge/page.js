@@ -103,7 +103,8 @@ function ForgeContent() {
       setTimeout(() => setMsg(''), 4000);
     } catch (err) { 
       console.error('Add workout failed', err); 
-      setMsg(`Error logging workout: ${err.response?.data?.error || err.message}`);
+      const errMsg = err.response?.data?.error || err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || err.message;
+      setMsg(`Error logging workout: ${errMsg}`);
       setTimeout(() => setMsg(''), 5000);
     }
   }
@@ -120,7 +121,8 @@ function ForgeContent() {
       setWorkouts(prev => prev.filter(w => (w._id || w.id) !== id));
     } catch (err) { 
       console.error('Delete failed', err); 
-      setMsg(`Error deleting workout: ${err.response?.data?.error || err.message}`);
+      const errMsg = err.response?.data?.error || err.response?.data?.message || err.message;
+      setMsg(`Error deleting workout: ${errMsg}`);
       setTimeout(() => setMsg(''), 5000);
     }
   }

@@ -7,9 +7,6 @@ COPY backend/package.json backend/package-lock.json ./
 RUN npm install --production
 COPY backend/ ./backend
 
-# Create empty client build directory to satisfy express fallback checks
-RUN mkdir -p /app/client/build
-
 WORKDIR /app/backend
 ENV NODE_ENV=production
 EXPOSE 4000

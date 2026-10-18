@@ -3,7 +3,12 @@ const mongoose = require('mongoose');
 const MealSchema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   name: { type: String, required: true },
-  type: { type: String, enum: ['breakfast', 'lunch', 'dinner', 'snack'], default: 'Meal' },
+  type: {
+    type: String,
+    enum: ['breakfast', 'lunch', 'dinner', 'snack'],
+    default: 'lunch',
+    set: v => (typeof v === 'string' ? v.toLowerCase() : v)
+  },
   calories: { type: Number, default: 0 },
   protein: { type: Number, default: 0 },
   carbs: { type: Number, default: 0 },

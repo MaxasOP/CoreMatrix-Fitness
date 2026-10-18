@@ -64,23 +64,29 @@ app.get('/api/health', (req, res) => res.json({
   version: '0.2.0'
 }));
 
-// Serve React client build in production if present
+// Serve React client build in production if index.html is present
 const clientBuildPath = path.join(__dirname, '..', 'client', 'build');
-if (process.env.NODE_ENV === 'production') {
-  console.log('Production mode detected. Checking client build at:', clientBuildPath);
-  if (fs.existsSync(clientBuildPath)) {
-    console.log('Client build found. Serving static files.');
-    app.use(express.static(clientBuildPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(clientBuildPath, 'index.html'));
-    });
-  } else {
-    console.warn('Client build NOT found at expected path. Root requests will show simple message.');
-    app.get('/', (req, res) => res.send('CoreMatrix API is running (Client build missing)'));
-  }
+const clientIndexPath = path.join(clientBuildPath, 'index.html');
+
+if (process.env.NODE_ENV === 'production' && fs.existsSync(clientIndexPath)) {
+  console.log('Client build found. Serving static files from:', clientBuildPath);
+  app.use(express.static(clientBuildPath));
+  app.get('*', (req, res) => {
+    res.sendFile(clientIndexPath);
+  });
 } else {
-  // Serve a simple message at root in non-production
-  app.get('/', (req, res) => res.send('CoreMatrix MERN backend v0.2.0'));
+  // Backend running in API-only mode
+  app.get('/', (req, res) => res.json({
+    status: 'ok',
+    message: 'CoreMatrix MERN Backend API running',
+    version: '0.2.0',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      workouts: '/api/workouts',
+      meals: '/api/meals'
+    }
+  }));
 }
 
 // Centralized Error Handling Middleware
