@@ -48,12 +48,7 @@ function LayoutContent({ children }) {
 
   return (
     <div className="min-h-screen text-gray-900 font-sans selection:bg-[#ff5a1f]/20 relative z-0">
-      {/* Animated Background Blobs */}
-      <div className="fixed inset-0 z-[-1] overflow-hidden bg-slate-50">
-        <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-orange-400/20 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
-        <div className="absolute top-[-10%] right-[-10%] w-[40rem] h-[40rem] bg-pink-400/20 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-[-20%] left-[20%] w-[40rem] h-[40rem] bg-purple-400/20 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-4000"></div>
-      </div>
+      <div className="fixed inset-0 z-[-1] bg-[#f3f0e8]" />
 
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-sm/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
@@ -67,15 +62,21 @@ function LayoutContent({ children }) {
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1 bg-gray-50/80 p-1.5 rounded-2xl border border-gray-100">
-            {nav.map(n => {
+          <nav className="hidden md:flex items-center gap-1">
+            {visibleNavItems.map(n => {
               const isActive = pathname === n.to;
               return (
-                <Link key={n.to} href={n.to} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${isActive ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100/50'}`}>
+                <Link key={n.to} href={n.to} className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'desktop-nav-active bg-[#171916]' : 'text-gray-500 hover:text-gray-900'}`}>
                   {n.label}
                 </Link>
               );
             })}
+            <details className="relative">
+              <summary className="list-none cursor-pointer px-3 py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-900">Explore</summary>
+              <div className="absolute right-0 top-12 w-52 rounded-xl border border-gray-200 bg-white p-2 shadow-xl">
+                {moreNavItems.map(n => <Link key={n.to} href={n.to} className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900">{n.label}</Link>)}
+              </div>
+            </details>
           </nav>
 
           <div className="flex items-center gap-4">

@@ -27,13 +27,21 @@ const { authOptional } = require('./middleware/authMiddleware');
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 4000;
+let databaseStatus = 'connecting';
 
 // Initialize Socket.io
 const socketService = new SocketService(server);
 
 // Security headers
 app.use(helmet());
-app.use(cors());
+const allowedOrigins = (process.env.CORS_ORIGIN || process.env.FRONTEND_URL || '')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
+app.use(cors({
+  origin: allowedOrigins.length ? allowedOrigins : true,
+  credentials: process.env.CORS_CREDENTIALS === 'true',
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -61,8 +69,14 @@ app.use('/api/analytics', analyticsRoutes);
 app.get('/api/health', (req, res) => res.json({ 
   status: 'ok', 
   message: 'CoreMatrix MERN backend running',
-  version: '0.2.0'
+  version: '0.2.0',
+  database: databaseStatus,
 }));
+
+app.get('/api/ready', (req, res) => {
+  const ready = databaseStatus === 'connected';
+  res.status(ready ? 200 : 503).json({ status: ready ? 'ready' : 'not_ready', database: databaseStatus });
+});
 
 // Serve React client build in production if index.html is present
 const clientBuildPath = path.join(__dirname, '..', 'client', 'build');
@@ -119,32 +133,22 @@ async function start() {
     }
   }
 
-  const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/corematrix';
-  try {
-    await mongoose.connect(mongoUri, { autoIndex: true });
-    console.log('MongoDB connected');
-  } catch (err) {
-    console.error('MongoDB connection error:', err.message);
-  }
-
   server.listen(PORT, () => {
     console.log(`CoreMatrix backend listening on http://localhost:${PORT}`);
     console.log('🚀 WebSocket server active (Socket.io)');
-    console.log('Available endpoints:');
-    console.log('  - /api/auth (register, login)');
-    console.log('  - /api/workouts (workout tracking)');
-    console.log('  - /api/meals (meal logging)');
-    console.log('  - /api/ai (meal plans, health twin)');
-    console.log('  - /api/supplements (supplement recommendations)');
-    console.log('  - /api/leaderboards (rankings)');
-    console.log('  - /api/challenges (fitness challenges)');
-    console.log('  - /api/reels (progress posts)');
-    console.log('  - /api/payments (payments & transactions)');
-    console.log('  - /api/video (form analysis)');
-    console.log('  - /api/analytics (user analytics)');
   });
+
+  const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/corematrix';
+  try {
+    await mongoose.connect(mongoUri, { autoIndex: true, serverSelectionTimeoutMS: 10000 });
+    databaseStatus = 'connected';
+    console.log('MongoDB connected');
+  } catch (err) {
+    databaseStatus = 'disconnected';
+    console.error('MongoDB connection error:', err.message);
+  }
 }
 
-start();
+if (require.main === module) start();
 
-module.exports = app;
+module.exports = { app, server, start };

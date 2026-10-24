@@ -106,10 +106,21 @@ router.get('/', authRequired, async (req, res) => {
   }
 });
 
-/**
- * GET /api/reels/:reelId
- * Get single reel details
- */
+/** Get the authenticated user's reels. Keep before /:reelId. */
+router.get('/my-reels', authRequired, async (req, res) => {
+  try {
+    const { limit = 20 } = req.query;
+    const reels = await ProgressReel.find({ user_id: req.user.id, is_deleted: false })
+      .sort({ created_at: -1 })
+      .limit(parseInt(limit));
+    res.json({ message: 'User reels retrieved', reels, total: reels.length });
+  } catch (error) {
+    console.error('Error fetching user reels:', error);
+    res.status(500).json({ error: 'Failed to fetch user reels' });
+  }
+});
+
+/** GET /api/reels/:reelId */
 router.get('/:reelId', async (req, res) => {
   try {
     const reel = await ProgressReel.findByIdAndUpdate(
@@ -233,33 +244,6 @@ router.delete('/:reelId', authRequired, async (req, res) => {
   } catch (error) {
     console.error('Error deleting reel:', error);
     res.status(500).json({ error: 'Failed to delete reel' });
-  }
-});
-
-/**
- * GET /api/reels/my-reels
- * Get authenticated user's reels
- */
-router.get('/my-reels', authRequired, async (req, res) => {
-  try {
-    const { limit = 20 } = req.query;
-    const userId = req.user.id; // Use req.user.id
-
-    const reels = await ProgressReel.find({
-      user_id: userId,
-      is_deleted: false
-    })
-      .sort({ created_at: -1 })
-      .limit(parseInt(limit));
-
-    res.json({
-      message: 'User reels retrieved',
-      reels,
-      total: reels.length
-    });
-  } catch (error) {
-    console.error('Error fetching user reels:', error);
-    res.status(500).json({ error: 'Failed to fetch user reels' });
   }
 });
 

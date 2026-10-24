@@ -3,6 +3,7 @@
 const User = require('../models/User');
 const Workout = require('../models/Workout');
 const Meal = require('../models/Meal');
+const mongoose = require('mongoose');
 
 exports.getUserAnalytics = async (req, res) => {
   try {

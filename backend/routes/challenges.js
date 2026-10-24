@@ -39,10 +39,26 @@ router.get('/', async (req, res) => {
   }
 });
 
-/**
- * GET /api/challenges/:challengeId
- * Get challenge details
- */
+/** Get the authenticated user's challenge participation. This static route
+ * must be declared before /:challengeId. */
+router.get('/user-challenges', authRequired, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const challenges = await Challenge.find({ participants: userId });
+    const userChallenges = challenges.map(c => ({
+      challenge_id: c._id,
+      name: c.name,
+      status: c.status,
+      progress: c.leaderboard.find(l => l.user_id.toString() === userId)
+    }));
+    res.json({ message: 'User challenges retrieved', challenges: userChallenges, total: userChallenges.length });
+  } catch (error) {
+    console.error('Error fetching user challenges:', error);
+    res.status(500).json({ error: 'Failed to fetch user challenges' });
+  }
+});
+
+/** GET /api/challenges/:challengeId */
 router.get('/:challengeId', async (req, res) => {
   try {
     const challenge = await Challenge.findById(req.params.challengeId);
@@ -232,36 +248,6 @@ router.get('/:challengeId/leaderboard', async (req, res) => {
   } catch (error) {
     console.error('Error fetching challenge leaderboard:', error);
     res.status(500).json({ error: 'Failed to fetch leaderboard' });
-  }
-});
-
-/**
- * GET /api/challenges/user-challenges
- * Get user's challenge participation
- */
-router.get('/user-challenges', authRequired, async (req, res) => { // Apply authRequired and change route
-  try {
-    const userId = req.user.id; // Use req.user.id
-
-    const challenges = await Challenge.find(
-      { participants: userId }
-    );
-
-    const userChallenges = challenges.map(c => ({
-      challenge_id: c._id,
-      name: c.name,
-      status: c.status,
-      progress: c.leaderboard.find(l => l.user_id.toString() === userId)
-    }));
-
-    res.json({
-      message: 'User challenges retrieved',
-      challenges: userChallenges,
-      total: userChallenges.length
-    });
-  } catch (error) {
-    console.error('Error fetching user challenges:', error);
-    res.status(500).json({ error: 'Failed to fetch user challenges' });
   }
 });
 
