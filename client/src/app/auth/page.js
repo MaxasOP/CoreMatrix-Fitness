@@ -116,7 +116,10 @@ export default function Auth() {
           {msg && <div className={`mt-6 p-4 rounded-xl text-sm font-medium text-center ${msg.toLowerCase().includes('error') || msg.toLowerCase().includes('failed') ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-700 border border-green-100'}`}>{msg}</div>}
         </div>
 
-        <div className="hidden md:flex flex-col justify-center bg-gradient-to-br from-[#ff5a1f] via-pink-500 to-orange-500 animate-gradient-x rounded-3xl p-10 text-white shadow-xl relative overflow-hidden h-full min-h-[400px]">
+        <div
+          className="auth-prism-panel hidden md:flex flex-col justify-center rounded-3xl p-10 text-white shadow-xl relative overflow-hidden h-full min-h-[400px]"
+          style={{ backgroundImage: 'linear-gradient(138deg, #11140f 0%, #263416 55%, #527a0e 100%)' }}
+        >
           <div className="absolute -bottom-20 -right-20 opacity-10 transform rotate-12 scale-150">
             <svg width="400" height="400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
           </div>
