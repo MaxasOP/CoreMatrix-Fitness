@@ -151,15 +151,10 @@ function LayoutContent({ children }) {
 }
 
 export default function ClientLayout({ children }) {
-  // Safe client-side dark theme initialization
+  // The feature pages currently share a light-only palette. Keep the root
+  // theme deterministic so fixed light surfaces never inherit dark tokens.
   useEffect(() => {
-    try {
-      var theme = localStorage.getItem('cmTheme');
-      if (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        theme = 'dark';
-      }
-      document.documentElement.dataset.theme = theme || 'light';
-    } catch (e) {}
+    document.documentElement.dataset.theme = 'light';
   }, []);
 
   return (

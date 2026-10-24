@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --bg: #f6f2ea;
   --ink: #101418;
-  --muted: #5e6472;
+  --muted: #4b5563;
   --card: #fffdf8;
   --card-soft: rgba(255,255,255,0.7);
   --surface-strong: rgba(255,255,255,0.92);
-  --accent: #ff5a1f;
+  --accent: #c2410c;
   --accent-2: #b6f000;
   --accent-3: #1bb3ff;
   --bg-grad-1: rgba(255,90,31,0.18);
@@ -76,14 +77,23 @@ body {
   min-height: 100vh;
 }
 
+/* Contrast guardrails for legacy feature pages using Tailwind arbitrary
+   orange utilities. These shades meet AA contrast for normal text. */
+.text-\[\#ff5a1f\] { color: #b93809 !important; }
+.bg-\[\#ff5a1f\] { background-color: #c2410c !important; }
+.hover\:text-\[\#ff5a1f\]:hover { color: #b93809 !important; }
+.hover\:border-\[\#ff5a1f\]:hover { border-color: #b93809 !important; }
+
 h1, h2, h3, .display {
   font-family: var(--font-bebas-neue), var(--font-space-grotesk), sans-serif;
   letter-spacing: 0.04em;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 a:focus-visible,
