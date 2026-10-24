@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useContext } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import api from '../../api';
 import { AuthContext } from '../../AuthContext';
@@ -68,9 +69,15 @@ export default function Auth() {
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
         <div className="card p-8 sm:p-10 shadow-2xl shadow-gray-200/50 border-white/80">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-gray-900 to-black rounded-2xl mx-auto mb-4 shadow-lg flex items-center justify-center transform -rotate-3">
-              <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-            </div>
+            <Image
+              src="/assets/corematrix-logo-v3.png"
+              alt="CoreMatrix"
+              width={2172}
+              height={724}
+              priority
+              className="h-14 sm:h-16 w-auto mx-auto mb-5"
+              sizes="(max-width: 640px) 190px, 216px"
+            />
             <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">{mode === 'login' ? 'Welcome back 👋' : 'Join the program 🚀'}</h1>
             <div className="text-gray-500 mt-2 font-medium">{mode === 'login' ? 'Log in and keep the momentum going.' : 'Create a free account and start tracking today.'}</div>
           </div>

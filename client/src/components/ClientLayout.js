@@ -2,6 +2,7 @@
 
 import React, { useContext, useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { AuthContext, AuthProvider } from '../AuthContext';
 
@@ -52,14 +53,16 @@ function LayoutContent({ children }) {
 
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-sm/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#ff5a1f] to-orange-500 rounded-xl shadow-md shadow-orange-500/20 flex items-center justify-center transform group-hover:-rotate-3 transition-transform">
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-            </div>
-            <div>
-              <div className="font-extrabold text-xl tracking-tight text-gray-900">CoreMatrix</div>
-              <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest leading-none">Workout & Meal</div>
-            </div>
+          <Link href="/" className="group shrink-0" aria-label="CoreMatrix home">
+            <Image
+              src="/assets/corematrix-logo-v3.png"
+              alt="CoreMatrix"
+              width={2172}
+              height={724}
+              priority
+              className="h-9 sm:h-10 w-auto transition-opacity group-hover:opacity-75"
+              sizes="(max-width: 640px) 132px, 148px"
+            />
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
