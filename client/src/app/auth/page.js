@@ -2,6 +2,7 @@
 
 import React, { useState, useContext } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '../../api';
 import { AuthContext } from '../../AuthContext';
@@ -61,20 +62,19 @@ export default function Auth() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pb-12">
       {/* Back to home */}
-      <a href="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#ff5a1f] transition-colors mb-6 font-medium">
+      <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#ff5a1f] transition-colors mb-6 font-medium">
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
         Back to Home
-      </a>
+      </Link>
 
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
         <div className="card p-8 sm:p-10 shadow-2xl shadow-gray-200/50 border-white/80">
           <div className="text-center mb-8">
             <Image
-              src="/assets/corematrix-logo-v3.png"
+              src="/assets/corematrix-logo.webp"
               alt="CoreMatrix"
-              width={2172}
-              height={724}
-              priority
+              width={768}
+              height={256}
               className="h-14 sm:h-16 w-auto mx-auto mb-5"
               sizes="(max-width: 640px) 190px, 216px"
             />

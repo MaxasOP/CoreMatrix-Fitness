@@ -55,11 +55,11 @@ function LayoutContent({ children }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
           <Link href="/" className="group shrink-0" aria-label="CoreMatrix home">
             <Image
-              src="/assets/corematrix-logo-v3.png"
+              src="/assets/corematrix-logo.webp"
               alt="CoreMatrix"
-              width={2172}
-              height={724}
-              priority
+              width={768}
+              height={256}
+              preload
               className="h-9 sm:h-10 w-auto transition-opacity group-hover:opacity-75"
               sizes="(max-width: 640px) 132px, 148px"
             />
