@@ -62,6 +62,10 @@ export default function Home() {
   return (
     <main className="dashboard-shell">
       <section className="command-hero">
+        <div className="refracted-glass" aria-hidden="true">
+          <span className="refracted-orb" />
+          <i /><i /><i /><i /><i /><i /><i /><i /><i />
+        </div>
         <div>
           <p className="eyebrow">Daily command center</p>
           <h1>{user ? `Ready, ${user.name.split(' ')[0]}?` : 'Make today count.'}</h1>
