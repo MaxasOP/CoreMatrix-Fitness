@@ -342,7 +342,7 @@ const SupplementCard = ({ supplement }) => {
         <img
           src={supplement.image_url}
           alt={supplement.name}
-          className="w-full h-40 object-cover rounded-lg mb-4"
+          className="w-full h-44 object-contain bg-gray-50/80 p-2.5 rounded-lg mb-4"
         />
       )}
 

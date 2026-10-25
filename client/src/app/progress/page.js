@@ -80,10 +80,23 @@ function ProgressContent() {
               <div className="h-full bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 animate-gradient-x rounded-full transition-all duration-1000" style={{ width: `${weekProgress}%` }} />
             </div>
           </div>
-          <div className="relative min-h-64 overflow-hidden rounded-2xl bg-[#151714]">
-            <Image src="/assets/progress-athlete.webp" alt="Athlete preparing for the next training session" fill preload quality={95} sizes="(max-width: 768px) 100vw, 38vw" className="object-cover object-[center_34%]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
-            <p className="absolute inset-x-5 bottom-4 text-sm font-semibold text-white">Preparation is part of the work.</p>
+          <div className="relative min-h-[380px] sm:min-h-[440px] md:min-h-full overflow-hidden rounded-2xl bg-[#151714] flex items-end p-6">
+            <Image
+              src="/assets/progress-athlete.webp"
+              alt="Athlete preparing for the next training session"
+              fill
+              preload
+              quality={95}
+              sizes="(max-width: 768px) 100vw, 38vw"
+              className="object-cover object-[center_16%] sm:object-[center_20%] md:object-[center_25%]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 via-35% to-transparent pointer-events-none" />
+            <div className="relative z-10 max-w-xs text-white">
+              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-lime-300 flex items-center gap-1.5 mb-1.5">
+                <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Discipline
+              </span>
+              <p className="text-sm sm:text-base font-semibold leading-snug">Preparation is part of the work.</p>
+            </div>
           </div>
         </div>
         <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">

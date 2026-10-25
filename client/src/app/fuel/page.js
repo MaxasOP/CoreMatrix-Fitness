@@ -171,12 +171,22 @@ function FuelContent() {
         </div>
 
         <aside className="card p-0 overflow-hidden">
-          <div className="relative h-52">
-            <Image src="/assets/fuel-athlete.webp" alt="Athlete holding a nutrition shaker after training" fill preload quality={95} sizes="(max-width: 768px) 100vw, 33vw" className="object-cover object-[center_38%]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-            <div className="absolute inset-x-5 bottom-4 text-white">
-              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-lime-300">Recovery starts here</span>
-              <p className="mt-1 text-sm font-semibold">Match every session with deliberate fuel.</p>
+          <div className="relative min-h-[320px] sm:min-h-[360px] md:h-72 flex items-end">
+            <Image
+              src="/assets/fuel-athlete.webp"
+              alt="Athlete holding a nutrition shaker after training"
+              fill
+              preload
+              quality={95}
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover object-[center_20%] sm:object-[center_24%] md:object-[center_28%]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 via-35% to-transparent pointer-events-none" />
+            <div className="relative z-10 p-5 text-white">
+              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-lime-300 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Recovery starts here
+              </span>
+              <p className="mt-1 text-sm font-semibold leading-snug">Match every session with deliberate fuel.</p>
             </div>
           </div>
           <div className="p-6">

@@ -102,7 +102,7 @@ function TrainerMarketplaceContent() {
 const TrainerCard = ({ trainer, onBook }) => (
   <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
     {trainer.image_url && (
-      <img src={trainer.image_url} alt={trainer.name} className="w-full h-40 object-cover" />
+      <img src={trainer.image_url} alt={trainer.name} className="w-full h-48 object-cover object-[center_20%]" />
     )}
     <div className="p-6">
       <h3 className="text-lg font-bold text-gray-900">{trainer.name}</h3>

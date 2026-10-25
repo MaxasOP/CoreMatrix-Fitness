@@ -588,10 +588,9 @@ button:disabled {
   .metric-card { min-width:0; padding:18px 12px 20px; }
   .metric-card strong { margin-top:9px; font-size:32px; }
   .metric-card small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:10px; }
-  .metric-label { font-size:9px; letter-spacing:.08em; }
-  .training-visuals { gap:1px; margin:0; background:rgba(255,255,255,.08); }
-  .training-visual { min-height:66svh; border-radius:0; }
-  .training-visual-copy { inset:auto 20px 22px; }
+  .training-visuals { gap:14px; margin:14px 0; background:transparent; }
+  .training-visual { min-height:280px; max-height:360px; aspect-ratio:16/10; border-radius:18px; }
+  .training-visual-copy { inset:auto 20px 20px; }
   .dashboard-grid { gap:0; }
   .focus-card,.quick-card,.recent-card { padding:30px 20px; border-width:0 0 1px; border-radius:0; }
   .quick-card { order:-1; }

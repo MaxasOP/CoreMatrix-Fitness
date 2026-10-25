@@ -49,13 +49,23 @@ function WorkoutPlannerContent() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <div className="relative min-h-72 overflow-hidden rounded-[28px] bg-[#11140f] mb-8 shadow-xl flex items-end">
-          <Image src="/assets/planner-athlete.webp" alt="Athlete performing a cable strength exercise" fill preload quality={95} sizes="(max-width: 1024px) 100vw, 896px" className="object-cover object-[center_25%]" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent" />
-          <div className="relative z-10 max-w-xl p-7 md:p-10 text-white">
-            <div className="text-lime-300 text-xs font-bold uppercase tracking-[0.18em] mb-2">Built around you</div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">Workout Planner</h1>
-            <p className="text-gray-200">Generate a custom routine tailored to your equipment and schedule.</p>
+        <div className="relative min-h-[360px] sm:min-h-[400px] md:min-h-72 overflow-hidden rounded-[28px] bg-[#11140f] mb-8 shadow-xl flex items-end">
+          <Image
+            src="/assets/planner-athlete.webp"
+            alt="Athlete performing a cable strength exercise"
+            fill
+            preload
+            quality={95}
+            sizes="(max-width: 1024px) 100vw, 896px"
+            className="object-cover object-[center_16%] sm:object-[center_20%] md:object-[center_25%]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/10 md:bg-gradient-to-r md:from-black/95 md:via-black/55 md:to-transparent pointer-events-none" />
+          <div className="relative z-10 max-w-xl p-6 sm:p-8 md:p-10 text-white">
+            <div className="text-lime-300 text-xs font-bold uppercase tracking-[0.18em] mb-2 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Built around you
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">Workout Planner</h1>
+            <p className="text-gray-200 text-sm sm:text-base">Generate a custom routine tailored to your equipment and schedule.</p>
           </div>
         </div>
 
