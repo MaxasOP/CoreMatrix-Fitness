@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -48,14 +48,14 @@ function LayoutContent({ children }) {
   const moreNavItems = nav.slice(4);
 
   return (
-    <div className="site-shell min-h-screen text-gray-900 font-sans selection:bg-lime-300/40 relative z-0">
+    <div className="site-shell min-h-screen font-sans selection:bg-lime-300/30 relative z-0">
       <div className="site-canvas" aria-hidden="true">
         <span className="site-orb site-orb--one" />
         <span className="site-orb site-orb--two" />
         <div className="site-refraction"><i /><i /><i /><i /><i /><i /><i /></div>
       </div>
 
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-sm/50">
+      <header className="site-header sticky top-0 z-50 backdrop-blur-xl border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
           <Link href="/" className="group shrink-0" aria-label="CoreMatrix home">
             <Image
@@ -64,7 +64,7 @@ function LayoutContent({ children }) {
               width={768}
               height={256}
               preload
-              className="h-9 sm:h-10 w-auto transition-opacity group-hover:opacity-75"
+              className="site-logo h-9 sm:h-10 w-auto transition-opacity group-hover:opacity-75"
               sizes="(max-width: 640px) 132px, 148px"
             />
           </Link>
@@ -73,15 +73,15 @@ function LayoutContent({ children }) {
             {visibleNavItems.map(n => {
               const isActive = pathname === n.to;
               return (
-                <Link key={n.to} href={n.to} className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'desktop-nav-active bg-[#171916]' : 'text-gray-500 hover:text-gray-900'}`}>
+                <Link key={n.to} href={n.to} className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'desktop-nav-active bg-white/10' : 'text-gray-400 hover:text-white'}`}>
                   {n.label}
                 </Link>
               );
             })}
             <details className="relative">
               <summary className="list-none cursor-pointer px-3 py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-900">Explore</summary>
-              <div className="absolute right-0 top-12 w-52 rounded-xl border border-gray-200 bg-white p-2 shadow-xl">
-                {moreNavItems.map(n => <Link key={n.to} href={n.to} className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900">{n.label}</Link>)}
+              <div className="nav-menu absolute right-0 top-12 w-52 rounded-xl border p-2 shadow-xl">
+                {moreNavItems.map(n => <Link key={n.to} href={n.to} className="block rounded-lg px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white">{n.label}</Link>)}
               </div>
             </details>
           </nav>
@@ -105,12 +105,12 @@ function LayoutContent({ children }) {
 
       {/* Mobile Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-safe">
-        <div className="bg-white/90 backdrop-blur-xl border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] px-4 py-3 flex items-center justify-around">
+        <div className="mobile-dock backdrop-blur-xl border-t px-4 py-3 flex items-center justify-around">
           {visibleNavItems.map(n => {
             const isActive = pathname === n.to;
             return (
-              <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-1.5 transition-colors ${isActive ? 'text-[#456500]' : 'text-gray-400 hover:text-gray-600'}`} onClick={() => setShowMoreNav(false)}>
-                <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-lime-100' : 'bg-transparent'}`}>
+              <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-1.5 transition-colors ${isActive ? 'text-lime-300' : 'text-gray-500 hover:text-gray-300'}`} onClick={() => setShowMoreNav(false)}>
+                <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-lime-300/10' : 'bg-transparent'}`}>
                   {n.icon}
                 </div>
                 <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap">{n.label}</span>
@@ -118,8 +118,8 @@ function LayoutContent({ children }) {
             );
           })}
           {/* More button */}
-          <button onClick={() => setShowMoreNav(true)} className={`flex flex-col items-center gap-1.5 min-w-[4.5rem] transition-colors ${showMoreNav ? 'text-[#456500]' : 'text-gray-400 hover:text-gray-600'}`}>
-            <div className={`p-1.5 rounded-xl transition-colors ${showMoreNav ? 'bg-lime-100' : 'bg-transparent'}`}>
+          <button onClick={() => setShowMoreNav(true)} className={`flex flex-col items-center gap-1.5 min-w-[4.5rem] transition-colors ${showMoreNav ? 'text-lime-300' : 'text-gray-500 hover:text-gray-300'}`}>
+            <div className={`p-1.5 rounded-xl transition-colors ${showMoreNav ? 'bg-lime-300/10' : 'bg-transparent'}`}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
             </div>
             <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap">More</span>
@@ -130,9 +130,9 @@ function LayoutContent({ children }) {
       {/* More Navigation Overlay */}
       {showMoreNav && (
         <div className="fixed inset-0 z-50 md:hidden bg-black/50 backdrop-blur-sm flex items-end justify-center" onClick={() => setShowMoreNav(false)}>
-          <div className="bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.1)] w-full max-h-[80vh] overflow-y-auto pb-safe p-6" onClick={e => e.stopPropagation()}>
+          <div className="more-sheet rounded-t-3xl w-full max-h-[80vh] overflow-y-auto pb-safe p-6" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-gray-900">More Options</h3>
+              <h3 className="text-xl font-bold text-white">More</h3>
               <button onClick={() => setShowMoreNav(false)} className="text-gray-400 hover:text-gray-600">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
@@ -141,7 +141,7 @@ function LayoutContent({ children }) {
               {moreNavItems.map(n => {
                 const isActive = pathname === n.to;
                 return (
-                  <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-colors ${isActive ? 'bg-lime-100 text-[#456500]' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`} onClick={() => setShowMoreNav(false)}>
+                  <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-colors ${isActive ? 'bg-lime-300/10 text-lime-300' : 'bg-white/5 text-gray-300 hover:bg-white/10'}`} onClick={() => setShowMoreNav(false)}>
                     <div className="p-1.5 rounded-xl">
                       {n.icon}
                     </div>
@@ -158,12 +158,6 @@ function LayoutContent({ children }) {
 }
 
 export default function ClientLayout({ children }) {
-  // The feature pages currently share a light-only palette. Keep the root
-  // theme deterministic so fixed light surfaces never inherit dark tokens.
-  useEffect(() => {
-    document.documentElement.dataset.theme = 'light';
-  }, []);
-
   return (
     <AuthProvider>
       <LayoutContent>{children}</LayoutContent>

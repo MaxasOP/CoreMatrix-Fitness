@@ -75,11 +75,11 @@ export default function Auth() {
               alt="CoreMatrix"
               width={768}
               height={256}
-              className="h-14 sm:h-16 w-auto mx-auto mb-5"
+              className="site-logo h-14 sm:h-16 w-auto mx-auto mb-5"
               sizes="(max-width: 640px) 190px, 216px"
             />
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">{mode === 'login' ? 'Welcome back 👋' : 'Join the program 🚀'}</h1>
-            <div className="text-gray-500 mt-2 font-medium">{mode === 'login' ? 'Log in and keep the momentum going.' : 'Create a free account and start tracking today.'}</div>
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">{mode === 'login' ? 'Welcome back.' : 'Create your account.'}</h1>
+            <div className="text-gray-500 mt-2 font-medium">{mode === 'login' ? 'Your training log is waiting.' : 'Start with today. Build from there.'}</div>
           </div>
 
           <div className="space-y-4">

@@ -22,7 +22,7 @@ export default function Home() {
   const { user, authLoading } = useContext(AuthContext);
   const [workouts, setWorkouts] = useState([]);
   const [meals, setMeals] = useState([]);
-  const [tip, setTip] = useState('Train with intent. Recover with the same discipline.');
+  const [tip, setTip] = useState('Leave one clean rep in reserve. Come back stronger tomorrow.');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -67,10 +67,10 @@ export default function Home() {
           <i /><i /><i /><i /><i /><i /><i /><i /><i />
         </div>
         <div>
-          <p className="eyebrow">Daily command center</p>
-          <h1>{user ? `Ready, ${user.name.split(' ')[0]}?` : 'Make today count.'}</h1>
-          <p className="hero-copy">One clear view of your training and nutrition. No noise, just the next useful move.</p>
-          <div className="hero-actions"><Link href="/forge" className="action-primary">Start workout <span>→</span></Link><Link href="/fuel" className="action-secondary">Log a meal</Link></div>
+          <p className="eyebrow">Today / CoreMatrix</p>
+          <h1>{user ? `${user.name.split(' ')[0]}, show up.` : 'Log the work.'}</h1>
+          <p className="hero-copy">Training, food, and recovery—kept in one place so you can see what is actually moving.</p>
+          <div className="hero-actions"><Link href="/forge" className="action-primary">Train now <span>→</span></Link><Link href="/fuel" className="action-secondary">Add food</Link></div>
         </div>
         <div className="today-score" aria-label="Weekly training progress"><span>This week</span><strong>{summary.activeDays.size}<small>/7</small></strong><p>active days</p></div>
       </section>
@@ -105,9 +105,9 @@ export default function Home() {
 
         <aside className="quick-card">
           <p className="eyebrow">Next actions</p><h2>Keep momentum</h2>
-          <Link href="/ai-workout"><span>Build a plan</span><small>AI workout planner</small><b>↗</b></Link>
-          <Link href="/ai-dietician"><span>Plan nutrition</span><small>Personalised meals</small><b>↗</b></Link>
-          <Link href="/form-analysis"><span>Check your form</span><small>Video movement analysis</small><b>↗</b></Link>
+          <Link href="/ai-workout"><span>Build a week</span><small>Set days and equipment</small><b>↗</b></Link>
+          <Link href="/ai-dietician"><span>Sort your meals</span><small>Plan around your target</small><b>↗</b></Link>
+          <Link href="/form-analysis"><span>Review a lift</span><small>Upload one working set</small><b>↗</b></Link>
         </aside>
       </section>
 
