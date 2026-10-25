@@ -119,7 +119,7 @@ export default function Home() {
         <div className="command-content">
           <p className="eyebrow">Today&apos;s Focus</p>
           <h1>{user ? `${user.name.split(' ')[0]}, show up.` : 'Log the work.'}</h1>
-          <p className="hero-copy">Training, food, and recovery—kept in one place so you can see what is actually moving.</p>
+          <p className="hero-copy">Your lifts, meals, and weekly progress—recorded without the noise.</p>
           <div className="hero-actions"><Link href="/forge" className="action-primary">Train now <span>→</span></Link><Link href="/fuel" className="action-secondary">Add food</Link></div>
         </div>
         <div className="today-score" aria-label="Weekly training progress"><span>This week</span><strong>{summary.activeDays.size}<small>/7</small></strong><p>active days</p></div>
@@ -137,24 +137,24 @@ export default function Home() {
         <Link href="/forge" className="training-visual group">
           <Image src="/assets/athlete-strength.webp" alt="Athlete performing a dumbbell curl in a gym" fill quality={95} priority sizes="(max-width: 800px) 100vw, 50vw" className="object-cover object-[center_18%] transition-transform duration-500 ease-out group-hover:scale-105" />
           <span className="training-visual-shade" />
-          <span className="training-visual-copy"><small>Strength</small><strong>Own the next rep.</strong><b>Start workout →</b></span>
+          <span className="training-visual-copy"><small>Strength</small><strong>Start a workout.</strong><b>Open workout log →</b></span>
         </Link>
         <Link href="/form-analysis" className="training-visual group">
           <Image src="/assets/athlete-form.webp" alt="Athlete holding a plank on dumbbells" fill quality={95} sizes="(max-width: 800px) 100vw, 50vw" className="object-cover object-[center_50%] transition-transform duration-500 ease-out group-hover:scale-105" />
           <span className="training-visual-shade" />
-          <span className="training-visual-copy"><small>Technique</small><strong>Move with control.</strong><b>Analyse form →</b></span>
+          <span className="training-visual-copy"><small>Technique</small><strong>Check your form.</strong><b>Upload a set →</b></span>
         </Link>
       </section>
 
       <section className="dashboard-grid">
         <article className="focus-card">
-          <div className="section-heading"><div><p className="eyebrow">Rhythm</p><h2>Your training week</h2></div><Link href="/progress">View progress</Link></div>
+          <div className="section-heading"><div><p className="eyebrow">Week</p><h2>Your training</h2></div><Link href="/progress">View progress</Link></div>
           <div className="week-strip">{week.map((day, index) => <div className={summary.activeDays.has(index) ? 'day active' : 'day'} key={day}><span>{day}</span><i /></div>)}</div>
-          <div className="insight-row"><span className="insight-mark">CM</span><p><strong>Coach note</strong>{tip}</p></div>
+          <div className="insight-row"><span className="insight-mark">CM</span><p><strong>Training note</strong>{tip}</p></div>
         </article>
 
         <aside className="quick-card">
-          <p className="eyebrow">Next actions</p><h2>Keep momentum</h2>
+          <p className="eyebrow">Tools</p><h2>Plan and review</h2>
           <Link href="/ai-workout"><span>Build a week</span><small>Set days and equipment</small><b>↗</b></Link>
           <Link href="/ai-dietician"><span>Sort your meals</span><small>Plan around your target</small><b>↗</b></Link>
           <Link href="/form-analysis"><span>Review a lift</span><small>Upload one working set</small><b>↗</b></Link>
@@ -163,7 +163,7 @@ export default function Home() {
 
       <section className="recent-card">
         <div className="section-heading"><div><p className="eyebrow">History</p><h2>Recent sessions</h2></div><Link href="/logs">Open log</Link></div>
-        {workouts.length ? workouts.slice(0, 4).map(item => <div className="session-row" key={item._id || item.id}><span className="session-glyph">↗</span><div><strong>{item.name}</strong><small>{item.category || 'Training'} · {item.sets || 0} sets</small></div><time>{item.log_date ? new Date(item.log_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Today'}</time></div>) : <div className="empty-state"><strong>Your first session starts here.</strong><span>Log a workout and this space becomes your training history.</span></div>}
+        {workouts.length ? workouts.slice(0, 4).map(item => <div className="session-row" key={item._id || item.id}><span className="session-glyph">↗</span><div><strong>{item.name}</strong><small>{item.category || 'Training'} · {item.sets || 0} sets</small></div><time>{item.log_date ? new Date(item.log_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : 'Today'}</time></div>) : <div className="empty-state"><strong>No sessions logged.</strong><span>Completed workouts will appear here.</span></div>}
       </section>
     </main>
   );

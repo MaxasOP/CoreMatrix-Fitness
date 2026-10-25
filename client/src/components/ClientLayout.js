@@ -104,22 +104,6 @@ function LayoutContent({ children }) {
         {children}
       </main>
 
-      <footer className="site-footer">
-        <div className="site-footer-inner">
-          <Link href="/" className="footer-brand" aria-label="CoreMatrix home">
-            <Image src="/assets/corematrix-logo.webp" alt="CoreMatrix" width={768} height={256} className="site-logo" sizes="128px" />
-          </Link>
-          <p>Training, meals, and progress. One record of the work.</p>
-          <nav aria-label="Footer navigation">
-            <Link href="/forge">Workout</Link>
-            <Link href="/fuel">Meals</Link>
-            <Link href="/progress">Progress</Link>
-            <Link href="/auth">Account</Link>
-          </nav>
-          <small>© {new Date().getFullYear()} CoreMatrix</small>
-        </div>
-      </footer>
-
       {/* Mobile Navigation */}
       <nav className="mobile-nav-shell fixed bottom-0 inset-x-0 z-50 md:hidden" aria-label="Primary navigation">
         <div className="mobile-dock flex items-center justify-around">
@@ -154,12 +138,12 @@ function LayoutContent({ children }) {
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="more-nav-grid">
               {moreNavItems.map(n => {
                 const isActive = pathname === n.to;
                 return (
-                  <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-colors ${isActive ? 'bg-lime-300/10 text-lime-300' : 'bg-white/5 text-gray-300 hover:bg-white/10'}`} onClick={() => setShowMoreNav(false)}>
-                    <div className="p-1.5 rounded-xl">
+                  <Link key={n.to} href={n.to} aria-current={isActive ? 'page' : undefined} className={`more-nav-link ${isActive ? 'is-active' : ''}`} onClick={() => setShowMoreNav(false)}>
+                    <div>
                       {n.icon}
                     </div>
                     <span className="text-xs font-semibold text-center">{n.label}</span>
