@@ -59,19 +59,51 @@ export default function Home() {
 
   if (authLoading || (user && loading)) {
     return (
-      <main className="dashboard-shell py-8">
-        <div className="min-h-[440px] rounded-[28px] bg-[#0d100d] border border-white/10 flex flex-col items-center justify-center relative overflow-hidden shadow-2xl p-8">
-          <div className="absolute inset-0 bg-radial from-lime-400/10 via-transparent to-transparent pointer-events-none" />
-          <div className="relative z-10 flex flex-col items-center gap-5 text-center">
-            <div className="relative w-14 h-14">
-              <div className="absolute inset-0 rounded-full border-2 border-lime-400/25 animate-ping" />
-              <div className="w-14 h-14 rounded-full border-2 border-lime-400 border-t-transparent animate-spin" />
-            </div>
+      <main className="dashboard-shell py-4 space-y-6" aria-label="Loading dashboard">
+        {/* Command Hero Skeleton */}
+        <div className="min-h-[360px] sm:min-h-[400px] rounded-[28px] bg-[#0d100d] border border-white/10 p-6 sm:p-10 md:p-12 relative overflow-hidden flex flex-col justify-between">
+          <div className="absolute inset-0 skeleton-shimmer opacity-30 pointer-events-none" />
+          <div className="relative z-10 flex flex-col justify-between h-full space-y-6 sm:space-y-8">
             <div>
-              <div className="text-lime-300 font-bold text-xs uppercase tracking-[0.22em] mb-1.5 animate-pulse">Initializing Dashboard</div>
-              <p className="text-gray-400 text-sm max-w-xs">Synchronizing your training & recovery metrics...</p>
+              <div className="w-28 h-4 rounded-full skeleton-shimmer mb-4" />
+              <div className="w-3/4 max-w-md h-10 sm:h-12 rounded-xl skeleton-shimmer mb-3" />
+              <div className="w-1/2 max-w-xs h-7 sm:h-9 rounded-xl skeleton-shimmer mb-4" />
+              <div className="w-4/5 max-w-sm h-3.5 rounded-lg skeleton-shimmer mb-2" />
+              <div className="w-3/5 max-w-xs h-3.5 rounded-lg skeleton-shimmer" />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <div className="w-32 sm:w-36 h-11 sm:h-12 rounded-xl skeleton-shimmer !bg-lime-400/20" />
+              <div className="w-28 sm:w-32 h-11 sm:h-12 rounded-xl skeleton-shimmer" />
             </div>
           </div>
+        </div>
+
+        {/* Metrics Grid Skeleton */}
+        <div className="grid grid-cols-3 gap-1 rounded-2xl overflow-hidden border border-white/10 bg-white/5">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-24 sm:h-28 p-3.5 sm:p-5 bg-[#0f120f] relative overflow-hidden flex flex-col justify-between">
+              <div className="absolute inset-0 skeleton-shimmer opacity-25 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="w-12 h-3 rounded skeleton-shimmer mb-2" />
+                <div className="w-14 sm:w-20 h-6 sm:h-8 rounded-lg skeleton-shimmer" />
+              </div>
+              <div className="relative z-10 w-20 h-2.5 rounded skeleton-shimmer" />
+            </div>
+          ))}
+        </div>
+
+        {/* Training Visuals Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[1, 2].map((i) => (
+            <div key={i} className="h-56 sm:h-64 rounded-2xl bg-[#0e110e] border border-white/10 relative overflow-hidden flex items-end p-6">
+              <div className="absolute inset-0 skeleton-shimmer opacity-30 pointer-events-none" />
+              <div className="relative z-10 space-y-2">
+                <div className="w-16 h-2.5 rounded skeleton-shimmer" />
+                <div className="w-40 sm:w-48 h-6 sm:h-7 rounded-lg skeleton-shimmer" />
+                <div className="w-24 h-2.5 rounded skeleton-shimmer" />
+              </div>
+            </div>
+          ))}
         </div>
       </main>
     );

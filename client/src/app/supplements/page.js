@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import api from '../../api';
 import useDocumentMetadata from '../../hooks/useDocumentMetadata';
 import ProtectedRoute from '../../components/ProtectedRoute';
@@ -118,8 +119,32 @@ function SupplementsContent() {
   return (
     <div className="min-h-screen bg-gray-50 p-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Supplement Store</h1>
-        <p className="text-gray-600 mb-8">Personalized recommendations with price comparison</p>
+        {/* Top Showcase Hero */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8 grid md:grid-cols-[1.1fr_.9fr] gap-6 items-stretch p-6">
+          <div className="order-first md:order-last relative min-h-[340px] sm:min-h-[400px] md:min-h-[290px] rounded-xl overflow-hidden bg-[#0d100d] shadow-inner">
+            <Image
+              src="/assets/store-athlete.webp"
+              alt="Athlete preparing training supplements"
+              fill
+              priority
+              quality={95}
+              sizes="(max-width: 768px) 100vw, 42vw"
+              className="object-cover object-[center_20%] sm:object-[center_25%] transition-transform duration-700 hover:scale-105"
+            />
+          </div>
+          <div className="flex flex-col justify-center order-last md:order-first">
+            <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Verified Fuel & Gear</div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">Supplement Store</h1>
+            <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
+              Personalized recommendations and transparent price comparison across top brands to fuel your training and recovery.
+            </p>
+            <div className="flex flex-wrap gap-2 text-xs font-medium text-gray-500">
+              <span className="px-3 py-1 bg-gray-100 rounded-full">✓ Verified Vendors</span>
+              <span className="px-3 py-1 bg-gray-100 rounded-full">✓ Price Comparison</span>
+              <span className="px-3 py-1 bg-gray-100 rounded-full">✓ Personalized Suggestions</span>
+            </div>
+          </div>
+        </div>
 
         {/* Recommendation Form */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">

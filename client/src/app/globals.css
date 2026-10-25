@@ -477,6 +477,14 @@ button:disabled {
 .empty-state { display:flex; flex-direction:column; gap:6px; margin-top:22px; padding:34px; border-radius:14px; background:#f0ede5; }
 .empty-state span,.status-note { color:var(--muted); }
 .dashboard-loading { height:390px; border-radius:28px; background:linear-gradient(100deg,#0d100d 20%,#182018 40%,#0d100d 60%); background-size:200% 100%; border:1px solid rgba(255,255,255,0.08); animation:gradient-x 1.4s infinite; }
+.skeleton-shimmer { position:relative; overflow:hidden; background:rgba(255,255,255,0.05); }
+.skeleton-shimmer::after {
+  position:absolute; inset:0; transform:translateX(-100%);
+  background-image:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 25%, rgba(191,255,74,0.14) 50%, rgba(255,255,255,0.04) 75%, transparent 100%);
+  animation:skeleton-sweep 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  content:''; pointer-events:none;
+}
+@keyframes skeleton-sweep { 0% { transform:translateX(-100%); } 100% { transform:translateX(100%); } }
 .desktop-nav-active { color:#fff!important; }
 @media (max-width:800px) { .command-hero { grid-template-columns:1fr; min-height:auto; } .today-score { width:auto; padding:20px; } .training-visuals,.dashboard-grid { grid-template-columns:1fr; } .training-visual { min-height:320px; } }
 @media (max-width:560px) { .dashboard-shell { width:min(100% - 24px,1180px); padding-top:20px; } .command-hero { padding:28px 24px; border-radius:20px; } .command-hero h1 { font-size:56px; } .metrics-grid { grid-template-columns:1fr; } .metric-card { padding:20px 22px; } .week-strip { gap:4px; } .day i { height:48px; } .focus-card,.quick-card,.recent-card { padding:24px; } }
@@ -567,9 +575,9 @@ button:disabled {
 :root[data-theme='dark'] .insight-row strong { color:#eef1ea; }
 
 @media (max-width:640px) {
-  .site-header > div { padding-top:10px; padding-bottom:10px; }
-  .site-logo { height:31px; }
-  .prism-button { padding:8px 13px; border-radius:8px; font-size:12px; }
+  .site-header > div { height:56px; padding-top:0; padding-bottom:0; }
+  .site-logo { height:26px; }
+  .prism-button { padding:6px 12px; border-radius:8px; font-size:12px; }
   .dashboard-shell { width:100%; padding:0 0 96px; }
   .command-hero { min-height:calc(100svh - 130px); padding:34px 20px 24px; border-radius:0; grid-template-rows:1fr auto; align-items:end; background:#0d100d; }
   .command-hero::after { width:280px; height:280px; right:-130px; top:-90px; box-shadow:0 0 0 52px rgba(190,255,74,.025),0 0 0 104px rgba(190,255,74,.015); }

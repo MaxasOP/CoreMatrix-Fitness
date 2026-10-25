@@ -56,8 +56,8 @@ function LayoutContent({ children }) {
       </div>
 
       <header className="site-header sticky top-0 z-50 backdrop-blur-xl border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-          <Link href="/" className="group shrink-0" aria-label="CoreMatrix home">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
+          <Link href="/" className="group shrink-0 flex items-center" aria-label="CoreMatrix home">
             <Image
               src="/assets/corematrix-logo.webp"
               alt="CoreMatrix"
@@ -65,65 +65,65 @@ function LayoutContent({ children }) {
               height={256}
               preload
               quality={95}
-              className="site-logo h-9 sm:h-10 w-auto transition-opacity group-hover:opacity-75"
-              sizes="(max-width: 640px) 132px, 148px"
+              className="site-logo h-7 sm:h-8 w-auto transition-opacity group-hover:opacity-75"
+              sizes="(max-width: 640px) 110px, 130px"
             />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-1.5">
             {visibleNavItems.map(n => {
               const isActive = pathname === n.to;
               return (
-                <Link key={n.to} href={n.to} className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${isActive ? 'desktop-nav-active bg-white/10' : 'text-gray-400 hover:text-white'}`}>
+                <Link key={n.to} href={n.to} className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'desktop-nav-active bg-white/10 text-white shadow-sm border border-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                   {n.label}
                 </Link>
               );
             })}
             <details className="relative">
-              <summary className="list-none cursor-pointer px-3 py-2 rounded-lg text-sm font-semibold text-gray-500 hover:text-gray-900">Explore</summary>
-              <div className="nav-menu absolute right-0 top-12 w-52 rounded-xl border p-2 shadow-xl">
+              <summary className="list-none cursor-pointer px-3.5 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">Explore ▾</summary>
+              <div className="nav-menu absolute right-0 top-11 w-52 rounded-xl border p-2 shadow-xl">
                 {moreNavItems.map(n => <Link key={n.to} href={n.to} className="block rounded-lg px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white">{n.label}</Link>)}
               </div>
             </details>
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {user ? (
               <>
-                <div className="text-sm hidden lg:block text-gray-500 font-medium">Signed in as <strong className="text-gray-900">{user.name}</strong></div>
-                <button onClick={logout} className="text-sm font-semibold text-gray-600 hover:text-red-600 bg-gray-100 hover:bg-red-50 px-4 py-2.5 rounded-xl transition-colors">Sign out</button>
+                <div className="text-xs hidden lg:block text-gray-400 font-medium">Signed in as <strong className="text-gray-200">{user.name}</strong></div>
+                <button onClick={logout} className="text-xs sm:text-sm font-medium text-gray-300 hover:text-red-400 bg-white/5 hover:bg-red-500/10 border border-white/10 px-3.5 py-1.5 rounded-lg transition-colors">Sign out</button>
               </>
             ) : (
-              <Link href="/auth" className="prism-button px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:-translate-y-0.5">Sign in</Link>
+              <Link href="/auth" className="prism-button px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all hover:-translate-y-0.5">Sign in</Link>
             )}
           </div>
         </div>
       </header>
 
-      <main key={pathname} className="site-main pb-28 md:pb-12 pt-2">
+      <main key={pathname} className="site-main pb-20 md:pb-12 pt-2">
         {children}
       </main>
 
       {/* Mobile Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-safe">
-        <div className="mobile-dock backdrop-blur-xl border-t px-4 py-3 flex items-center justify-around">
+        <div className="mobile-dock backdrop-blur-2xl border-t px-2 py-1.5 flex items-center justify-around h-14 sm:h-15">
           {visibleNavItems.map(n => {
             const isActive = pathname === n.to;
             return (
-              <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-1.5 transition-colors ${isActive ? 'text-lime-300' : 'text-gray-500 hover:text-gray-300'}`} onClick={() => setShowMoreNav(false)}>
-                <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-lime-300/10' : 'bg-transparent'}`}>
+              <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-0.5 py-0.5 px-2 min-w-[3.5rem] transition-colors ${isActive ? 'text-lime-300' : 'text-gray-500 hover:text-gray-300'}`} onClick={() => setShowMoreNav(false)}>
+                <div className={`p-1 rounded-lg transition-colors ${isActive ? 'bg-lime-300/10' : 'bg-transparent'}`}>
                   {n.icon}
                 </div>
-                <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap">{n.label}</span>
+                <span className="text-[10px] font-semibold tracking-tight whitespace-nowrap">{n.label}</span>
               </Link>
             );
           })}
           {/* More button */}
-          <button onClick={() => setShowMoreNav(true)} className={`flex flex-col items-center gap-1.5 min-w-[4.5rem] transition-colors ${showMoreNav ? 'text-lime-300' : 'text-gray-500 hover:text-gray-300'}`}>
-            <div className={`p-1.5 rounded-xl transition-colors ${showMoreNav ? 'bg-lime-300/10' : 'bg-transparent'}`}>
+          <button onClick={() => setShowMoreNav(true)} className={`flex flex-col items-center gap-0.5 py-0.5 px-2 min-w-[3.5rem] transition-colors ${showMoreNav ? 'text-lime-300' : 'text-gray-500 hover:text-gray-300'}`}>
+            <div className={`p-1 rounded-lg transition-colors ${showMoreNav ? 'bg-lime-300/10' : 'bg-transparent'}`}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
             </div>
-            <span className="text-[10px] font-semibold tracking-wide whitespace-nowrap">More</span>
+            <span className="text-[10px] font-semibold tracking-tight whitespace-nowrap">More</span>
           </button>
         </div>
       </nav>

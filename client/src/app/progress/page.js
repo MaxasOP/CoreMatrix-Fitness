@@ -71,7 +71,7 @@ function ProgressContent() {
     <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
       <section className="card p-6">
         <div className="grid md:grid-cols-[1.15fr_.85fr] gap-6 items-stretch">
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-center order-last md:order-first">
             <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Consistency</div>
             <h1 className="text-3xl font-extrabold text-gray-900">Weekly progress</h1>
             <div className="mt-4 text-6xl font-black flex items-center gap-4"><span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 animate-gradient-x">{weekProgress}%</span> {weekProgress === 100 && <span className="text-5xl animate-bounce">🏆</span>}</div>
@@ -80,23 +80,16 @@ function ProgressContent() {
               <div className="h-full bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 animate-gradient-x rounded-full transition-all duration-1000" style={{ width: `${weekProgress}%` }} />
             </div>
           </div>
-          <div className="relative min-h-[380px] sm:min-h-[440px] md:min-h-full overflow-hidden rounded-2xl bg-[#151714] flex items-end p-6">
+          <div className="order-first md:order-last relative min-h-[420px] sm:min-h-[480px] md:min-h-full overflow-hidden rounded-2xl bg-[#0d100d] shadow-lg">
             <Image
               src="/assets/progress-athlete.webp"
-              alt="Athlete preparing for the next training session"
+              alt="Athlete in training"
               fill
-              preload
+              priority
               quality={95}
               sizes="(max-width: 768px) 100vw, 38vw"
-              className="object-cover object-[center_16%] sm:object-[center_20%] md:object-[center_25%]"
+              className="object-cover object-[center_12%] sm:object-[center_15%] transition-transform duration-700 hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 via-35% to-transparent pointer-events-none" />
-            <div className="relative z-10 max-w-xs text-white">
-              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-lime-300 flex items-center gap-1.5 mb-1.5">
-                <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Discipline
-              </span>
-              <p className="text-sm sm:text-base font-semibold leading-snug">Preparation is part of the work.</p>
-            </div>
           </div>
         </div>
         <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
