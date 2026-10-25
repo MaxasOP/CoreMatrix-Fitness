@@ -236,10 +236,10 @@ const ChallengeCard = ({ challenge, userId, onJoin }) => {
       <button
         onClick={onJoin}
         disabled={isJoined}
-        className={`w-full mt-4 py-2.5 rounded-lg font-semibold transition-colors ${
+        className={`w-full mt-4 py-2.5 rounded-xl font-bold transition-all ${
           isJoined
-            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            : 'bg-[#ff5a1f] text-white hover:bg-[#e54d12]'
+            ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
+            : 'btn-core-primary w-full'
         }`}
       >
         {isJoined ? '✓ Already Joined' : 'Join Challenge'}
@@ -287,13 +287,13 @@ const MyChallengeCard = ({ challenge, onLeave, leaving }) => {
       </div>
 
       <div className="mt-4 flex gap-2">
-        <button className="flex-1 bg-[#ff5a1f] text-white py-2.5 rounded-lg font-semibold hover:bg-[#e54d12] transition-colors">
+        <button className="flex-1 btn-core-primary !py-2.5">
           Update Progress
         </button>
         <button
           onClick={onLeave}
           disabled={leaving}
-          className="px-4 py-2.5 rounded-lg font-semibold border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+          className="btn-core-danger px-4"
         >
           {leaving ? '...' : 'Leave'}
         </button>

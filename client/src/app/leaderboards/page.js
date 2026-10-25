@@ -230,10 +230,10 @@ function LeaderboardsContent() {
                   <button
                     key={p.value}
                     onClick={() => setPeriod(p.value)}
-                    className={`flex-1 px-3 py-2 text-sm font-medium transition-colors ${
+                    className={`flex-1 px-3 py-2 text-sm font-bold transition-all ${
                       period === p.value
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white text-gray-700 hover:bg-blue-50'
+                        ? 'bg-[#bfff4a] text-[#10140f] shadow-sm'
+                        : 'bg-white text-gray-700 hover:bg-gray-50'
                     }`}
                   >
                     {p.label}

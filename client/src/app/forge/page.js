@@ -202,7 +202,7 @@ function ForgeContent() {
           </div>
 
           <div className="mt-4">
-            <button id="btn-forge-add-workout" onClick={addWorkout} className="bg-[#ff5a1f] hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md shadow-orange-500/20 hover:-translate-y-0.5 hover:scale-105 hover:shadow-orange-500/30 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:scale-100" disabled={!isAuthed}>Add workout</button>
+            <button id="btn-forge-add-workout" onClick={addWorkout} className="btn-core-primary" disabled={!isAuthed}>Add workout</button>
           </div>
         </div>
 
@@ -253,7 +253,7 @@ function ForgeContent() {
                 </div>
                 <div className="flex items-center gap-3 mt-2 sm:mt-0">
                   <div className="text-gray-400 text-sm font-medium bg-gray-100 px-3 py-1 rounded-md">{new Date(w.log_date).toLocaleDateString()}</div>
-                  <button onClick={() => deleteWorkout(w._id || w.id)} className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">Delete</button>
+                  <button onClick={() => deleteWorkout(w._id || w.id)} className="btn-core-danger">Delete</button>
                 </div>
               </div>
             ))}

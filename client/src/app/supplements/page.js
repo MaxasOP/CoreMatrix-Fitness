@@ -173,7 +173,7 @@ function SupplementsContent() {
               id="btn-supp-recommend"
               onClick={getRecommendations}
               disabled={loading}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="btn-core-primary"
             >
               {loading ? 'Loading...' : 'Recommend'}
             </button>
@@ -433,10 +433,10 @@ const SupplementCard = ({ supplement }) => {
 
       {/* Action Buttons */}
       <div className="mt-4 flex gap-2">
-        <button className="flex-1 bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 text-sm font-medium transition">
+        <button className="flex-1 btn-core-primary !py-2.5 !px-3 text-sm">
           Add to Cart
         </button>
-        <button className="flex-1 border border-blue-600 text-blue-600 py-2 px-3 rounded-lg hover:bg-blue-50 text-sm font-medium transition">
+        <button className="flex-1 btn-core-secondary !py-2.5 !px-3 text-sm !text-gray-800 dark:!text-white border border-gray-200 dark:border-white/15">
           Buy Now
         </button>
       </div>

@@ -55,8 +55,8 @@ function LayoutContent({ children }) {
         <div className="site-refraction"><i /><i /><i /><i /><i /><i /><i /></div>
       </div>
 
-      <header className="site-header sticky top-0 z-50 backdrop-blur-xl border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between">
+      <header className="site-header sticky top-0 z-50 backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between">
           <Link href="/" className="group shrink-0 flex items-center" aria-label="CoreMatrix home">
             <Image
               src="/assets/corematrix-logo.webp"
@@ -65,65 +65,65 @@ function LayoutContent({ children }) {
               height={256}
               preload
               quality={95}
-              className="site-logo h-8 sm:h-10 w-auto transition-opacity group-hover:opacity-75"
-              sizes="(max-width: 640px) 140px, 170px"
+              className="site-logo h-10 sm:h-12 md:h-14 w-auto transition-all group-hover:scale-105"
+              sizes="(max-width: 640px) 160px, 240px"
             />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-2">
+          <nav className="hidden md:flex items-center gap-2 lg:gap-3">
             {visibleNavItems.map(n => {
               const isActive = pathname === n.to;
               return (
-                <Link key={n.to} href={n.to} className={`px-4 py-2 rounded-xl text-sm md:text-[15px] font-semibold transition-colors ${isActive ? 'desktop-nav-active bg-white/10 text-white shadow-sm border border-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                <Link key={n.to} href={n.to} className={`px-4 lg:px-5 py-2.5 rounded-xl text-base lg:text-[17px] font-bold transition-all ${isActive ? 'desktop-nav-active bg-white/12 text-white shadow-md border border-white/15' : 'text-gray-300 hover:text-white hover:bg-white/8'}`}>
                   {n.label}
                 </Link>
               );
             })}
             <details className="relative">
-              <summary className="list-none cursor-pointer px-4 py-2 rounded-xl text-sm md:text-[15px] font-semibold text-gray-400 hover:text-white hover:bg-white/5">Explore ▾</summary>
-              <div className="nav-menu absolute right-0 top-13 w-56 rounded-xl border p-2 shadow-xl bg-[#11140f]/95 backdrop-blur-2xl">
-                {moreNavItems.map(n => <Link key={n.to} href={n.to} className="block rounded-lg px-3.5 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white font-medium">{n.label}</Link>)}
+              <summary className="list-none cursor-pointer px-4 lg:px-5 py-2.5 rounded-xl text-base lg:text-[17px] font-bold text-gray-300 hover:text-white hover:bg-white/8">Explore ▾</summary>
+              <div className="nav-menu absolute right-0 top-14 w-60 rounded-2xl border p-2.5 shadow-2xl bg-[#11140f]/95 backdrop-blur-2xl border-white/15">
+                {moreNavItems.map(n => <Link key={n.to} href={n.to} className="block rounded-xl px-4 py-3 text-base text-gray-200 hover:bg-white/10 hover:text-white font-semibold transition-colors">{n.label}</Link>)}
               </div>
             </details>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 sm:gap-4">
             {user ? (
               <>
-                <div className="text-xs hidden lg:block text-gray-400 font-medium">Signed in as <strong className="text-gray-200">{user.name}</strong></div>
-                <button onClick={logout} className="text-xs sm:text-sm font-semibold text-gray-300 hover:text-red-400 bg-white/5 hover:bg-red-500/10 border border-white/10 px-4 py-2 rounded-xl transition-colors">Sign out</button>
+                <div className="text-sm hidden lg:block text-gray-300 font-semibold">Signed in as <strong className="text-white">{user.name}</strong></div>
+                <button onClick={logout} className="text-sm sm:text-base font-bold text-gray-200 hover:text-red-400 bg-white/8 hover:bg-red-500/15 border border-white/15 px-5 py-2.5 rounded-xl transition-all">Sign out</button>
               </>
             ) : (
-              <Link href="/auth" className="prism-button px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all hover:-translate-y-0.5">Sign in</Link>
+              <Link href="/auth" className="prism-button px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-extrabold transition-all hover:scale-105 shadow-lg">Sign in</Link>
             )}
           </div>
         </div>
       </header>
 
-      <main key={pathname} className="site-main pb-28 md:pb-16 pt-2">
+      <main key={pathname} className="site-main pb-32 md:pb-20 pt-3">
         {children}
       </main>
 
       {/* Mobile Navigation */}
-      <nav className="fixed bottom-3 inset-x-3 sm:inset-x-6 z-50 md:hidden">
-        <div className="mobile-dock rounded-2xl border border-white/15 bg-[#10140f]/92 backdrop-blur-2xl shadow-2xl px-2 py-1.5 flex items-center justify-around h-16">
+      <nav className="fixed bottom-4 inset-x-4 sm:inset-x-8 z-50 md:hidden">
+        <div className="mobile-dock rounded-2xl border border-white/15 bg-[#10140f]/95 backdrop-blur-2xl shadow-2xl px-3 py-2 flex items-center justify-around h-18 sm:h-20">
           {visibleNavItems.map(n => {
             const isActive = pathname === n.to;
             return (
-              <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-0.5 py-1 px-2.5 min-w-[3.5rem] rounded-xl transition-all ${isActive ? 'text-lime-300 font-bold' : 'text-gray-400 hover:text-white'}`} onClick={() => setShowMoreNav(false)}>
-                <div className={`p-1 rounded-lg transition-colors ${isActive ? 'bg-lime-300/15 text-lime-300' : 'bg-transparent text-gray-400'}`}>
-                  {React.cloneElement(n.icon, { width: 22, height: 22 })}
+              <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-1 py-1 px-3 min-w-[4rem] rounded-xl transition-all ${isActive ? 'text-lime-300 font-extrabold' : 'text-gray-300 hover:text-white'}`} onClick={() => setShowMoreNav(false)}>
+                <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-lime-300/20 text-lime-300 scale-110' : 'bg-transparent text-gray-400'}`}>
+                  {React.cloneElement(n.icon, { width: 25, height: 25 })}
                 </div>
-                <span className="text-[11px] font-semibold tracking-tight whitespace-nowrap">{n.label}</span>
+                <span className="text-xs font-bold tracking-tight whitespace-nowrap">{n.label}</span>
               </Link>
             );
           })}
           {/* More button */}
-          <button onClick={() => setShowMoreNav(true)} className={`flex flex-col items-center gap-0.5 py-1 px-2.5 min-w-[3.5rem] rounded-xl transition-all ${showMoreNav ? 'text-lime-300 font-bold' : 'text-gray-400 hover:text-white'}`}>
-            <div className={`p-1 rounded-lg transition-colors ${showMoreNav ? 'bg-lime-300/15 text-lime-300' : 'bg-transparent text-gray-400'}`}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/><circle cx="5" cy="12" r="1.2"/></svg>
+          <button onClick={() => setShowMoreNav(true)} className={`flex flex-col items-center gap-1 py-1 px-3 min-w-[4rem] rounded-xl transition-all ${showMoreNav ? 'text-lime-300 font-extrabold' : 'text-gray-300 hover:text-white'}`}>
+            <div className={`p-1.5 rounded-xl transition-all ${showMoreNav ? 'bg-lime-300/20 text-lime-300 scale-110' : 'bg-transparent text-gray-400'}`}>
+              <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
             </div>
-            <span className="text-[11px] font-semibold tracking-tight whitespace-nowrap">More</span>
+            <span className="text-xs font-bold tracking-tight whitespace-nowrap">More</span>
           </button>
         </div>
       </nav>

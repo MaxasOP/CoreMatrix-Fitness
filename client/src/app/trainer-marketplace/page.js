@@ -126,11 +126,11 @@ const TrainerCard = ({ trainer, onBook }) => (
       <div className="mt-4 flex gap-2">
         <button
           onClick={onBook}
-          className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-sm"
+          className="flex-1 btn-core-primary !py-2.5 text-sm"
         >
           Book Now
         </button>
-        <button className="flex-1 bg-gray-100 text-gray-900 py-2 rounded-lg hover:bg-gray-200 text-sm">
+        <button className="flex-1 btn-core-secondary !py-2.5 text-sm !text-gray-800">
           Reviews
         </button>
       </div>

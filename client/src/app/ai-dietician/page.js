@@ -178,7 +178,7 @@ function DieticianContent() {
                 id="btn-dietician-submit"
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                className="btn-core-primary w-full mt-4 !py-3.5 !text-base"
               >
                 {loading ? 'Generating...' : 'Generate Meal Plan'}
               </button>

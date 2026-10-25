@@ -132,10 +132,10 @@ export default function Setup() {
         </div>
 
         <div className="mt-5 flex flex-wrap gap-3 items-center">
-          <button id="btn-setup-save" onClick={saveProfile} className="btn-primary" disabled={saving}>
+          <button id="btn-setup-save" onClick={saveProfile} className="btn-core-primary" disabled={saving}>
             {saving ? 'Saving...' : 'Save & continue'}
           </button>
-          <Link id="btn-setup-skip" href="/" className="btn-secondary">Skip for now</Link>
+          <Link id="btn-setup-skip" href="/" className="btn-core-secondary !text-gray-800 dark:!text-white">Skip for now</Link>
           {msg && <span className="text-sm" style={{ color: msg.toLowerCase().includes('failed') ? '#b91c1c' : '#15803d' }}>{msg}</span>}
         </div>
       </section>

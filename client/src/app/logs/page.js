@@ -38,9 +38,9 @@ function LogsContent() {
             <h1 className="text-3xl font-extrabold text-gray-900">Logs</h1>
           </div>
           <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-xl border border-gray-100">
-            <button id="btn-logs-filter-all" className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'all' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`} onClick={() => setFilter('all')}>All</button>
-            <button id="btn-logs-filter-workouts" className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'workout' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`} onClick={() => setFilter('workout')}>Workouts</button>
-            <button id="btn-logs-filter-meals" className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${filter === 'meal' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`} onClick={() => setFilter('meal')}>Meals</button>
+            <button id="btn-logs-filter-all" className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'all' ? 'bg-[#bfff4a] shadow-sm text-[#10140f]' : 'text-gray-500 hover:text-gray-900'}`} onClick={() => setFilter('all')}>All</button>
+            <button id="btn-logs-filter-workouts" className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'workout' ? 'bg-[#bfff4a] shadow-sm text-[#10140f]' : 'text-gray-500 hover:text-gray-900'}`} onClick={() => setFilter('workout')}>Workouts</button>
+            <button id="btn-logs-filter-meals" className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${filter === 'meal' ? 'bg-[#bfff4a] shadow-sm text-[#10140f]' : 'text-gray-500 hover:text-gray-900'}`} onClick={() => setFilter('meal')}>Meals</button>
           </div>
         </div>
 

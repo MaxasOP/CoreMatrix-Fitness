@@ -102,11 +102,11 @@ function YogaContent() {
               <div className="flex gap-4">
                 <button
                   onClick={() => setSelectedProgram(null)}
-                  className="flex-1 bg-gray-200 text-gray-900 py-2 rounded-lg hover:bg-gray-300"
+                  className="flex-1 btn-core-secondary !py-2.5 !text-gray-800"
                 >
                   Cancel
                 </button>
-                <button className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                <button className="flex-1 btn-core-primary !py-2.5">
                   Start Program
                 </button>
               </div>

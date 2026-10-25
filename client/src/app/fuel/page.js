@@ -188,8 +188,8 @@ function FuelContent() {
           </div>
 
           <div className="mt-4 flex flex-wrap gap-3">
-            <button id="btn-fuel-save-meal" onClick={addOrUpdateMeal} className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-teal-400 hover:to-emerald-400 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/30 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:hover:translate-y-0 disabled:active:scale-100" disabled={!isAuthed}>{editingId ? 'Save Meal' : 'Add Meal'}</button>
-            {editingId && <button onClick={() => { setEditingId(null); setForm({ name: '', type: 'Lunch', calories: 0, protein: 0, carbs: 0, fat: 0, date: getTodayKey() }); }} className="bg-white/50 hover:bg-white/80 text-gray-800 px-6 py-3 rounded-xl font-bold transition-colors active:scale-95 border border-gray-200">Cancel</button>}
+            <button id="btn-fuel-save-meal" onClick={addOrUpdateMeal} className="btn-core-primary" disabled={!isAuthed}>{editingId ? 'Save Meal' : 'Add Meal'}</button>
+            {editingId && <button onClick={() => { setEditingId(null); setForm({ name: '', type: 'Lunch', calories: 0, protein: 0, carbs: 0, fat: 0, date: getTodayKey() }); }} className="btn-core-secondary">Cancel</button>}
           </div>
         </div>
 
@@ -239,8 +239,8 @@ function FuelContent() {
                   <div className="text-gray-500 text-sm mt-0.5"><span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-xs font-medium mr-2">{m.type}</span> {m.calories} kcal • P: <span className="font-medium">{m.protein}</span> C: <span className="font-medium">{m.carbs}</span> F: <span className="font-medium">{m.fat}</span></div>
                 </div>
                 <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                  <button onClick={() => startEdit(m)} className="text-gray-600 hover:text-gray-900 bg-gray-200 hover:bg-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">Edit</button>
-                  <button onClick={() => deleteMeal(m._id || m.id)} className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors">Delete</button>
+                  <button onClick={() => startEdit(m)} className="px-3.5 py-1.5 rounded-lg text-sm font-semibold bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors">Edit</button>
+                  <button onClick={() => deleteMeal(m._id || m.id)} className="btn-core-danger">Delete</button>
                 </div>
               </div>
             ))}

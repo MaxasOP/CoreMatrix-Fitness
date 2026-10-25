@@ -103,11 +103,7 @@ function VideoFormAnalysisContent() {
             id="btn-analysis-submit"
             onClick={onAnalyze}
             disabled={loading || !file}
-            className={`w-full py-4 rounded-xl font-bold text-white transition-all shadow-lg text-lg ${
-              loading || !file 
-              ? "bg-gray-400 cursor-not-allowed" 
-              : "bg-orange-600 hover:bg-orange-700 active:scale-95 hover:shadow-orange-500/20"
-            }`}
+            className="w-full btn-core-primary !py-4 !text-base shadow-xl disabled:!opacity-50"
           >
             {loading ? (
               <div className="flex items-center justify-center gap-2">

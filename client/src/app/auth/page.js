@@ -102,11 +102,11 @@ export default function Auth() {
           )}
 
           <div className="mt-8 flex flex-col gap-3">
-            <button id="btn-auth-submit" onClick={submit} disabled={loading} className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-black disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 text-white px-6 py-3.5 rounded-xl font-bold transition-all shadow-xl shadow-gray-900/20 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
-              {loading && <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" /></svg>}
+            <button id="btn-auth-submit" onClick={submit} disabled={loading} className="btn-core-primary w-full !py-3.5 !text-base shadow-xl">
+              {loading && <svg className="animate-spin h-5 w-5 text-black mr-2" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" /></svg>}
               {mode === 'login' ? 'Sign In' : 'Create Account'}
             </button>
-            <button id="btn-auth-switch-mode" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="w-full bg-white/50 hover:bg-white/80 text-gray-700 px-6 py-3.5 rounded-xl font-bold transition-all border border-gray-200 active:scale-95">{mode === 'login' ? 'Need an account? Sign up' : 'Already have an account? Sign in'}</button>
+            <button id="btn-auth-switch-mode" onClick={() => setMode(mode === 'login' ? 'register' : 'login')} className="btn-core-secondary w-full !py-3.5 !text-base !text-gray-800 dark:!text-white border border-gray-200 dark:border-white/15">{mode === 'login' ? 'Need an account? Sign up' : 'Already have an account? Sign in'}</button>
           </div>
 
           {msg && <div className={`mt-6 p-4 rounded-xl text-sm font-medium text-center ${msg.toLowerCase().includes('error') || msg.toLowerCase().includes('failed') ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-700 border border-green-100'}`}>{msg}</div>}

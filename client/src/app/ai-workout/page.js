@@ -121,7 +121,7 @@ function WorkoutPlannerContent() {
                 id="btn-workout-submit"
                 type="submit"
                 disabled={loading}
-                className="w-full mt-4 bg-gradient-to-r from-[#ff5a1f] to-orange-500 text-white font-bold py-3 rounded-xl hover:shadow-lg hover:shadow-orange-500/30 transition-all disabled:opacity-60"
+                className="btn-core-primary w-full mt-4 !py-3.5 !text-base"
               >
                 {loading ? 'Consulting AI...' : 'Generate Plan'}
               </button>
