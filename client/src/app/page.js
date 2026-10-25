@@ -85,12 +85,12 @@ export default function Home() {
 
       <section className="training-visuals" aria-label="Choose your training focus">
         <Link href="/forge" className="training-visual">
-          <Image src="/assets/athlete-strength.webp" alt="Athlete performing a dumbbell curl in a gym" fill sizes="(max-width: 800px) 100vw, 50vw" />
+          <Image src="/assets/athlete-strength.webp" alt="Athlete performing a dumbbell curl in a gym" fill quality={95} priority sizes="(max-width: 800px) 100vw, 50vw" />
           <span className="training-visual-shade" />
           <span className="training-visual-copy"><small>Strength</small><strong>Own the next rep.</strong><b>Start workout →</b></span>
         </Link>
         <Link href="/form-analysis" className="training-visual">
-          <Image src="/assets/athlete-form.webp" alt="Athlete holding a plank on dumbbells" fill sizes="(max-width: 800px) 100vw, 50vw" />
+          <Image src="/assets/athlete-form.webp" alt="Athlete holding a plank on dumbbells" fill quality={95} sizes="(max-width: 800px) 100vw, 50vw" />
           <span className="training-visual-shade" />
           <span className="training-visual-copy"><small>Technique</small><strong>Move with control.</strong><b>Analyse form →</b></span>
         </Link>

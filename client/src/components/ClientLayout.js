@@ -64,6 +64,7 @@ function LayoutContent({ children }) {
               width={768}
               height={256}
               preload
+              quality={95}
               className="site-logo h-9 sm:h-10 w-auto transition-opacity group-hover:opacity-75"
               sizes="(max-width: 640px) 132px, 148px"
             />

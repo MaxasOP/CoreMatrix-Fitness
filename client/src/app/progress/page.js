@@ -81,7 +81,7 @@ function ProgressContent() {
             </div>
           </div>
           <div className="relative min-h-64 overflow-hidden rounded-2xl bg-[#151714]">
-            <Image src="/assets/progress-athlete.webp" alt="Athlete preparing for the next training session" fill preload sizes="(max-width: 768px) 100vw, 38vw" className="object-cover object-[center_34%]" />
+            <Image src="/assets/progress-athlete.webp" alt="Athlete preparing for the next training session" fill preload quality={95} sizes="(max-width: 768px) 100vw, 38vw" className="object-cover object-[center_34%]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
             <p className="absolute inset-x-5 bottom-4 text-sm font-semibold text-white">Preparation is part of the work.</p>
           </div>

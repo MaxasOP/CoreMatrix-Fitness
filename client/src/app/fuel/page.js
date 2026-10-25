@@ -172,7 +172,7 @@ function FuelContent() {
 
         <aside className="card p-0 overflow-hidden">
           <div className="relative h-52">
-            <Image src="/assets/fuel-athlete.webp" alt="Athlete holding a nutrition shaker after training" fill preload sizes="(max-width: 768px) 100vw, 33vw" className="object-cover object-[center_38%]" />
+            <Image src="/assets/fuel-athlete.webp" alt="Athlete holding a nutrition shaker after training" fill preload quality={95} sizes="(max-width: 768px) 100vw, 33vw" className="object-cover object-[center_38%]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
             <div className="absolute inset-x-5 bottom-4 text-white">
               <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-lime-300">Recovery starts here</span>

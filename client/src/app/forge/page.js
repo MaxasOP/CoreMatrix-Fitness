@@ -206,13 +206,23 @@ function ForgeContent() {
           </div>
         </div>
 
-        <aside className="bg-gray-900 text-white rounded-2xl p-6 shadow-lg relative overflow-hidden group min-h-72 flex items-end">
-          <Image src="/assets/forge-athlete.webp" alt="Athlete preparing a barbell for strength training" fill preload sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/5" />
-          <div className="relative z-10">
-            <div className="font-semibold text-lime-300 uppercase tracking-wide text-xs mb-2">Focus</div>
-            <h3 className="text-2xl font-extrabold text-white">Train with intent</h3>
-            <p className="text-gray-200 mt-3 leading-relaxed">Use templates to speed up logging. Capture sets, reps, and intensity in under 10 seconds.</p>
+        <aside className="bg-gray-900 text-white rounded-2xl p-6 sm:p-7 shadow-lg relative overflow-hidden group min-h-[460px] sm:min-h-[520px] md:min-h-full flex items-end">
+          <Image
+            src="/assets/forge-athlete.webp"
+            alt="Female athlete performing a barbell front squat with proper form"
+            fill
+            priority
+            quality={95}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover object-[center_12%] sm:object-[center_15%] md:object-[center_18%] transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent pointer-events-none" />
+          <div className="relative z-10 max-w-sm">
+            <div className="font-semibold text-lime-300 uppercase tracking-wider text-xs mb-1.5 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Focus
+            </div>
+            <h3 className="text-2xl font-extrabold text-white tracking-tight">Train with intent</h3>
+            <p className="text-gray-200 mt-2 text-sm leading-relaxed">Use templates to speed up logging. Capture sets, reps, and intensity in under 10 seconds.</p>
           </div>
         </aside>
       </section>

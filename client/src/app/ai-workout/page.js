@@ -50,7 +50,7 @@ function WorkoutPlannerContent() {
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="relative min-h-72 overflow-hidden rounded-[28px] bg-[#11140f] mb-8 shadow-xl flex items-end">
-          <Image src="/assets/planner-athlete.webp" alt="Athlete performing a cable strength exercise" fill preload sizes="(max-width: 1024px) 100vw, 896px" className="object-cover object-center" />
+          <Image src="/assets/planner-athlete.webp" alt="Athlete performing a cable strength exercise" fill preload quality={95} sizes="(max-width: 1024px) 100vw, 896px" className="object-cover object-[center_25%]" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent" />
           <div className="relative z-10 max-w-xl p-7 md:p-10 text-white">
             <div className="text-lime-300 text-xs font-bold uppercase tracking-[0.18em] mb-2">Built around you</div>

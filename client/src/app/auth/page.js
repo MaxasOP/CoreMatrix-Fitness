@@ -75,6 +75,8 @@ export default function Auth() {
               alt="CoreMatrix"
               width={768}
               height={256}
+              priority
+              quality={95}
               className="site-logo h-14 sm:h-16 w-auto mx-auto mb-5"
               sizes="(max-width: 640px) 190px, 216px"
             />
