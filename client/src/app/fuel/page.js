@@ -163,7 +163,7 @@ function FuelContent() {
               <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Nutrition log</div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Log your meal</h2>
             </div>
-            <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-500">Smart presets</span>
+            <span className="hidden sm:inline-block text-xs font-semibold text-gray-500">Quick values</span>
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">

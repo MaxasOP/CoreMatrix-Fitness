@@ -41,11 +41,12 @@ function ProgressContent() {
   });
   const [workouts, setWorkouts] = useState([]);
 
-  useEffect(() => { fetchWorkouts(); }, []);
-
-  async function fetchWorkouts() {
-    try { const res = await api.get('/workouts'); setWorkouts(res.data || []); } catch (err) { console.warn(err); }
-  }
+  useEffect(() => {
+    async function fetchWorkouts() {
+      try { const res = await api.get('/workouts'); setWorkouts(res.data || []); } catch (err) { console.warn(err); }
+    }
+    fetchWorkouts();
+  }, []);
 
   function computeWeekly() {
     const daysWithWorkout = new Set(workouts.map(w => {
@@ -77,29 +78,21 @@ function ProgressContent() {
                 <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Consistency</div>
                 <h1 className="text-3xl font-extrabold text-gray-900">Weekly progress</h1>
               </div>
-              <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-500">
-                Weekly Target
-              </span>
+              <span className="hidden sm:inline-block text-xs font-semibold text-gray-500">Target · 5 days</span>
             </div>
 
             <div className="mt-4 text-6xl font-black flex items-center gap-4">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 animate-gradient-x">{weekProgress}%</span>
-              {weekProgress === 100 && <span className="text-5xl animate-bounce">🏆</span>}
+              <span className="text-lime-300">{weekProgress}%</span>
             </div>
             <div className="text-gray-500 font-medium mt-1">{completed} training days completed</div>
-            <div className="h-3 bg-gray-100 rounded-full mt-4 overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 animate-gradient-x rounded-full transition-all duration-1000" style={{ width: `${weekProgress}%` }} />
-            </div>
           </div>
 
-          <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="weekly-chart" role="img" aria-label={`${completed} of 5 training days completed this week`}>
             {weekly.map(d => (
-              <div key={d.day} className={`card-soft ${d.done && d.group !== 'REST' ? 'bg-indigo-50/50 border-indigo-200 shadow-inner' : ''} flex flex-col gap-1`}>
-                <div className="flex items-center justify-between">
-                  <div className={`font-semibold ${d.done && d.group !== 'REST' ? 'text-indigo-900' : 'text-gray-900'}`}>{d.day}</div>
-                  {d.done && d.group !== 'REST' && <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>}
-                </div>
-                <div className={`text-sm ${d.done && d.group !== 'REST' ? 'text-indigo-600' : 'text-gray-500'}`}>{d.group} • {d.done ? 'Done' : 'Rest'}</div>
+              <div key={d.day} className={`weekly-bar ${d.done && d.group !== 'REST' ? 'is-done' : ''} ${d.group === 'REST' ? 'is-rest' : ''}`}>
+                <i aria-hidden="true" />
+                <strong>{d.day.slice(0, 3)}</strong>
+                <span>{d.group}</span>
               </div>
             ))}
           </div>
@@ -117,11 +110,9 @@ function ProgressContent() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent pointer-events-none" />
           <div className="relative z-10 max-w-sm">
-            <div className="font-semibold text-lime-300 uppercase tracking-wider text-xs mb-1.5 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Momentum
-            </div>
-            <h3 className="text-2xl font-extrabold text-white tracking-tight">Push the standard</h3>
-            <p className="text-gray-200 mt-2 text-sm leading-relaxed">Every rep and session compounds over time. Keep track of consistency to stay ahead of your goals.</p>
+            <div className="font-semibold text-lime-300 uppercase tracking-wider text-xs mb-1.5">This week</div>
+            <h3 className="text-2xl font-extrabold text-white tracking-tight">{completed} training days</h3>
+            <p className="text-gray-200 mt-2 text-sm leading-relaxed">The chart records completed days against a five-day target.</p>
           </div>
         </aside>
       </section>
@@ -131,12 +122,12 @@ function ProgressContent() {
           <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Profile</div>
           <h3 className="text-2xl font-bold text-gray-900">Your metrics</h3>
           {user ? (
-            <div className="mt-6 space-y-3 text-sm">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Goal</span><strong className="text-gray-900 capitalize">{user.goal}</strong></div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Weight</span><strong className="text-gray-900">{user.weight || user.weight_kg || '-'} kg</strong></div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Calories</span><strong className="text-gray-900">{user.calorieGoal || user.calorie_goal || '-'} kcal</strong></div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Protein</span><strong className="text-gray-900">{user.proteinGoal || user.protein_goal || '-'} g</strong></div>
-            </div>
+            <dl className="metric-table">
+              <div><dt>Goal</dt><dd className="capitalize">{user.goal}</dd></div>
+              <div><dt>Weight</dt><dd>{user.weight || user.weight_kg || '-'} kg</dd></div>
+              <div><dt>Calories</dt><dd>{user.calorieGoal || user.calorie_goal || '-'} kcal</dd></div>
+              <div><dt>Protein</dt><dd>{user.proteinGoal || user.protein_goal || '-'} g</dd></div>
+            </dl>
           ) : (
             <div className="mt-4 p-4 rounded-xl bg-gray-50 border border-gray-100 text-gray-500 text-sm">Sign in to see your profile metrics.</div>
           )}
@@ -146,22 +137,17 @@ function ProgressContent() {
           <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Focus areas</div>
           <h3 className="text-2xl font-bold text-gray-900">Top categories</h3>
           {topCategories.length === 0 ? (
-            <div className="card-soft py-10 mt-6 flex flex-col items-center justify-center text-center">
-              <div className="w-16 h-16 mb-3 bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-500 rounded-full flex items-center justify-center shadow-inner">
-                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012-2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-              </div>
-              <div className="text-gray-900 font-extrabold text-base">No analytics yet</div>
-              <div className="muted mt-1 text-sm">Start logging workouts to see patterns.</div>
+            <div className="py-10 mt-6 border-y border-white/10 text-center">
+              <div className="text-gray-900 font-bold text-base">No category data</div>
+              <div className="muted mt-1 text-sm">Logged workouts will build this chart.</div>
             </div>
           ) : (
-            <div className="mt-6 grid sm:grid-cols-2 gap-4">
+            <div className="category-chart" role="img" aria-label="Workout sessions by category">
               {topCategories.map(([cat, count]) => (
-                <div key={cat} className="card-soft p-5 hover:shadow-lg hover:shadow-orange-500/10 hover:-translate-y-0.5 transition-all">
-                  <div className="font-bold text-gray-900 text-lg">{cat}</div>
-                  <div className="text-gray-500 text-sm font-medium mt-1">{count} session{count !== 1 ? 's' : ''}</div>
-                  <div className="h-2 bg-gray-200 rounded-full mt-4 overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-[#ff5a1f] to-orange-400 animate-gradient-x rounded-full" style={{ width: `${Math.min(100, count * 12)}%` }} />
-                  </div>
+                <div key={cat} className="category-row">
+                  <strong>{cat}</strong>
+                  <div className="category-track"><i style={{ width: `${Math.min(100, count * 12)}%` }} /></div>
+                  <span>{count}</span>
                 </div>
               ))}
             </div>

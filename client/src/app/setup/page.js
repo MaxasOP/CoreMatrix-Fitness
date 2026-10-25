@@ -84,7 +84,7 @@ export default function Setup() {
         <div className="card-soft p-5">
           <div className="tag muted">Sign in required</div>
           <h1 className="text-3xl mt-2 font-bold text-gray-900">Set your goals</h1>
-          <p className="mt-2 muted">Create an account to unlock personalized calories, protein targets, and training plans.</p>
+          <p className="mt-2 muted">Create an account to save calorie, protein, and training targets.</p>
           <div className="mt-4">
             <Link id="btn-setup-signin" href="/auth" className="btn-primary">Sign in</Link>
           </div>
@@ -152,7 +152,7 @@ export default function Setup() {
             <div className="muted">Optimized to support muscle gain or fat loss.</div>
           </div>
           <div>
-            <div className="font-semibold">Smarter insights</div>
+            <div className="font-semibold">Training summaries</div>
             <div className="muted">Progress view auto-updates once your profile is set.</div>
           </div>
         </div>

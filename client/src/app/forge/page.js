@@ -241,7 +241,7 @@ function ForgeContent() {
               <DumbbellIcon className="w-10 h-10" />
             </div>
             <div className="text-gray-900 font-extrabold text-lg">No workouts yet</div>
-            <div className="muted mt-1 text-sm">Your journey starts here. Add your first session above!</div>
+            <div className="muted mt-1 text-sm">Logged sessions will appear here.</div>
           </div>
         ) : (
           <div className="mt-4 space-y-3">

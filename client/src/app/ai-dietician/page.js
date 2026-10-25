@@ -9,8 +9,8 @@ import ProtectedRoute from '../../components/ProtectedRoute';
 function DieticianContent() {
   const { user } = useContext(AuthContext);
   useDocumentMetadata({
-    title: 'AI Dietician & Meal Planner',
-    description: 'Receive personalized meal plans and nutrition guidance from our state-of-the-art AI-powered dietician.'
+    title: 'Meal Planner',
+    description: 'Build a meal plan around your calorie, protein, and dietary targets.'
   });
 
   const [formData, setFormData] = useState({
@@ -72,7 +72,7 @@ function DieticianContent() {
     <div className="min-h-screen bg-gray-50 p-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Dietician</h1>
-        <p className="text-gray-600 mb-8">Get your personalized meal plan in seconds</p>
+        <p className="text-gray-600 mb-8">Set your targets and build a day of meals.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-white rounded-lg shadow-lg p-6">
@@ -180,7 +180,7 @@ function DieticianContent() {
                 disabled={loading}
                 className="btn-core-primary w-full mt-4 !py-3.5 !text-base"
               >
-                {loading ? 'Generating...' : 'Generate Meal Plan'}
+                {loading ? 'Building plan...' : 'Build meal plan'}
               </button>
             </form>
           </div>
@@ -189,7 +189,7 @@ function DieticianContent() {
             <div className="space-y-6">
               {/* Header Card */}
               <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl shadow-lg p-6 text-white">
-                <h2 className="text-2xl font-bold mb-1">Your Personalized Meal Plan</h2>
+                <h2 className="text-2xl font-bold mb-1">Your meal plan</h2>
                 <p className="text-orange-100 text-sm">Tailored to your goals, preferences & budget</p>
                 {mealPlan.daily_macros?.calories > 0 && (
                   <div className="mt-4 flex items-center gap-2">

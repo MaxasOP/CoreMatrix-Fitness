@@ -7,8 +7,8 @@ import ProtectedRoute from '../../components/ProtectedRoute';
 
 function VideoFormAnalysisContent() {
   useDocumentMetadata({
-    title: 'AI Video Form Analysis',
-    description: 'Upload videos of your exercises to receive instant AI feedback on your lifting form, posture, and safety.'
+    title: 'Video Form Analysis',
+    description: 'Upload a working set to review movement, posture, and visible form issues.'
   });
 
   const [file, setFile] = useState(null);
@@ -63,7 +63,7 @@ function VideoFormAnalysisContent() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-10">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Form AI Analyzer</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Form review</h1>
         
         <div className="space-y-6">
           <div>

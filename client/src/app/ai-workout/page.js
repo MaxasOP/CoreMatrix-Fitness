@@ -8,7 +8,7 @@ import ProtectedRoute from '../../components/ProtectedRoute';
 
 function WorkoutPlannerContent() {
   useDocumentMetadata({
-    title: 'AI Workout Planner',
+    title: 'Workout Planner',
     description: 'Generate custom, goal-oriented workout routines tailored to your target muscles, equipment, and experience.'
   });
 
@@ -65,7 +65,7 @@ function WorkoutPlannerContent() {
               <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Built around you
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">Workout Planner</h1>
-            <p className="text-gray-200 text-sm sm:text-base">Generate a custom routine tailored to your equipment and schedule.</p>
+            <p className="text-gray-200 text-sm sm:text-base">Set your goal, available equipment, and weekly schedule.</p>
           </div>
         </div>
 
@@ -123,7 +123,7 @@ function WorkoutPlannerContent() {
                 disabled={loading}
                 className="btn-core-primary w-full mt-4 !py-3.5 !text-base"
               >
-                {loading ? 'Consulting AI...' : 'Generate Plan'}
+                {loading ? 'Building plan...' : 'Build plan'}
               </button>
             </form>
           </div>
@@ -220,7 +220,7 @@ function WorkoutPlannerContent() {
               </>
             ) : (
               <div className="bg-white/50 border-2 border-dashed border-gray-200 rounded-2xl p-12 text-center text-gray-400">
-                <p className="text-lg font-medium">Your personalized workout plan will appear here.</p>
+                <p className="text-lg font-medium">Your workout plan will appear here.</p>
               </div>
             )}
           </div>

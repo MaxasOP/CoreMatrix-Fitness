@@ -17,7 +17,7 @@ const SORT_OPTIONS = [
 function SupplementsContent() {
   useDocumentMetadata({
     title: 'Supplement Store',
-    description: 'Browse high-quality fitness supplements and receive personalized suggestions based on your profile and goals.'
+    description: 'Compare fitness supplements by category, goal, serving size, and listed price.'
   });
 
   const [supplements, setSupplements] = useState([]);
@@ -136,12 +136,12 @@ function SupplementsContent() {
             <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Verified Fuel & Gear</div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">Supplement Store</h1>
             <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
-              Personalized recommendations and transparent price comparison across top brands to fuel your training and recovery.
+              Compare products by goal, serving size, and listed price.
             </p>
             <div className="flex flex-wrap gap-2 text-xs font-medium text-gray-500">
               <span className="px-3 py-1 bg-gray-100 rounded-full">✓ Verified Vendors</span>
               <span className="px-3 py-1 bg-gray-100 rounded-full">✓ Price Comparison</span>
-              <span className="px-3 py-1 bg-gray-100 rounded-full">✓ Personalized Suggestions</span>
+              <span className="px-3 py-1 bg-gray-100">Goal filters</span>
             </div>
           </div>
         </div>

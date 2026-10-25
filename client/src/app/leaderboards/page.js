@@ -126,7 +126,7 @@ function EmptyState({ category }) {
       <h3 className="text-xl font-semibold text-gray-700 mb-2">No rankings yet</h3>
       <p className="text-gray-500 max-w-sm">
         Be the first to earn a spot on the <strong>{CATEGORY_LABELS[category]}</strong> leaderboard!
-        Start your fitness journey today.
+        Log sessions to enter the rankings.
       </p>
       <div className="mt-6 flex gap-3">
         <span className="text-3xl">{CATEGORY_ICONS[category]}</span>

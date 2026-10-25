@@ -23,7 +23,7 @@ const FEED_FILTERS = [
 function ProgressReelsContent() {
   useDocumentMetadata({
     title: 'Progress Reels',
-    description: 'Share your fitness journey and inspire others by posting video or photo Reels of your workouts.'
+    description: 'Post workout photos and videos to the community feed.'
   });
 
   const [reels, setReels] = useState([]);
@@ -98,7 +98,7 @@ function ProgressReelsContent() {
     <div className="min-h-screen bg-gray-50 p-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">💪 Progress Reels</h1>
-        <p className="text-gray-600 mb-8">Share your fitness journey and inspire others</p>
+        <p className="text-gray-600 mb-8">Post a workout photo or video.</p>
 
         {/* Upload Section */}
         <button
@@ -225,7 +225,7 @@ function ProgressReelsContent() {
             </h3>
             <p className="text-gray-600 mb-6">
               {activeFilter === 'all'
-                ? 'Be the first to share your fitness journey!'
+                ? 'No posts yet.'
                 : 'No reels match this filter. Try switching categories.'}
             </p>
             <button

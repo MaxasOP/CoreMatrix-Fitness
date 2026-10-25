@@ -56,7 +56,7 @@ function YogaContent() {
             <div>
               <p className="text-gray-600 text-sm">Current Streak</p>
               <p className="text-4xl font-bold text-orange-600 mt-2">{streak} 🔥</p>
-              <p className="text-gray-600 mt-1">Keep it going!</p>
+              <p className="text-gray-600 mt-1">Sessions logged this week.</p>
             </div>
             <div className="text-right">
               <button
