@@ -476,8 +476,7 @@ button:disabled {
 .session-row small,.session-row time { color:var(--muted); font-size:12px; }
 .empty-state { display:flex; flex-direction:column; gap:6px; margin-top:22px; padding:34px; border-radius:14px; background:#f0ede5; }
 .empty-state span,.status-note { color:var(--muted); }
-.status-note { margin:18px 0; padding:14px 18px; border-left:3px solid #ff5a1f; background:var(--card); }
-.dashboard-loading { height:390px; border-radius:28px; background:linear-gradient(100deg,#ebe7df 20%,#f7f4ee 40%,#ebe7df 60%); background-size:200% 100%; animation:gradient-x 1.4s infinite; }
+.dashboard-loading { height:390px; border-radius:28px; background:linear-gradient(100deg,#0d100d 20%,#182018 40%,#0d100d 60%); background-size:200% 100%; border:1px solid rgba(255,255,255,0.08); animation:gradient-x 1.4s infinite; }
 .desktop-nav-active { color:#fff!important; }
 @media (max-width:800px) { .command-hero { grid-template-columns:1fr; min-height:auto; } .today-score { width:auto; padding:20px; } .training-visuals,.dashboard-grid { grid-template-columns:1fr; } .training-visual { min-height:320px; } }
 @media (max-width:560px) { .dashboard-shell { width:min(100% - 24px,1180px); padding-top:20px; } .command-hero { padding:28px 24px; border-radius:20px; } .command-hero h1 { font-size:56px; } .metrics-grid { grid-template-columns:1fr; } .metric-card { padding:20px 22px; } .week-strip { gap:4px; } .day i { height:48px; } .focus-card,.quick-card,.recent-card { padding:24px; } }

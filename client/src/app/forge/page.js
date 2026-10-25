@@ -206,7 +206,7 @@ function ForgeContent() {
           </div>
         </div>
 
-        <aside className="bg-gray-900 text-white rounded-2xl p-6 sm:p-7 shadow-lg relative overflow-hidden group min-h-[460px] sm:min-h-[520px] md:min-h-full flex items-end">
+        <aside className="order-first md:order-last bg-gray-900 text-white rounded-2xl p-6 sm:p-7 shadow-lg relative overflow-hidden group min-h-[460px] sm:min-h-[520px] md:min-h-full flex items-end">
           <Image
             src="/assets/forge-athlete.webp"
             alt="Female athlete performing a barbell front squat with proper form"

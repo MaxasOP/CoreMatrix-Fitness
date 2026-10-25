@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useContext } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '../../api';
@@ -70,16 +69,11 @@ export default function Auth() {
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
         <div className="card p-8 sm:p-10 shadow-2xl shadow-gray-200/50 border-white/80">
           <div className="text-center mb-8">
-            <Image
-              src="/assets/corematrix-logo.webp"
-              alt="CoreMatrix"
-              width={768}
-              height={256}
-              priority
-              quality={95}
-              className="site-logo h-14 sm:h-16 w-auto mx-auto mb-5"
-              sizes="(max-width: 640px) 190px, 216px"
-            />
+            <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-[#ff5a1f]/20 via-[#ff5a1f]/10 to-transparent border border-[#ff5a1f]/30 flex items-center justify-center text-[#ff5a1f] shadow-lg shadow-orange-500/10">
+              <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
             <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">{mode === 'login' ? 'Welcome back.' : 'Create your account.'}</h1>
             <div className="text-gray-500 mt-2 font-medium">{mode === 'login' ? 'Your training log is waiting.' : 'Start with today. Build from there.'}</div>
           </div>

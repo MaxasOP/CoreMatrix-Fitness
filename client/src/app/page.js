@@ -57,7 +57,25 @@ export default function Home() {
     };
   }, [meals, workouts]);
 
-  if (authLoading || (user && loading)) return <main className="dashboard-shell"><div className="dashboard-loading" aria-label="Loading dashboard" /></main>;
+  if (authLoading || (user && loading)) {
+    return (
+      <main className="dashboard-shell py-8">
+        <div className="min-h-[440px] rounded-[28px] bg-[#0d100d] border border-white/10 flex flex-col items-center justify-center relative overflow-hidden shadow-2xl p-8">
+          <div className="absolute inset-0 bg-radial from-lime-400/10 via-transparent to-transparent pointer-events-none" />
+          <div className="relative z-10 flex flex-col items-center gap-5 text-center">
+            <div className="relative w-14 h-14">
+              <div className="absolute inset-0 rounded-full border-2 border-lime-400/25 animate-ping" />
+              <div className="w-14 h-14 rounded-full border-2 border-lime-400 border-t-transparent animate-spin" />
+            </div>
+            <div>
+              <div className="text-lime-300 font-bold text-xs uppercase tracking-[0.22em] mb-1.5 animate-pulse">Initializing Dashboard</div>
+              <p className="text-gray-400 text-sm max-w-xs">Synchronizing your training & recovery metrics...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="dashboard-shell">

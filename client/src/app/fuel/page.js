@@ -133,12 +133,35 @@ function FuelContent() {
           </div>
         </div>
       )}
+      {/* Top Meal Hero Showcase */}
+      <section className="relative min-h-[300px] sm:min-h-[360px] md:min-h-[340px] rounded-[28px] overflow-hidden bg-[#11140f] shadow-xl flex items-end">
+        <Image
+          src="/assets/meal.webp"
+          alt="Healthy fitness meal with grilled chicken, eggs, corn, broccoli, and sweet potatoes"
+          fill
+          priority
+          quality={95}
+          sizes="(max-width: 1024px) 100vw, 1280px"
+          className="object-cover object-[center_42%]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-black/20 md:bg-gradient-to-r md:from-black/95 md:via-black/60 md:to-transparent pointer-events-none" />
+        <div className="relative z-10 max-w-xl p-6 sm:p-8 md:p-10 text-white">
+          <div className="text-lime-300 text-xs font-bold uppercase tracking-[0.18em] mb-2 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Daily Nutrition
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 tracking-tight">Fuel Your Day</h1>
+          <p className="text-gray-200 text-sm sm:text-base leading-relaxed">
+            Clean whole foods, balanced macros, and optimal timing. Log your meals in seconds to stay on target.
+          </p>
+        </div>
+      </section>
+
       <section className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 card p-6">
           <div className="flex items-center justify-between">
             <div>
               <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Nutrition log</div>
-              <h1 className="text-3xl font-extrabold text-gray-900">Fuel your day</h1>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Log your meal</h2>
             </div>
             <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-500">Smart presets</span>
           </div>
@@ -170,26 +193,8 @@ function FuelContent() {
           </div>
         </div>
 
-        <aside className="card p-0 overflow-hidden">
-          <div className="relative min-h-[320px] sm:min-h-[360px] md:h-72 flex items-end">
-            <Image
-              src="/assets/fuel-athlete.webp"
-              alt="Athlete holding a nutrition shaker after training"
-              fill
-              preload
-              quality={95}
-              sizes="(max-width: 768px) 100vw, 33vw"
-              className="object-cover object-[center_20%] sm:object-[center_24%] md:object-[center_28%]"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 via-35% to-transparent pointer-events-none" />
-            <div className="relative z-10 p-5 text-white">
-              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-lime-300 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Recovery starts here
-              </span>
-              <p className="mt-1 text-sm font-semibold leading-snug">Match every session with deliberate fuel.</p>
-            </div>
-          </div>
-          <div className="p-6">
+        <aside className="card p-6 flex flex-col justify-between">
+          <div>
             <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Today&apos;s Intake</div>
             <h3 className="text-4xl font-extrabold text-gray-900">{totals.calories} <span className="text-lg text-gray-400 font-medium">kcal</span></h3>
             <div className="text-sm text-gray-500 font-medium mt-1">Goal: {calorieGoal} kcal</div>
@@ -201,6 +206,10 @@ function FuelContent() {
               <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Carbs</span><strong className="text-gray-900">{totals.carbs}g</strong></div>
               <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Fat</span><strong className="text-gray-900">{totals.fat}g</strong></div>
             </div>
+          </div>
+          <div className="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-500 flex items-center justify-between">
+            <span>Macro balance</span>
+            <span className="font-semibold text-emerald-600">Optimal ratio</span>
           </div>
         </aside>
       </section>
@@ -237,6 +246,56 @@ function FuelContent() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Bottom Athlete Showcase: Our Girl Shown in Full */}
+      <section className="bg-gradient-to-br from-[#141913] via-[#0e120e] to-[#090b08] border border-white/10 text-white rounded-3xl overflow-hidden shadow-2xl relative p-6 sm:p-8 md:p-10">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="relative w-full aspect-[3/4] sm:aspect-[4/5] md:aspect-[3/4] max-w-md mx-auto min-h-[460px] sm:min-h-[520px] flex items-center justify-center overflow-hidden rounded-2xl bg-black/40">
+            {/* Ambient atmospheric backdrop */}
+            <Image
+              src="/assets/fuel-athlete.webp"
+              alt=""
+              aria-hidden="true"
+              fill
+              quality={30}
+              className="object-cover blur-2xl opacity-40 scale-110 pointer-events-none"
+            />
+            {/* Full athlete photo - zero cropping */}
+            <Image
+              src="/assets/fuel-athlete.webp"
+              alt="Athlete holding a nutrition shaker after training"
+              fill
+              quality={95}
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-contain relative z-10 drop-shadow-2xl"
+            />
+          </div>
+
+          <div className="flex flex-col justify-center space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold uppercase tracking-wider text-lime-300 w-fit">
+              <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Recovery Focus
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Recovery starts here.</h2>
+            <p className="text-gray-300 text-base leading-relaxed">
+              Match every session with deliberate fuel. Every rep you put into the gym demands the right nutrients to repair and grow. Hydrate, hit your protein targets, and fuel your body for tomorrow&apos;s session.
+            </p>
+            <div className="pt-2 grid grid-cols-3 gap-3">
+              <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
+                <div className="text-lime-300 font-extrabold text-lg sm:text-xl">{totals.protein}g</div>
+                <div className="text-gray-400 text-xs mt-0.5">Protein logged</div>
+              </div>
+              <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
+                <div className="text-emerald-400 font-extrabold text-lg sm:text-xl">{totals.calories}</div>
+                <div className="text-gray-400 text-xs mt-0.5">Calories logged</div>
+              </div>
+              <div className="p-3.5 rounded-xl bg-white/5 border border-white/10">
+                <div className="text-teal-300 font-extrabold text-lg sm:text-xl">{meals.length}</div>
+                <div className="text-gray-400 text-xs mt-0.5">Meals logged</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );
