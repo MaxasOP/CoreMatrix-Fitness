@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import api from '../../api';
 import { AuthContext } from '../../AuthContext';
 import useDocumentMetadata from '../../hooks/useDocumentMetadata';
@@ -169,17 +170,27 @@ function FuelContent() {
           </div>
         </div>
 
-        <aside className="card p-6">
-          <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Today's Intake</div>
-          <h3 className="text-4xl font-extrabold text-gray-900">{totals.calories} <span className="text-lg text-gray-400 font-medium">kcal</span></h3>
-          <div className="text-sm text-gray-500 font-medium mt-1">Goal: {calorieGoal} kcal</div>
-          <div className="h-3 bg-gray-100 rounded-full mt-4 overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-600 animate-gradient-x rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, Math.round((totals.calories / calorieGoal) * 100))}%` }} />
+        <aside className="card p-0 overflow-hidden">
+          <div className="relative h-52">
+            <Image src="/assets/fuel-athlete.webp" alt="Athlete holding a nutrition shaker after training" fill preload sizes="(max-width: 768px) 100vw, 33vw" className="object-cover object-[center_38%]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+            <div className="absolute inset-x-5 bottom-4 text-white">
+              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-lime-300">Recovery starts here</span>
+              <p className="mt-1 text-sm font-semibold">Match every session with deliberate fuel.</p>
+            </div>
           </div>
-          <div className="mt-6 space-y-3 text-sm">
-            <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Protein</span><strong className="text-gray-900">{totals.protein}g</strong></div>
-            <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Carbs</span><strong className="text-gray-900">{totals.carbs}g</strong></div>
-            <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Fat</span><strong className="text-gray-900">{totals.fat}g</strong></div>
+          <div className="p-6">
+            <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Today&apos;s Intake</div>
+            <h3 className="text-4xl font-extrabold text-gray-900">{totals.calories} <span className="text-lg text-gray-400 font-medium">kcal</span></h3>
+            <div className="text-sm text-gray-500 font-medium mt-1">Goal: {calorieGoal} kcal</div>
+            <div className="h-3 bg-gray-100 rounded-full mt-4 overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-600 animate-gradient-x rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, Math.round((totals.calories / calorieGoal) * 100))}%` }} />
+            </div>
+            <div className="mt-6 space-y-3 text-sm">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Protein</span><strong className="text-gray-900">{totals.protein}g</strong></div>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Carbs</span><strong className="text-gray-900">{totals.carbs}g</strong></div>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Fat</span><strong className="text-gray-900">{totals.fat}g</strong></div>
+            </div>
           </div>
         </aside>
       </section>

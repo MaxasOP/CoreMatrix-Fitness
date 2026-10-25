@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import api from '../../api';
 import { AuthContext } from '../../AuthContext';
 import useDocumentMetadata from '../../hooks/useDocumentMetadata';
@@ -205,14 +206,13 @@ function ForgeContent() {
           </div>
         </div>
 
-        <aside className="bg-gray-900 text-white rounded-2xl p-6 shadow-lg relative overflow-hidden group">
-          <div className="absolute -bottom-10 -right-10 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-transform duration-700">
-            <svg width="200" height="200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-          </div>
+        <aside className="bg-gray-900 text-white rounded-2xl p-6 shadow-lg relative overflow-hidden group min-h-72 flex items-end">
+          <Image src="/assets/forge-athlete.webp" alt="Athlete preparing a barbell for strength training" fill preload sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/5" />
           <div className="relative z-10">
-            <div className="font-semibold text-gray-400 uppercase tracking-wide text-xs mb-2">Focus</div>
+            <div className="font-semibold text-lime-300 uppercase tracking-wide text-xs mb-2">Focus</div>
             <h3 className="text-2xl font-extrabold text-white">Train with intent</h3>
-            <p className="text-gray-300 mt-3 leading-relaxed">Use templates to speed up logging. Capture sets, reps, and intensity in under 10 seconds.</p>
+            <p className="text-gray-200 mt-3 leading-relaxed">Use templates to speed up logging. Capture sets, reps, and intensity in under 10 seconds.</p>
           </div>
         </aside>
       </section>

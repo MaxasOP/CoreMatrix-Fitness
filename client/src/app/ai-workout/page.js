@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import api from '../../api';
 import useDocumentMetadata from '../../hooks/useDocumentMetadata';
 import ProtectedRoute from '../../components/ProtectedRoute';
@@ -48,8 +49,15 @@ function WorkoutPlannerContent() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Workout Planner</h1>
-        <p className="text-gray-600 mb-8">Generate a custom routine tailored to your equipment and schedule.</p>
+        <div className="relative min-h-72 overflow-hidden rounded-[28px] bg-[#11140f] mb-8 shadow-xl flex items-end">
+          <Image src="/assets/planner-athlete.webp" alt="Athlete performing a cable strength exercise" fill preload sizes="(max-width: 1024px) 100vw, 896px" className="object-cover object-center" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/55 to-transparent" />
+          <div className="relative z-10 max-w-xl p-7 md:p-10 text-white">
+            <div className="text-lime-300 text-xs font-bold uppercase tracking-[0.18em] mb-2">Built around you</div>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">Workout Planner</h1>
+            <p className="text-gray-200">Generate a custom routine tailored to your equipment and schedule.</p>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 bg-white rounded-2xl shadow-lg p-6 h-fit lg:sticky top-24">
