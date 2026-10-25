@@ -56,7 +56,7 @@ function LayoutContent({ children }) {
       </div>
 
       <header className="site-header sticky top-0 z-50 backdrop-blur-xl border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between">
           <Link href="/" className="group shrink-0 flex items-center" aria-label="CoreMatrix home">
             <Image
               src="/assets/corematrix-logo.webp"
@@ -65,24 +65,24 @@ function LayoutContent({ children }) {
               height={256}
               preload
               quality={95}
-              className="site-logo h-7 sm:h-8 w-auto transition-opacity group-hover:opacity-75"
-              sizes="(max-width: 640px) 110px, 130px"
+              className="site-logo h-8 sm:h-10 w-auto transition-opacity group-hover:opacity-75"
+              sizes="(max-width: 640px) 140px, 170px"
             />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1.5">
+          <nav className="hidden md:flex items-center gap-2">
             {visibleNavItems.map(n => {
               const isActive = pathname === n.to;
               return (
-                <Link key={n.to} href={n.to} className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'desktop-nav-active bg-white/10 text-white shadow-sm border border-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                <Link key={n.to} href={n.to} className={`px-4 py-2 rounded-xl text-sm md:text-[15px] font-semibold transition-colors ${isActive ? 'desktop-nav-active bg-white/10 text-white shadow-sm border border-white/10' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                   {n.label}
                 </Link>
               );
             })}
             <details className="relative">
-              <summary className="list-none cursor-pointer px-3.5 py-1.5 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5">Explore ▾</summary>
-              <div className="nav-menu absolute right-0 top-11 w-52 rounded-xl border p-2 shadow-xl">
-                {moreNavItems.map(n => <Link key={n.to} href={n.to} className="block rounded-lg px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white">{n.label}</Link>)}
+              <summary className="list-none cursor-pointer px-4 py-2 rounded-xl text-sm md:text-[15px] font-semibold text-gray-400 hover:text-white hover:bg-white/5">Explore ▾</summary>
+              <div className="nav-menu absolute right-0 top-13 w-56 rounded-xl border p-2 shadow-xl bg-[#11140f]/95 backdrop-blur-2xl">
+                {moreNavItems.map(n => <Link key={n.to} href={n.to} className="block rounded-lg px-3.5 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white font-medium">{n.label}</Link>)}
               </div>
             </details>
           </nav>
@@ -91,39 +91,39 @@ function LayoutContent({ children }) {
             {user ? (
               <>
                 <div className="text-xs hidden lg:block text-gray-400 font-medium">Signed in as <strong className="text-gray-200">{user.name}</strong></div>
-                <button onClick={logout} className="text-xs sm:text-sm font-medium text-gray-300 hover:text-red-400 bg-white/5 hover:bg-red-500/10 border border-white/10 px-3.5 py-1.5 rounded-lg transition-colors">Sign out</button>
+                <button onClick={logout} className="text-xs sm:text-sm font-semibold text-gray-300 hover:text-red-400 bg-white/5 hover:bg-red-500/10 border border-white/10 px-4 py-2 rounded-xl transition-colors">Sign out</button>
               </>
             ) : (
-              <Link href="/auth" className="prism-button px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all hover:-translate-y-0.5">Sign in</Link>
+              <Link href="/auth" className="prism-button px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all hover:-translate-y-0.5">Sign in</Link>
             )}
           </div>
         </div>
       </header>
 
-      <main key={pathname} className="site-main pb-20 md:pb-12 pt-2">
+      <main key={pathname} className="site-main pb-28 md:pb-16 pt-2">
         {children}
       </main>
 
       {/* Mobile Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-safe">
-        <div className="mobile-dock backdrop-blur-2xl border-t px-2 py-1.5 flex items-center justify-around h-14 sm:h-15">
+      <nav className="fixed bottom-3 inset-x-3 sm:inset-x-6 z-50 md:hidden">
+        <div className="mobile-dock rounded-2xl border border-white/15 bg-[#10140f]/92 backdrop-blur-2xl shadow-2xl px-2 py-1.5 flex items-center justify-around h-16">
           {visibleNavItems.map(n => {
             const isActive = pathname === n.to;
             return (
-              <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-0.5 py-0.5 px-2 min-w-[3.5rem] transition-colors ${isActive ? 'text-lime-300' : 'text-gray-500 hover:text-gray-300'}`} onClick={() => setShowMoreNav(false)}>
-                <div className={`p-1 rounded-lg transition-colors ${isActive ? 'bg-lime-300/10' : 'bg-transparent'}`}>
-                  {n.icon}
+              <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-0.5 py-1 px-2.5 min-w-[3.5rem] rounded-xl transition-all ${isActive ? 'text-lime-300 font-bold' : 'text-gray-400 hover:text-white'}`} onClick={() => setShowMoreNav(false)}>
+                <div className={`p-1 rounded-lg transition-colors ${isActive ? 'bg-lime-300/15 text-lime-300' : 'bg-transparent text-gray-400'}`}>
+                  {React.cloneElement(n.icon, { width: 22, height: 22 })}
                 </div>
-                <span className="text-[10px] font-semibold tracking-tight whitespace-nowrap">{n.label}</span>
+                <span className="text-[11px] font-semibold tracking-tight whitespace-nowrap">{n.label}</span>
               </Link>
             );
           })}
           {/* More button */}
-          <button onClick={() => setShowMoreNav(true)} className={`flex flex-col items-center gap-0.5 py-0.5 px-2 min-w-[3.5rem] transition-colors ${showMoreNav ? 'text-lime-300' : 'text-gray-500 hover:text-gray-300'}`}>
-            <div className={`p-1 rounded-lg transition-colors ${showMoreNav ? 'bg-lime-300/10' : 'bg-transparent'}`}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          <button onClick={() => setShowMoreNav(true)} className={`flex flex-col items-center gap-0.5 py-1 px-2.5 min-w-[3.5rem] rounded-xl transition-all ${showMoreNav ? 'text-lime-300 font-bold' : 'text-gray-400 hover:text-white'}`}>
+            <div className={`p-1 rounded-lg transition-colors ${showMoreNav ? 'bg-lime-300/15 text-lime-300' : 'bg-transparent text-gray-400'}`}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/><circle cx="5" cy="12" r="1.2"/></svg>
             </div>
-            <span className="text-[10px] font-semibold tracking-tight whitespace-nowrap">More</span>
+            <span className="text-[11px] font-semibold tracking-tight whitespace-nowrap">More</span>
           </button>
         </div>
       </nav>

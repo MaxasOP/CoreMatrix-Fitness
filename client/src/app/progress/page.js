@@ -69,40 +69,61 @@ function ProgressContent() {
 
   return (
     <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-      <section className="card p-6">
-        <div className="grid md:grid-cols-[1.15fr_.85fr] gap-6 items-stretch">
-          <div className="flex flex-col justify-center order-last md:order-first">
-            <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Consistency</div>
-            <h1 className="text-3xl font-extrabold text-gray-900">Weekly progress</h1>
-            <div className="mt-4 text-6xl font-black flex items-center gap-4"><span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 animate-gradient-x">{weekProgress}%</span> {weekProgress === 100 && <span className="text-5xl animate-bounce">🏆</span>}</div>
+      <section className="grid md:grid-cols-3 gap-6">
+        <div className="md:col-span-2 card p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Consistency</div>
+                <h1 className="text-3xl font-extrabold text-gray-900">Weekly progress</h1>
+              </div>
+              <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-500">
+                Weekly Target
+              </span>
+            </div>
+
+            <div className="mt-4 text-6xl font-black flex items-center gap-4">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 animate-gradient-x">{weekProgress}%</span>
+              {weekProgress === 100 && <span className="text-5xl animate-bounce">🏆</span>}
+            </div>
             <div className="text-gray-500 font-medium mt-1">{completed} training days completed</div>
-            <div className="h-3 bg-gray-100 rounded-full mt-5 overflow-hidden">
+            <div className="h-3 bg-gray-100 rounded-full mt-4 overflow-hidden">
               <div className="h-full bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 animate-gradient-x rounded-full transition-all duration-1000" style={{ width: `${weekProgress}%` }} />
             </div>
           </div>
-          <div className="order-first md:order-last relative min-h-[420px] sm:min-h-[480px] md:min-h-full overflow-hidden rounded-2xl bg-[#0d100d] shadow-lg">
-            <Image
-              src="/assets/progress-athlete.webp"
-              alt="Athlete in training"
-              fill
-              priority
-              quality={95}
-              sizes="(max-width: 768px) 100vw, 38vw"
-              className="object-cover object-[center_12%] sm:object-[center_15%] transition-transform duration-700 hover:scale-105"
-            />
+
+          <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {weekly.map(d => (
+              <div key={d.day} className={`card-soft ${d.done && d.group !== 'REST' ? 'bg-indigo-50/50 border-indigo-200 shadow-inner' : ''} flex flex-col gap-1`}>
+                <div className="flex items-center justify-between">
+                  <div className={`font-semibold ${d.done && d.group !== 'REST' ? 'text-indigo-900' : 'text-gray-900'}`}>{d.day}</div>
+                  {d.done && d.group !== 'REST' && <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>}
+                </div>
+                <div className={`text-sm ${d.done && d.group !== 'REST' ? 'text-indigo-600' : 'text-gray-500'}`}>{d.group} • {d.done ? 'Done' : 'Rest'}</div>
+              </div>
+            ))}
           </div>
         </div>
-        <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {weekly.map(d => (
-            <div key={d.day} className={`card-soft ${d.done && d.group !== 'REST' ? 'bg-indigo-50/50 border-indigo-200 shadow-inner' : ''} flex flex-col gap-1`}>
-              <div className="flex items-center justify-between">
-                <div className={`font-semibold ${d.done && d.group !== 'REST' ? 'text-indigo-900' : 'text-gray-900'}`}>{d.day}</div>
-                {d.done && d.group !== 'REST' && <svg className="w-5 h-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>}
-              </div>
-              <div className={`text-sm ${d.done && d.group !== 'REST' ? 'text-indigo-600' : 'text-gray-500'}`}>{d.group} • {d.done ? 'Done' : 'Rest'}</div>
+
+        <aside className="order-first md:order-last bg-gray-900 text-white rounded-2xl p-6 sm:p-7 shadow-lg relative overflow-hidden group min-h-[460px] sm:min-h-[520px] md:min-h-full flex items-end">
+          <Image
+            src="/assets/progress-athlete.webp"
+            alt="Athlete pushing sled in high-intensity training session"
+            fill
+            priority
+            quality={95}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover object-[center_18%] sm:object-[center_20%] md:object-[center_22%] transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent pointer-events-none" />
+          <div className="relative z-10 max-w-sm">
+            <div className="font-semibold text-lime-300 uppercase tracking-wider text-xs mb-1.5 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Momentum
             </div>
-          ))}
-        </div>
+            <h3 className="text-2xl font-extrabold text-white tracking-tight">Push the standard</h3>
+            <p className="text-gray-200 mt-2 text-sm leading-relaxed">Every rep and session compounds over time. Keep track of consistency to stay ahead of your goals.</p>
+          </div>
+        </aside>
       </section>
 
       <section className="grid md:grid-cols-3 gap-4">
