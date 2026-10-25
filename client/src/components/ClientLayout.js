@@ -56,7 +56,7 @@ function LayoutContent({ children }) {
       </div>
 
       <header className="site-header sticky top-0 z-50 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-24 flex items-center justify-between">
+        <div className="site-header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <Link href="/" className="group shrink-0 flex items-center" aria-label="CoreMatrix home">
             <Image
               src="/assets/corematrix-logo.webp"
@@ -65,8 +65,8 @@ function LayoutContent({ children }) {
               height={256}
               preload
               quality={95}
-              className="site-logo h-10 sm:h-12 md:h-14 w-auto transition-all group-hover:scale-105"
-              sizes="(max-width: 640px) 160px, 240px"
+              className="site-logo w-auto transition-opacity group-hover:opacity-80"
+              sizes="(max-width: 640px) 132px, 156px"
             />
           </Link>
 
@@ -74,13 +74,13 @@ function LayoutContent({ children }) {
             {visibleNavItems.map(n => {
               const isActive = pathname === n.to;
               return (
-                <Link key={n.to} href={n.to} className={`px-4 lg:px-5 py-2.5 rounded-xl text-base lg:text-[17px] font-bold transition-all ${isActive ? 'desktop-nav-active bg-white/12 text-white shadow-md border border-white/15' : 'text-gray-300 hover:text-white hover:bg-white/8'}`}>
+                <Link key={n.to} href={n.to} aria-current={isActive ? 'page' : undefined} className={`desktop-nav-link ${isActive ? 'desktop-nav-active' : ''}`}>
                   {n.label}
                 </Link>
               );
             })}
             <details className="relative">
-              <summary className="list-none cursor-pointer px-4 lg:px-5 py-2.5 rounded-xl text-base lg:text-[17px] font-bold text-gray-300 hover:text-white hover:bg-white/8">Explore ▾</summary>
+              <summary className="desktop-nav-link list-none cursor-pointer">Explore <span aria-hidden="true">▾</span></summary>
               <div className="nav-menu absolute right-0 top-14 w-60 rounded-2xl border p-2.5 shadow-2xl bg-[#11140f]/95 backdrop-blur-2xl border-white/15">
                 {moreNavItems.map(n => <Link key={n.to} href={n.to} className="block rounded-xl px-4 py-3 text-base text-gray-200 hover:bg-white/10 hover:text-white font-semibold transition-colors">{n.label}</Link>)}
               </div>
@@ -91,39 +91,55 @@ function LayoutContent({ children }) {
             {user ? (
               <>
                 <div className="text-sm hidden lg:block text-gray-300 font-semibold">Signed in as <strong className="text-white">{user.name}</strong></div>
-                <button onClick={logout} className="text-sm sm:text-base font-bold text-gray-200 hover:text-red-400 bg-white/8 hover:bg-red-500/15 border border-white/15 px-5 py-2.5 rounded-xl transition-all">Sign out</button>
+                <button onClick={logout} className="header-account-action text-gray-200 hover:text-red-400">Sign out</button>
               </>
             ) : (
-              <Link href="/auth" className="prism-button px-6 py-2.5 sm:py-3 rounded-xl text-sm sm:text-base font-extrabold transition-all hover:scale-105 shadow-lg">Sign in</Link>
+              <Link href="/auth" className="prism-button header-account-action font-bold transition-opacity hover:opacity-90">Sign in</Link>
             )}
           </div>
         </div>
       </header>
 
-      <main key={pathname} className="site-main pb-32 md:pb-20 pt-3">
+      <main key={pathname} className="site-main">
         {children}
       </main>
 
+      <footer className="site-footer">
+        <div className="site-footer-inner">
+          <Link href="/" className="footer-brand" aria-label="CoreMatrix home">
+            <Image src="/assets/corematrix-logo.webp" alt="CoreMatrix" width={768} height={256} className="site-logo" sizes="128px" />
+          </Link>
+          <p>Training, meals, and progress. One record of the work.</p>
+          <nav aria-label="Footer navigation">
+            <Link href="/forge">Workout</Link>
+            <Link href="/fuel">Meals</Link>
+            <Link href="/progress">Progress</Link>
+            <Link href="/auth">Account</Link>
+          </nav>
+          <small>© {new Date().getFullYear()} CoreMatrix</small>
+        </div>
+      </footer>
+
       {/* Mobile Navigation */}
-      <nav className="fixed bottom-4 inset-x-4 sm:inset-x-8 z-50 md:hidden">
-        <div className="mobile-dock rounded-2xl border border-white/15 bg-[#10140f]/95 backdrop-blur-2xl shadow-2xl px-3 py-2 flex items-center justify-around h-18 sm:h-20">
+      <nav className="mobile-nav-shell fixed bottom-0 inset-x-0 z-50 md:hidden" aria-label="Primary navigation">
+        <div className="mobile-dock flex items-center justify-around">
           {visibleNavItems.map(n => {
             const isActive = pathname === n.to;
             return (
-              <Link key={n.to} href={n.to} className={`flex flex-col items-center gap-1 py-1 px-3 min-w-[4rem] rounded-xl transition-all ${isActive ? 'text-lime-300 font-extrabold' : 'text-gray-300 hover:text-white'}`} onClick={() => setShowMoreNav(false)}>
-                <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-lime-300/20 text-lime-300 scale-110' : 'bg-transparent text-gray-400'}`}>
-                  {React.cloneElement(n.icon, { width: 25, height: 25 })}
+              <Link key={n.to} href={n.to} aria-current={isActive ? 'page' : undefined} className={`mobile-nav-item ${isActive ? 'is-active' : ''}`} onClick={() => setShowMoreNav(false)}>
+                <div className="mobile-nav-icon">
+                  {React.cloneElement(n.icon, { width: 22, height: 22 })}
                 </div>
-                <span className="text-xs font-bold tracking-tight whitespace-nowrap">{n.label}</span>
+                <span>{n.label}</span>
               </Link>
             );
           })}
           {/* More button */}
-          <button onClick={() => setShowMoreNav(true)} className={`flex flex-col items-center gap-1 py-1 px-3 min-w-[4rem] rounded-xl transition-all ${showMoreNav ? 'text-lime-300 font-extrabold' : 'text-gray-300 hover:text-white'}`}>
-            <div className={`p-1.5 rounded-xl transition-all ${showMoreNav ? 'bg-lime-300/20 text-lime-300 scale-110' : 'bg-transparent text-gray-400'}`}>
-              <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
+          <button type="button" aria-label="Open more navigation" aria-expanded={showMoreNav} onClick={() => setShowMoreNav(true)} className={`mobile-nav-item ${showMoreNav ? 'is-active' : ''}`}>
+            <div className="mobile-nav-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
             </div>
-            <span className="text-xs font-bold tracking-tight whitespace-nowrap">More</span>
+            <span>More</span>
           </button>
         </div>
       </nav>
@@ -134,7 +150,7 @@ function LayoutContent({ children }) {
           <div className="more-sheet rounded-t-3xl w-full max-h-[80vh] overflow-y-auto pb-safe p-6" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-white">More</h3>
-              <button onClick={() => setShowMoreNav(false)} className="text-gray-400 hover:text-gray-600">
+              <button type="button" aria-label="Close more navigation" onClick={() => setShowMoreNav(false)} className="text-gray-400 hover:text-white min-h-11 min-w-11 grid place-items-center">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>

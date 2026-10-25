@@ -116,7 +116,7 @@ export default function Home() {
           <span className="refracted-orb" />
           <i /><i /><i /><i /><i /><i /><i /><i /><i />
         </div>
-        <div>
+        <div className="command-content">
           <p className="eyebrow">Today&apos;s Focus</p>
           <h1>{user ? `${user.name.split(' ')[0]}, show up.` : 'Log the work.'}</h1>
           <p className="hero-copy">Training, food, and recovery—kept in one place so you can see what is actually moving.</p>
