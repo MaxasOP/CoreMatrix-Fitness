@@ -134,7 +134,7 @@ export default function Home() {
       </section>
 
       <section className="training-visuals" aria-label="Choose your training focus">
-        <Link href="/forge" className="training-visual training-visual--strength group">
+        <Link href="/forge" className="training-visual group">
           <Image src="/assets/athlete-strength.webp" alt="Athlete performing a dumbbell curl in a gym" fill quality={95} priority sizes="(max-width: 800px) 100vw, 50vw" className="object-cover object-[center_18%] transition-transform duration-500 ease-out group-hover:scale-105" />
           <span className="training-visual-shade" />
           <span className="training-visual-copy"><small>Strength</small><strong>Start a workout.</strong><b>Open workout log →</b></span>
