@@ -16,7 +16,7 @@ const allowedVideoTypes = new Set([
 
 const upload = multer({
   dest: (process.env.VIDEO_UPLOAD_DIR || 'uploads/videos/'),
-  limits: { fileSize: 100 * 1024 * 1024 },
+  limits: { fileSize: 40 * 1024 * 1024 },
   fileFilter: (_req, file, callback) => {
     if (!allowedVideoTypes.has(file.mimetype)) {
       return callback(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'video'));

@@ -138,6 +138,10 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
         if not cap.isOpened():
             raise HTTPException(status_code=422, detail="The uploaded file is not a readable video")
 
+        fps = cap.get(cv2.CAP_PROP_FPS) or 30
+        sample_stride = max(1, round(fps / 8))
+        max_dimension = 720
+        max_sampled_frames = 360
         frame_count = 0
         sampled_frames = 0
         landmark_frames = 0
@@ -148,10 +152,21 @@ async def analyze_video(video: UploadFile = File(...), exercise_name: str = Form
             if not ok:
                 break
             frame_count += 1
-            if frame_count % 2:
+            if frame_count % sample_stride:
                 continue
 
             sampled_frames += 1
+            if sampled_frames > max_sampled_frames:
+                break
+            height, width = frame.shape[:2]
+            longest_side = max(height, width)
+            if longest_side > max_dimension:
+                scale = max_dimension / longest_side
+                frame = cv2.resize(
+                    frame,
+                    (max(1, round(width * scale)), max(1, round(height * scale))),
+                    interpolation=cv2.INTER_AREA,
+                )
             image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image.flags.writeable = False
             results = pose.process(image)

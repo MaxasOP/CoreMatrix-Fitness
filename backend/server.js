@@ -111,8 +111,11 @@ app.use((err, req, res, next) => {
     return next(err);
   }
   const isUploadError = err.name === 'MulterError';
+  const message = err.code === 'LIMIT_FILE_SIZE'
+    ? 'Video must be 40 MB or smaller. Trim the clip to one working set and try again.'
+    : (err.message || 'An unexpected error occurred');
   res.status(isUploadError ? 400 : (err.statusCode || 500)).json({
-    message: err.message || 'An unexpected error occurred',
+    message,
     error: process.env.NODE_ENV === 'production' ? {} : err.stack // Send stack trace in development
   });
 });

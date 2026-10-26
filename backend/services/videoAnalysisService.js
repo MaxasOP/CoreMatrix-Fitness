@@ -47,24 +47,35 @@ class VideoAnalysisService {
         throw new Error(`Video file not found at path: ${videoPath}`);
       }
 
-      const fileStream = fs.createReadStream(videoPath);
-      const formData = new FormData();
-      formData.append('video', fileStream);
-      formData.append('exercise_name', exerciseName);
-
       const targetUrl = `${this.pythonServiceUrl}/analyze`;
       console.log('Calling Python service at:', targetUrl);
 
-      const response = await axios.post(
-        targetUrl,
-        formData,
-        {
-          headers: formData.getHeaders(),
-          timeout: this.requestTimeoutMs,
-          maxBodyLength: Infinity,
-          maxContentLength: Infinity
+      // Wake sleeping Render instances before streaming a potentially large upload.
+      await axios.get(`${this.pythonServiceUrl}/health`, { timeout: 90000 });
+
+      let response;
+      let lastError;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const formData = new FormData();
+        formData.append('video', fs.createReadStream(videoPath));
+        formData.append('exercise_name', exerciseName);
+        try {
+          response = await axios.post(targetUrl, formData, {
+            headers: formData.getHeaders(),
+            timeout: this.requestTimeoutMs,
+            maxBodyLength: Infinity,
+            maxContentLength: Infinity
+          });
+          break;
+        } catch (requestError) {
+          lastError = requestError;
+          const status = requestError.response?.status;
+          if (attempt === 1 || ![502, 503, 504].includes(status)) throw requestError;
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+          await axios.get(`${this.pythonServiceUrl}/health`, { timeout: 90000 });
         }
-      );
+      }
+      if (!response) throw lastError;
 
       console.log('Python service raw response status:', response.status);
       console.log('Python service response data:', response.data);

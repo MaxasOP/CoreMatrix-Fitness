@@ -5,7 +5,7 @@ import api from '../../api';
 import useDocumentMetadata from '../../hooks/useDocumentMetadata';
 import ProtectedRoute from '../../components/ProtectedRoute';
 
-const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 40 * 1024 * 1024;
 const VIDEO_TYPES = new Set(['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm']);
 
 const EXERCISE_SUGGESTIONS = [
@@ -59,7 +59,7 @@ function VideoFormAnalysisContent() {
     }
     if (selectedFile.size > MAX_VIDEO_BYTES) {
       setFile(null);
-      setError('This video is over 100 MB. Trim the clip and try again.');
+      setError('This video is over 40 MB. Trim it to one working set (about 15–30 seconds) and try again.');
       return;
     }
     setFile(selectedFile);
@@ -156,7 +156,7 @@ function VideoFormAnalysisContent() {
             onClick={() => fileInputRef.current?.click()}
           >
             <span>{file ? 'Replace video' : 'Choose video'}</span>
-            <b>MP4 · MOV · AVI · WEBM / 100 MB max</b>
+            <b>MP4 · MOV · AVI · WEBM / 40 MB max</b>
           </button>
 
           {file ? (
