@@ -51,7 +51,7 @@ export default function Home() {
   useEffect(() => {
     if (authLoading) return;
     if (!user) return;
-    Promise.allSettled([api.get('/workouts'), api.get('/meals'), api.get('/tip'), api.get('/ai/workout-plan'), api.get('/video/analyses?limit=20')])
+    Promise.allSettled([api.get('/workouts'), api.get('/meals'), api.get('/tip'), api.get('/ai/workout-plan'), api.get('/video/history?limit=20')])
       .then(([workoutResponse, mealResponse, tipResponse, planResponse, analysisResponse]) => {
         if (workoutResponse.status === 'fulfilled') setWorkouts(Array.isArray(workoutResponse.value.data) ? workoutResponse.value.data : []);
         if (mealResponse.status === 'fulfilled') setMeals(Array.isArray(mealResponse.value.data) ? mealResponse.value.data : []);

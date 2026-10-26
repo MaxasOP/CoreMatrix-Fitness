@@ -47,7 +47,7 @@ function ProgressContent() {
   useEffect(() => {
     async function fetchWorkouts() {
       const [workoutResult, planResult, analysisResult] = await Promise.allSettled([
-        api.get('/workouts'), api.get('/ai/workout-plan'), api.get('/video/analyses?limit=12')
+        api.get('/workouts'), api.get('/ai/workout-plan'), api.get('/video/history?limit=12')
       ]);
       if (workoutResult.status === 'fulfilled') setWorkouts(workoutResult.value.data || []);
       if (planResult.status === 'fulfilled') setActivePlan(planResult.value.data);
