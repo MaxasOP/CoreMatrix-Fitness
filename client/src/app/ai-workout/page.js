@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import api from '../../api';
 import useDocumentMetadata from '../../hooks/useDocumentMetadata';
@@ -19,6 +19,37 @@ function WorkoutPlannerContent() {
   });
   const [workoutPlan, setWorkoutPlan] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [restoring, setRestoring] = useState(true);
+  const [savedAt, setSavedAt] = useState(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    const restorePlan = async () => {
+      try {
+        const response = await api.get('/ai/workout-plan');
+        if (!active) return;
+        setWorkoutPlan(response.data.workoutPlan);
+        setSavedAt(response.data.savedAt || null);
+        const preferences = response.data.preferences;
+        if (preferences) {
+          setFormData({
+            experience_level: preferences.experienceLevel || 'beginner',
+            days_per_week: preferences.daysPerWeek || 4,
+            equipment_available: preferences.equipmentAvailable || 'full_gym'
+          });
+        }
+      } catch (requestError) {
+        if (requestError.response?.status !== 404 && active) {
+          setError('Your saved plan could not be loaded. You can still build a new one.');
+        }
+      } finally {
+        if (active) setRestoring(false);
+      }
+    };
+    restorePlan();
+    return () => { active = false; };
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,6 +58,7 @@ function WorkoutPlannerContent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     try {
       const response = await api.post(
         '/ai/workout-plan',
@@ -37,10 +69,11 @@ function WorkoutPlannerContent() {
         }
       );
       setWorkoutPlan(response.data.workoutPlan);
+      setSavedAt(response.data.savedAt || new Date().toISOString());
     } catch (error) {
       console.error('Error:', error);
       const msg = error?.response?.data?.error || error?.message || 'Error generating workout plan';
-      alert(msg);
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -125,15 +158,22 @@ function WorkoutPlannerContent() {
               >
                 {loading ? 'Building plan...' : 'Build plan'}
               </button>
+              {error ? <p className="mt-3 text-sm text-red-400" role="alert">{error}</p> : null}
             </form>
           </div>
 
           <div className="lg:col-span-2 space-y-6">
-            {workoutPlan ? (
+            {restoring ? (
+              <div className="border-y border-gray-200 py-10 text-gray-400" role="status">Loading your saved plan…</div>
+            ) : workoutPlan ? (
               <>
                 <div className="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-[#ff5a1f]">
-                  <h2 className="text-2xl font-bold text-gray-900">{workoutPlan.plan_name}</h2>
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <h2 className="text-2xl font-bold text-gray-900">{workoutPlan.plan_name}</h2>
+                    <span className="text-xs font-semibold text-lime-300">Saved to your account</span>
+                  </div>
                   <p className="text-gray-600 mt-1 font-medium">{workoutPlan.goal_focus} • {workoutPlan.days_per_week} Days/Week</p>
+                  {savedAt ? <p className="text-xs text-gray-400 mt-2">Updated {new Date(savedAt).toLocaleDateString()}</p> : null}
                 </div>
 
                 {workoutPlan.weekly_routine?.map((day, idx) => (

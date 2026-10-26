@@ -158,7 +158,6 @@ function ForgeContent() {
               <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Workout builder</div>
               <h1 className="text-3xl font-extrabold text-gray-900">Forge a session</h1>
             </div>
-            <span className="hidden sm:inline-block px-3 py-1 rounded-full bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-500">Mobile-first logging</span>
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">

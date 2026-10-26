@@ -16,16 +16,27 @@ exports.uploadWorkoutVideo = async (req, res) => {
 
     // 1. Analyze video directly from temporary storage
     const analysis = await videoAnalysisService.analyzeExerciseForm(req.file.path, exercise_name);
-    const feedbackData = await videoAnalysisService.generateFeedback(analysis);
+    const feedbackData = analysis.form_issues?.includes('no_person_detected')
+      ? {
+          overall: 'No complete body position was detected in this clip.',
+          cues: analysis.recommendations || [],
+          issues_breakdown: analysis.form_issues,
+          encouragement: 'Reframe the camera and record the set again.'
+        }
+      : await videoAnalysisService.generateFeedback(analysis);
 
     // 2. Save only results to MongoDB
     const formAnalysis = new FormAnalysis({
       userId: req.user.id,
       exercise: analysis.exercise || exercise_name || 'unknown',
+      analysisMode: analysis.analysis_mode || 'adaptive',
+      dominantJoint: analysis.dominant_joint || null,
       score: analysis.form_score || 0,
       issues: analysis.form_issues || [],
       feedback: (feedbackData.overall || '') + '. ' + (feedbackData.cues ? feedbackData.cues.join(' ') : ''),
-      reps: analysis.rep_count || 0
+      reps: analysis.rep_count || 0,
+      detectionConfidence: analysis.detection_confidence || 0,
+      framesAnalyzed: analysis.frames_analyzed || 0
     });
 
     await formAnalysis.save();
@@ -54,7 +65,7 @@ exports.uploadWorkoutVideo = async (req, res) => {
       }
     }
     const pythonServiceError = error.pythonServiceError;
-    res.status(500).json({
+    res.status(error.statusCode || 500).json({
       error: error.message,
       pythonServiceError: pythonServiceError
         ? {
@@ -78,15 +89,26 @@ exports.analyzeFormFromUrl = async (req, res) => {
 
     // Analyze
     const analysis = await videoAnalysisService.analyzeExerciseForm(tempPath, exercise_name);
-    const feedbackData = await videoAnalysisService.generateFeedback(analysis);
+    const feedbackData = analysis.form_issues?.includes('no_person_detected')
+      ? {
+          overall: 'No complete body position was detected in this clip.',
+          cues: analysis.recommendations || [],
+          issues_breakdown: analysis.form_issues,
+          encouragement: 'Reframe the camera and record the set again.'
+        }
+      : await videoAnalysisService.generateFeedback(analysis);
 
     const formAnalysis = new FormAnalysis({
       userId: req.user.id,
       exercise: analysis.exercise || exercise_name || 'unknown',
+      analysisMode: analysis.analysis_mode || 'adaptive',
+      dominantJoint: analysis.dominant_joint || null,
       score: analysis.form_score || 0,
       issues: analysis.form_issues || [],
       feedback: (feedbackData.overall || '') + '. ' + (feedbackData.cues ? feedbackData.cues.join(' ') : ''),
-      reps: analysis.rep_count || 0
+      reps: analysis.rep_count || 0,
+      detectionConfidence: analysis.detection_confidence || 0,
+      framesAnalyzed: analysis.frames_analyzed || 0
     });
 
     await formAnalysis.save();
@@ -109,7 +131,7 @@ exports.analyzeFormFromUrl = async (req, res) => {
     });
   } catch (error) {
     const pythonServiceError = error.pythonServiceError;
-    res.status(500).json({
+    res.status(error.statusCode || 500).json({
       error: error.message,
       pythonServiceError: pythonServiceError
         ? {

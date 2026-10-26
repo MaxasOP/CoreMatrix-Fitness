@@ -71,11 +71,14 @@ class VideoAnalysisService {
 
       return {
         exercise: response.data.exercise,
+        analysis_mode: response.data.analysis_mode,
+        dominant_joint: response.data.dominant_joint,
         form_issues: response.data.form_issues,
         rep_count: response.data.rep_count,
-        depth_percentage: response.data.depth_percentage,
         form_score: response.data.form_score,
-        recommendations: response.data.recommendations
+        recommendations: response.data.recommendations,
+        frames_analyzed: response.data.frames_analyzed,
+        detection_confidence: response.data.detection_confidence
       };
     } catch (error) {
       const formatted = this._formatAxiosError(error);
@@ -84,6 +87,7 @@ class VideoAnalysisService {
       const err = new Error(
         `Unable to analyze video: ${error.message}`
       );
+      err.statusCode = formatted?.status && formatted.status < 500 ? formatted.status : 502;
       err.pythonServiceError = formatted;
       throw err;
     }

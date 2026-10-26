@@ -1,17 +1,16 @@
-import { Space_Grotesk, Bebas_Neue } from "next/font/google";
+import { Manrope, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "../components/ClientLayout";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const manrope = Manrope({
+  variable: "--font-body",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
 });
 
-const bebasNeue = Bebas_Neue({
-  variable: "--font-bebas-neue",
+const barlowCondensed = Barlow_Condensed({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["500", "600", "700", "800"],
 });
 
 export const metadata = {
@@ -24,7 +23,7 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       data-theme="dark"
-      className={`${spaceGrotesk.variable} ${bebasNeue.variable} h-full antialiased`}
+      className={`${manrope.variable} ${barlowCondensed.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <ClientLayout>{children}</ClientLayout>

@@ -14,7 +14,7 @@ class AIService {
    * Generate AI feedback for workout form
    */
   async generateFormFeedback(analysis) {
-    const { exercise, form_issues, rep_count, form_score, recommendations } = analysis;
+    const { exercise, analysis_mode, dominant_joint, form_issues, rep_count, form_score, recommendations, detection_confidence } = analysis;
 
     const prompt = `You are an elite fitness coach. Provide professional, encouraging, and highly technical feedback for a user who just performed ${exercise}.
 
@@ -22,6 +22,9 @@ Analysis Data:
 - Exercise: ${exercise}
 - Reps: ${rep_count}
 - Form Score: ${form_score}/100
+- Analysis Mode: ${analysis_mode === 'adaptive' ? 'adaptive movement tracking' : 'exercise-specific'}
+- Dominant Joint: ${dominant_joint || 'not detected'}
+- Pose Detection Confidence: ${detection_confidence || 0}%
 - Issues Detected: ${form_issues.join(', ')}
 - Initial Recommendations: ${recommendations.join(', ')}
 
@@ -38,7 +41,7 @@ Format the response as JSON:
   "cues": [],
   "encouragement": ""
 } \n
-(Keep technical terms and focus on Indian context if applicable)`;
+(Do not claim to diagnose injury risk. If analysis mode is adaptive, describe only visible movement range and repetition consistency, not exercise-specific technique. Keep technical terms and focus on Indian context if applicable)`;
 
     try {
       const response = await this.callGemini(prompt);

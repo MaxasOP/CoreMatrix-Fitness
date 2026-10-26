@@ -7,7 +7,23 @@ const { authRequired: authMiddleware } = require('../middleware/authMiddleware')
 const { aiLimiter } = require('../middleware/rateLimiter');
 const multer = require('multer');
 
-const upload = multer({ dest: (process.env.VIDEO_UPLOAD_DIR || 'uploads/videos/'), limits: { fileSize: 100 * 1024 * 1024 } });
+const allowedVideoTypes = new Set([
+  'video/mp4',
+  'video/quicktime',
+  'video/x-msvideo',
+  'video/webm'
+]);
+
+const upload = multer({
+  dest: (process.env.VIDEO_UPLOAD_DIR || 'uploads/videos/'),
+  limits: { fileSize: 100 * 1024 * 1024 },
+  fileFilter: (_req, file, callback) => {
+    if (!allowedVideoTypes.has(file.mimetype)) {
+      return callback(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'video'));
+    }
+    callback(null, true);
+  }
+});
 
 
 // Upload and analyze workout video

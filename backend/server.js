@@ -110,7 +110,8 @@ app.use((err, req, res, next) => {
   if (res.headersSent) {
     return next(err);
   }
-  res.status(err.statusCode || 500).json({
+  const isUploadError = err.name === 'MulterError';
+  res.status(isUploadError ? 400 : (err.statusCode || 500)).json({
     message: err.message || 'An unexpected error occurred',
     error: process.env.NODE_ENV === 'production' ? {} : err.stack // Send stack trace in development
   });

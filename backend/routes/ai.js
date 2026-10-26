@@ -3,6 +3,7 @@ const router = express.Router();
 const { authOptional: authMiddleware, authRequired } = require('../middleware/authMiddleware'); // Import authRequired
 const User = require('../models/User');
 const MealPlan = require('../models/MealPlan');
+const WorkoutPlan = require('../models/WorkoutPlan');
 const aiService = require('../services/aiService');
 
 /**
@@ -116,30 +117,35 @@ router.get('/meal-plan/:mealPlanId', authMiddleware, async (req, res) => {
  * POST /api/ai/workout-plan
  * Generate personalized workout plan
  */
-router.post('/workout-plan', authMiddleware, async (req, res) => {
+router.get('/workout-plan', authRequired, async (req, res) => {
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      // Guest mode fallback: generate workout plan without login.
-      // This avoids UI 401s when localStorage token is missing/expired.
-      const workoutPlanData = await aiService.generateWorkoutPlan({
-        age: 30,
-        weight_kg: 75,
-        height_cm: 175,
-        activity_level: 'moderate',
-        goal: 'maintenance',
-        experience_level: req.body.experience_level || 'intermediate',
-        days_per_week: req.body.days_per_week || 4,
-        equipment_available: req.body.equipment_available || 'full_gym'
-      });
+    const savedPlan = await WorkoutPlan.findOne({
+      userId: req.user.id,
+      status: 'active'
+    }).sort({ createdAt: -1 });
 
-      return res.status(201).json({
-        message: 'Workout plan generated successfully (guest)',
-        workoutPlan: workoutPlanData
-      });
+    if (!savedPlan) {
+      return res.status(404).json({ error: 'No saved workout plan' });
     }
 
+    res.json({
+      workoutPlan: savedPlan.plan,
+      preferences: savedPlan.preferences,
+      savedAt: savedPlan.createdAt
+    });
+  } catch (error) {
+    console.error('Error fetching workout plan:', error);
+    res.status(500).json({ error: 'Failed to fetch workout plan' });
+  }
+});
 
+router.post('/workout-plan', authRequired, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const daysPerWeek = Number(req.body.days_per_week || 4);
+    if (!Number.isInteger(daysPerWeek) || daysPerWeek < 1 || daysPerWeek > 7) {
+      return res.status(400).json({ error: 'Days per week must be between 1 and 7' });
+    }
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -153,13 +159,29 @@ router.post('/workout-plan', authMiddleware, async (req, res) => {
       activity_level: user.activity_level,
       goal: user.goal,
       experience_level: req.body.experience_level || 'intermediate',
-      days_per_week: req.body.days_per_week || 4,
+      days_per_week: daysPerWeek,
       equipment_available: req.body.equipment_available || 'full_gym'
     });
 
+    const savedPlan = await WorkoutPlan.create({
+      userId,
+      plan: workoutPlanData,
+      preferences: {
+        experienceLevel: req.body.experience_level || 'intermediate',
+        daysPerWeek,
+        equipmentAvailable: req.body.equipment_available || 'full_gym'
+      }
+    });
+
+    await WorkoutPlan.updateMany(
+      { userId, status: 'active', _id: { $ne: savedPlan._id } },
+      { $set: { status: 'archived' } }
+    );
+
     res.status(201).json({
-      message: 'Workout plan generated successfully',
-      workoutPlan: workoutPlanData
+      message: 'Workout plan generated and saved',
+      workoutPlan: savedPlan.plan,
+      savedAt: savedPlan.createdAt
     });
   } catch (error) {
     console.error('Error generating workout plan:', error);
