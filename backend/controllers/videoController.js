@@ -2,16 +2,25 @@
 // Handle video upload and analysis for workout form correction
 const FormAnalysis = require('../models/FormAnalysis');
 const Workout = require('../models/Workout');
+const WorkoutPlan = require('../models/WorkoutPlan');
 const videoAnalysisService = require('../services/videoAnalysisService');
 const uploadService = require('../services/uploadService');
 const fs = require('fs');
 
 exports.uploadWorkoutVideo = async (req, res) => {
   try {
-    const { exercise_name } = req.body;
+    const { exercise_name, workout_id } = req.body;
 
     if (!req.file) {
       return res.status(400).json({ error: 'No video file provided' });
+    }
+
+    const linkedWorkout = workout_id
+      ? await Workout.findOne({ _id: workout_id, user_id: req.user.id }).lean()
+      : null;
+    if (workout_id && !linkedWorkout) {
+      if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+      return res.status(404).json({ error: 'The linked workout could not be found' });
     }
 
     // 1. Analyze video directly from temporary storage
@@ -28,6 +37,10 @@ exports.uploadWorkoutVideo = async (req, res) => {
     // 2. Save only results to MongoDB
     const formAnalysis = new FormAnalysis({
       userId: req.user.id,
+      workoutId: linkedWorkout?._id || null,
+      planId: linkedWorkout?.plan_id || null,
+      planDayIndex: linkedWorkout?.plan_day_index ?? null,
+      planExerciseIndex: linkedWorkout?.plan_exercise_index ?? null,
       exercise: analysis.exercise || exercise_name || 'unknown',
       analysisMode: analysis.analysis_mode || 'adaptive',
       dominantJoint: analysis.dominant_joint || null,
@@ -40,6 +53,26 @@ exports.uploadWorkoutVideo = async (req, res) => {
     });
 
     await formAnalysis.save();
+
+    if (workout_id) {
+      await Workout.updateOne(
+        { _id: workout_id, user_id: req.user.id },
+        { $set: { form_feedback: { issues: formAnalysis.issues, corrections_needed: feedbackData.cues || [], form_score: formAnalysis.score, analyzed_at: new Date() } } }
+      );
+    }
+    const linkedPlanId = linkedWorkout?.plan_id;
+    const linkedDayIndex = linkedWorkout?.plan_day_index;
+    const linkedExerciseIndex = linkedWorkout?.plan_exercise_index;
+    if (linkedPlanId && linkedDayIndex !== null && linkedDayIndex !== undefined && linkedExerciseIndex !== null && linkedExerciseIndex !== undefined) {
+      await WorkoutPlan.updateOne(
+        {
+          _id: linkedPlanId,
+          userId: req.user.id,
+          progress: { $elemMatch: { dayIndex: Number(linkedDayIndex), exerciseIndex: Number(linkedExerciseIndex) } }
+        },
+        { $set: { 'progress.$.analysisId': formAnalysis._id, updatedAt: new Date() } }
+      );
+    }
 
     // 3. Delete temporary file immediately after analysis
     try {
@@ -175,6 +208,19 @@ exports.getFormFeedback = async (req, res) => {
       issues: analysis.issues,
       reps: analysis.reps
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getRecentAnalyses = async (req, res) => {
+  try {
+    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 50);
+    const analyses = await FormAnalysis.find({ userId: req.user.id })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+    res.json(analyses);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

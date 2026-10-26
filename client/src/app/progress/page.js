@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import api from '../../api';
 import { AuthContext } from '../../AuthContext';
 import useDocumentMetadata from '../../hooks/useDocumentMetadata';
@@ -40,15 +41,35 @@ function ProgressContent() {
     description: 'View your weekly workout completion rates, body metric logs, and top exercise categories.'
   });
   const [workouts, setWorkouts] = useState([]);
+  const [activePlan, setActivePlan] = useState(null);
+  const [analyses, setAnalyses] = useState([]);
 
   useEffect(() => {
     async function fetchWorkouts() {
-      try { const res = await api.get('/workouts'); setWorkouts(res.data || []); } catch (err) { console.warn(err); }
+      const [workoutResult, planResult, analysisResult] = await Promise.allSettled([
+        api.get('/workouts'), api.get('/ai/workout-plan'), api.get('/video/analyses?limit=12')
+      ]);
+      if (workoutResult.status === 'fulfilled') setWorkouts(workoutResult.value.data || []);
+      if (planResult.status === 'fulfilled') setActivePlan(planResult.value.data);
+      if (analysisResult.status === 'fulfilled') setAnalyses(analysisResult.value.data || []);
     }
     fetchWorkouts();
   }, []);
 
   function computeWeekly() {
+    if (activePlan?.workoutPlan?.weekly_routine?.length) {
+      return activePlan.workoutPlan.weekly_routine.map((day, dayIndex) => {
+        const exercises = day.exercises || [];
+        const completedExercises = exercises.filter((_exercise, exerciseIndex) => activePlan.progress?.some(item => item.dayIndex === dayIndex && item.exerciseIndex === exerciseIndex)).length;
+        return {
+          day: day.day || `Day ${dayIndex + 1}`,
+          group: day.target_muscle_group || 'TRAIN',
+          done: exercises.length > 0 && completedExercises === exercises.length,
+          completedExercises,
+          exerciseCount: exercises.length
+        };
+      });
+    }
     const daysWithWorkout = new Set(workouts.map(w => {
       const dt = parseLocalDate(w.date || w.log_date);
       return dt ? dt.getDay() : null;
@@ -59,7 +80,9 @@ function ProgressContent() {
 
   const weekly = computeWeekly();
   const completed = weekly.filter(d => d.done && d.group !== 'REST').length;
-  const weekProgress = Math.round((completed / 5) * 100);
+  const targetDays = Math.max(weekly.filter(d => d.group !== 'REST').length, 1);
+  const weekProgress = Math.round((completed / targetDays) * 100);
+  const averageFormScore = analyses.length ? Math.round(analyses.reduce((sum, item) => sum + (Number(item.score) || 0), 0) / analyses.length) : null;
 
   const categoryCounts = workouts.reduce((acc, w) => {
     const key = w.category || 'Other';
@@ -78,21 +101,21 @@ function ProgressContent() {
                 <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Consistency</div>
                 <h1 className="text-3xl font-extrabold text-gray-900">Weekly progress</h1>
               </div>
-              <span className="hidden sm:inline-block text-xs font-semibold text-gray-500">Target · 5 days</span>
+              <span className="hidden sm:inline-block text-xs font-semibold text-gray-500">Target · {targetDays} days</span>
             </div>
 
             <div className="mt-4 text-6xl font-black flex items-center gap-4">
               <span className="text-lime-300">{weekProgress}%</span>
             </div>
-            <div className="text-gray-500 font-medium mt-1">{completed} training days completed</div>
+            <div className="text-gray-500 font-medium mt-1">{completed} of {targetDays} planned days completed</div>
           </div>
 
-          <div className="weekly-chart" role="img" aria-label={`${completed} of 5 training days completed this week`}>
+          <div className="weekly-chart" role="img" aria-label={`${completed} of ${targetDays} planned training days completed`}>
             {weekly.map(d => (
               <div key={d.day} className={`weekly-bar ${d.done && d.group !== 'REST' ? 'is-done' : ''} ${d.group === 'REST' ? 'is-rest' : ''}`}>
                 <i aria-hidden="true" />
                 <strong>{d.day.slice(0, 3)}</strong>
-                <span>{d.group}</span>
+                <span>{d.exerciseCount ? `${d.completedExercises}/${d.exerciseCount}` : d.group}</span>
               </div>
             ))}
           </div>
@@ -112,7 +135,8 @@ function ProgressContent() {
           <div className="relative z-10 max-w-sm">
             <div className="font-semibold text-lime-300 uppercase tracking-wider text-xs mb-1.5">This week</div>
             <h3 className="text-2xl font-extrabold text-white tracking-tight">{completed} training days</h3>
-            <p className="text-gray-200 mt-2 text-sm leading-relaxed">The chart records completed days against a five-day target.</p>
+            <p className="text-gray-200 mt-2 text-sm leading-relaxed">Your logged exercises are measured against the active plan.</p>
+            <Link href="/ai-workout" className="plan-day-action mt-4 inline-flex">Adjust plan →</Link>
           </div>
         </aside>
       </section>
@@ -153,6 +177,21 @@ function ProgressContent() {
             </div>
           )}
         </div>
+      </section>
+
+      <section className="form-trend-section" aria-labelledby="form-trend-title">
+        <div className="section-heading"><div><p className="eyebrow">Technique</p><h2 id="form-trend-title">Form review history</h2></div><Link href="/form-analysis">Analyze a set</Link></div>
+        {analyses.length ? (
+          <>
+            <div className="form-score-summary"><strong>{averageFormScore}</strong><span>average score<br />across {analyses.length} reviews</span></div>
+            <div className="form-score-chart" role="img" aria-label={`Recent form scores averaging ${averageFormScore} out of 100`}>
+              {[...analyses].reverse().map(item => <i key={item._id} style={{ height: `${Math.max(8, item.score || 0)}%` }} title={`${item.exercise}: ${item.score}`} />)}
+            </div>
+            <div className="form-review-table" role="table" aria-label="Recent form reviews">
+              {analyses.slice(0, 5).map(item => <div role="row" key={item._id}><strong role="cell">{item.exercise}</strong><span role="cell">{item.score}/100</span><time role="cell">{new Date(item.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</time></div>)}
+            </div>
+          </>
+        ) : <div className="empty-state"><strong>No form reviews yet.</strong><span>Analyze a working set to establish a technique baseline.</span></div>}
       </section>
     </div>
   );

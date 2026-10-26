@@ -41,12 +41,23 @@ function VideoFormAnalysisContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
+  const [linkedWorkout, setLinkedWorkout] = useState(null);
 
   const previewUrl = useMemo(() => file ? URL.createObjectURL(file) : '', [file]);
 
   useEffect(() => () => {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
   }, [previewUrl]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const workoutId = params.get('workout');
+    const name = params.get('name');
+    if (name) setExercise(name);
+    if (workoutId) {
+      setLinkedWorkout({ workoutId });
+    }
+  }, []);
 
   const selectFile = (selectedFile) => {
     setError('');
@@ -83,6 +94,7 @@ function VideoFormAnalysisContent() {
     const formData = new FormData();
     formData.append('video', file);
     formData.append('exercise_name', cleanExercise);
+    if (linkedWorkout?.workoutId) formData.append('workout_id', linkedWorkout.workoutId);
 
     try {
       const response = await api.post('/video/analyze', formData);
@@ -105,6 +117,7 @@ function VideoFormAnalysisContent() {
         <p className="analysis-kicker">Movement review</p>
         <h1>Put one working set under the lens.</h1>
         <p>Record from the side with your full body visible. CoreMatrix follows the main working joint, counts complete repetitions, and flags visible range issues.</p>
+        {linkedWorkout ? <p className="analysis-linked-note">Linked to the exercise you just logged. The result will appear with that session.</p> : null}
       </header>
 
       <section className="analysis-workspace" aria-labelledby="analysis-input-title">

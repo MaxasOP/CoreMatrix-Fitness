@@ -31,6 +31,9 @@ function ForgeContent() {
     description: 'Log your daily exercises, sets, reps, weight, and intensity using our fast mobile-friendly workout tracker.'
   });
   const [workouts, setWorkouts] = useState([]);
+  const [activePlan, setActivePlan] = useState(null);
+  const [selectedPlanDay, setSelectedPlanDay] = useState(0);
+  const [plannedExercise, setPlannedExercise] = useState(null);
   function getTodayKey() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -42,7 +45,15 @@ function ForgeContent() {
 
   const isAuthed = Boolean(user);
 
-  useEffect(() => { fetchWorkouts(); }, []);
+  useEffect(() => {
+    fetchWorkouts();
+    api.get('/ai/workout-plan').then(({ data }) => {
+      setActivePlan(data);
+      const requestedDay = Number(new URLSearchParams(window.location.search).get('planDay'));
+      const boundedDay = Number.isInteger(requestedDay) && requestedDay >= 0 && requestedDay < (data.workoutPlan?.weekly_routine?.length || 0) ? requestedDay : 0;
+      setSelectedPlanDay(boundedDay);
+    }).catch(() => setActivePlan(null));
+  }, []);
 
   async function fetchWorkouts() {
     setLoading(true);
@@ -65,6 +76,19 @@ function ForgeContent() {
 
   function applyTemplate(t) {
     setForm({ ...form, name: t.name, category: t.category, sets: t.sets, reps: t.reps, weight: t.weight, intensity: t.intensity });
+    setValidationErrors({});
+  }
+
+  function loadPlannedExercise(exercise, exerciseIndex) {
+    const repMatch = String(exercise.reps || 10).match(/\d+/);
+    setPlannedExercise({ exerciseIndex });
+    setForm(current => ({
+      ...current,
+      name: exercise.name,
+      category: activePlan?.workoutPlan?.weekly_routine?.[selectedPlanDay]?.target_muscle_group || 'General',
+      sets: Number(exercise.sets) || 3,
+      reps: repMatch ? Number(repMatch[0]) : 10
+    }));
     setValidationErrors({});
   }
 
@@ -95,10 +119,27 @@ function ForgeContent() {
     }
 
     try {
-      const payload = { ...form };
+      const payload = {
+        ...form,
+        ...(plannedExercise && activePlan?.planId ? {
+          plan_id: activePlan.planId,
+          plan_day_index: selectedPlanDay,
+          plan_exercise_index: plannedExercise.exerciseIndex
+        } : {})
+      };
       const res = await api.post('/workouts', payload);
       setWorkouts(prev => [res.data || res, ...prev]);
       setForm({ name: '', category: 'Chest', sets: 3, reps: 10, weight: 0, intensity: 'medium', date: getTodayKey() });
+      if (plannedExercise) {
+        setActivePlan(current => current ? {
+          ...current,
+          progress: [
+            ...(current.progress || []).filter(item => !(item.dayIndex === selectedPlanDay && item.exerciseIndex === plannedExercise.exerciseIndex)),
+            { dayIndex: selectedPlanDay, exerciseIndex: plannedExercise.exerciseIndex, workoutId: (res.data || res)._id, completedAt: new Date().toISOString() }
+          ]
+        } : current);
+      }
+      setPlannedExercise(null);
       setValidationErrors({});
       setMsg('Workout logged successfully! 🎉');
       setTimeout(() => setMsg(''), 4000);
@@ -151,12 +192,42 @@ function ForgeContent() {
           </div>
         </div>
       )}
+      {activePlan?.workoutPlan?.weekly_routine?.length ? (
+        <section className="session-plan" aria-labelledby="today-plan-title">
+          <div className="session-plan-head">
+            <div>
+              <p className="eyebrow">Active plan</p>
+              <h1 id="today-plan-title">{activePlan.workoutPlan.weekly_routine[selectedPlanDay]?.day}: {activePlan.workoutPlan.weekly_routine[selectedPlanDay]?.target_muscle_group}</h1>
+            </div>
+            <Link href="/ai-workout">Full plan</Link>
+          </div>
+          <div className="plan-day-tabs" aria-label="Choose planned training day">
+            {activePlan.workoutPlan.weekly_routine.map((day, index) => (
+              <button key={`${day.day}-${index}`} type="button" className={index === selectedPlanDay ? 'is-active' : ''} onClick={() => { setSelectedPlanDay(index); setPlannedExercise(null); }}>{day.day}</button>
+            ))}
+          </div>
+          <ol className="session-exercise-list">
+            {activePlan.workoutPlan.weekly_routine[selectedPlanDay]?.exercises?.map((exercise, index) => {
+              const completed = activePlan.progress?.find(item => item.dayIndex === selectedPlanDay && item.exerciseIndex === index);
+              return (
+                <li key={`${exercise.name}-${index}`} className={completed ? 'is-complete' : ''}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <div><strong>{exercise.name}</strong><small>{exercise.sets} sets · {exercise.reps} reps · {exercise.rest_seconds}s rest</small></div>
+                  {completed ? <Link href={`/form-analysis?workout=${completed.workoutId}&planDay=${selectedPlanDay}&exercise=${index}&name=${encodeURIComponent(exercise.name)}`}>Review form</Link> : <button type="button" onClick={() => loadPlannedExercise(exercise, index)}>Log exercise</button>}
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ) : (
+        <section className="session-plan-empty"><p>No active training plan.</p><Link href="/ai-workout">Build your week →</Link></section>
+      )}
       <section className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 card p-6">
           <div className="flex items-center justify-between">
             <div>
               <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Workout builder</div>
-              <h1 className="text-3xl font-extrabold text-gray-900">Forge a session</h1>
+              <h2 className="text-3xl font-extrabold text-gray-900">{plannedExercise ? 'Log planned exercise' : 'Log an exercise'}</h2>
             </div>
           </div>
 

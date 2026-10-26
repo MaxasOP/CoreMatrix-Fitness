@@ -18,11 +18,31 @@ function Stat({ value, label, detail }) {
   return <div className="metric-card"><span className="metric-label">{label}</span><strong>{value}</strong><small>{detail}</small></div>;
 }
 
+function resolveNextAction(user, activePlan, analyses) {
+  if (!user) return { href: '/auth', label: 'Sign in to begin', detail: 'Save your training data' };
+  if (!activePlan?.workoutPlan?.weekly_routine?.length) return { href: '/ai-workout', label: 'Build your training week', detail: 'Choose days and equipment' };
+  const routine = activePlan.workoutPlan.weekly_routine;
+  let reviewCandidate = null;
+  for (let dayIndex = 0; dayIndex < routine.length; dayIndex += 1) {
+    const exercises = routine[dayIndex]?.exercises || [];
+    for (let exerciseIndex = 0; exerciseIndex < exercises.length; exerciseIndex += 1) {
+      const completion = activePlan.progress?.find(item => item.dayIndex === dayIndex && item.exerciseIndex === exerciseIndex);
+      if (!completion) return { href: `/forge?planDay=${dayIndex}`, label: `Train ${routine[dayIndex].target_muscle_group || routine[dayIndex].day}`, detail: `${exercises.length} exercises in ${routine[dayIndex].day}` };
+      const hasAnalysis = analyses.some(item => String(item.workoutId || '') === String(completion.workoutId || ''));
+      if (!hasAnalysis && !reviewCandidate) reviewCandidate = { href: `/form-analysis?workout=${completion.workoutId}&planDay=${dayIndex}&exercise=${exerciseIndex}&name=${encodeURIComponent(exercises[exerciseIndex].name)}`, label: `Review ${exercises[exerciseIndex].name}`, detail: 'Attach form feedback to this set' };
+    }
+  }
+  if (reviewCandidate) return reviewCandidate;
+  return { href: '/progress', label: 'Review your training week', detail: 'Your current plan is complete' };
+}
+
 export default function Home() {
   const { user, authLoading } = useContext(AuthContext);
   const [workouts, setWorkouts] = useState([]);
   const [meals, setMeals] = useState([]);
   const [tip, setTip] = useState('Leave one clean rep in reserve. Come back stronger tomorrow.');
+  const [activePlan, setActivePlan] = useState(null);
+  const [analyses, setAnalyses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -31,11 +51,13 @@ export default function Home() {
   useEffect(() => {
     if (authLoading) return;
     if (!user) return;
-    Promise.all([api.get('/workouts'), api.get('/meals'), api.get('/tip')])
-      .then(([workoutResponse, mealResponse, tipResponse]) => {
-        setWorkouts(Array.isArray(workoutResponse.data) ? workoutResponse.data : []);
-        setMeals(Array.isArray(mealResponse.data) ? mealResponse.data : []);
-        setTip(currentTip => tipResponse.data?.tip || currentTip);
+    Promise.allSettled([api.get('/workouts'), api.get('/meals'), api.get('/tip'), api.get('/ai/workout-plan'), api.get('/video/analyses?limit=20')])
+      .then(([workoutResponse, mealResponse, tipResponse, planResponse, analysisResponse]) => {
+        if (workoutResponse.status === 'fulfilled') setWorkouts(Array.isArray(workoutResponse.value.data) ? workoutResponse.value.data : []);
+        if (mealResponse.status === 'fulfilled') setMeals(Array.isArray(mealResponse.value.data) ? mealResponse.value.data : []);
+        if (tipResponse.status === 'fulfilled') setTip(currentTip => tipResponse.value.data?.tip || currentTip);
+        if (planResponse.status === 'fulfilled') setActivePlan(planResponse.value.data);
+        if (analysisResponse.status === 'fulfilled') setAnalyses(Array.isArray(analysisResponse.value.data) ? analysisResponse.value.data : []);
       })
       .catch(() => setError('Your live data is unavailable right now.'))
       .finally(() => setLoading(false));
@@ -56,6 +78,8 @@ export default function Home() {
       activeDays,
     };
   }, [meals, workouts]);
+
+  const nextAction = resolveNextAction(user, activePlan, analyses);
 
   if (authLoading || (user && loading)) {
     return (
@@ -119,8 +143,8 @@ export default function Home() {
         <div className="command-content">
           <p className="eyebrow">Today&apos;s Focus</p>
           <h1>{user ? `${user.name.split(' ')[0]}, show up.` : 'Log the work.'}</h1>
-          <p className="hero-copy">Your lifts, meals, and weekly progress—recorded without the noise.</p>
-          <div className="hero-actions"><Link href="/forge" className="action-primary">Train now <span>→</span></Link><Link href="/fuel" className="action-secondary">Add food</Link></div>
+          <p className="hero-copy">{nextAction.detail}</p>
+          <div className="hero-actions"><Link href={nextAction.href} className="action-primary">{nextAction.label} <span>→</span></Link><Link href="/progress" className="action-secondary">Review week</Link></div>
         </div>
         <div className="today-score" aria-label="Weekly training progress"><span>This week</span><strong>{summary.activeDays.size}<small>/7</small></strong><p>active days</p></div>
       </section>
@@ -154,10 +178,10 @@ export default function Home() {
         </article>
 
         <aside className="quick-card">
-          <p className="eyebrow">Tools</p><h2>Plan and review</h2>
-          <Link href="/ai-workout"><span>Build a week</span><small>Set days and equipment</small><b>↗</b></Link>
-          <Link href="/ai-dietician"><span>Sort your meals</span><small>Plan around your target</small><b>↗</b></Link>
-          <Link href="/form-analysis"><span>Review a lift</span><small>Upload one working set</small><b>↗</b></Link>
+          <p className="eyebrow">Training loop</p><h2>Continue the work</h2>
+          <Link href={nextAction.href}><span>{nextAction.label}</span><small>{nextAction.detail}</small><b>↗</b></Link>
+          <Link href="/ai-workout"><span>Adjust the week</span><small>Replace the active plan</small><b>↗</b></Link>
+          <Link href="/form-analysis"><span>Review another lift</span><small>Upload one working set</small><b>↗</b></Link>
         </aside>
       </section>
 

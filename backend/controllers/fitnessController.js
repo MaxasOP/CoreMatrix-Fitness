@@ -1,6 +1,7 @@
 const Workout = require('../models/Workout');
 const Meal = require('../models/Meal');
 const mongoose = require('mongoose');
+const WorkoutPlan = require('../models/WorkoutPlan');
 
 
 
@@ -29,6 +30,22 @@ async function createWorkout(req, res) {
     };
     const w = new Workout(workoutData);
     await w.save();
+    if (w.plan_id && Number.isInteger(w.plan_day_index) && Number.isInteger(w.plan_exercise_index)) {
+      await WorkoutPlan.findOneAndUpdate(
+        { _id: w.plan_id, userId, status: 'active' },
+        {
+          $pull: { progress: { dayIndex: w.plan_day_index, exerciseIndex: w.plan_exercise_index } },
+          $set: { updatedAt: new Date() }
+        }
+      );
+      await WorkoutPlan.findOneAndUpdate(
+        { _id: w.plan_id, userId, status: 'active' },
+        {
+          $push: { progress: { dayIndex: w.plan_day_index, exerciseIndex: w.plan_exercise_index, workoutId: w._id, completedAt: new Date() } },
+          $set: { updatedAt: new Date() }
+        }
+      );
+    }
     res.status(201).json(w);
   } catch (err) { res.status(500).json({ error: err.message }); }
 }
@@ -53,6 +70,12 @@ async function deleteWorkout(req, res) {
     const userId = req.user.id;
     const doc = await Workout.findOneAndDelete({ _id: id, user_id: userId });
     if (!doc) return res.status(404).json({ error: 'Not found' });
+    if (doc.plan_id) {
+      await WorkoutPlan.updateOne(
+        { _id: doc.plan_id, userId },
+        { $pull: { progress: { workoutId: doc._id } }, $set: { updatedAt: new Date() } }
+      );
+    }
     res.json({ success: true, id: doc._id });
   } catch (err) { res.status(500).json({ error: err.message }); }
 }

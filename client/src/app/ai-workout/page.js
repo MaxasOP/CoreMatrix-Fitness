@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import api from '../../api';
 import useDocumentMetadata from '../../hooks/useDocumentMetadata';
 import ProtectedRoute from '../../components/ProtectedRoute';
@@ -21,6 +22,7 @@ function WorkoutPlannerContent() {
   const [loading, setLoading] = useState(false);
   const [restoring, setRestoring] = useState(true);
   const [savedAt, setSavedAt] = useState(null);
+  const [progress, setProgress] = useState([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -30,6 +32,7 @@ function WorkoutPlannerContent() {
         const response = await api.get('/ai/workout-plan');
         if (!active) return;
         setWorkoutPlan(response.data.workoutPlan);
+        setProgress(response.data.progress || []);
         setSavedAt(response.data.savedAt || null);
         const preferences = response.data.preferences;
         if (preferences) {
@@ -69,6 +72,7 @@ function WorkoutPlannerContent() {
         }
       );
       setWorkoutPlan(response.data.workoutPlan);
+      setProgress(response.data.progress || []);
       setSavedAt(response.data.savedAt || new Date().toISOString());
     } catch (error) {
       console.error('Error:', error);
@@ -178,17 +182,22 @@ function WorkoutPlannerContent() {
 
                 {workoutPlan.weekly_routine?.map((day, idx) => (
                   <div key={idx} className="bg-white rounded-2xl shadow-lg p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="bg-orange-100 text-[#ff5a1f] font-bold px-3 py-1 rounded-lg text-sm">{day.day}</span>
-                      <h3 className="text-lg font-bold text-gray-900">{day.target_muscle_group}</h3>
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                      <div>
+                        <span className="text-lime-300 font-bold text-sm">{day.day}</span>
+                        <h3 className="text-lg font-bold text-gray-900">{day.target_muscle_group}</h3>
+                      </div>
+                      <Link className="plan-day-action" href={`/forge?planDay=${idx}`}>Start day <span>→</span></Link>
                     </div>
                     
                     <div className="space-y-4">
-                      {day.exercises?.map((exercise, i) => (
-                        <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                      {day.exercises?.map((exercise, i) => {
+                        const completion = progress.find(item => item.dayIndex === idx && item.exerciseIndex === i);
+                        return (
+                        <div key={i} className={`plan-exercise-row ${completion ? 'is-complete' : ''}`}>
                           <div>
-                            <p className="font-bold text-gray-900">{exercise.name}</p>
-                            <p className="text-sm text-gray-500 mt-0.5">{exercise.notes}</p>
+                            <p className="font-bold text-gray-900">{completion ? '✓ ' : ''}{exercise.name}</p>
+                            <p className="text-sm text-gray-500 mt-0.5">{completion ? 'Logged in Forge' : exercise.notes}</p>
                           </div>
                           <div className="flex gap-4 mt-3 sm:mt-0 text-sm font-semibold">
                             <div className="bg-white px-3 py-1.5 rounded-lg shadow-sm">
@@ -202,7 +211,7 @@ function WorkoutPlannerContent() {
                             </div>
                           </div>
                         </div>
-                      ))}
+                      )})}
                     </div>
                   </div>
                 ))}

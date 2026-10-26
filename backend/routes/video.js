@@ -34,5 +34,6 @@ router.post('/analyze-url', authMiddleware, aiLimiter, videoController.analyzeFo
 
 // Get form feedback for workout
 router.get('/feedback/:workoutId', authMiddleware, videoController.getFormFeedback);
+router.get('/analyses', authMiddleware, videoController.getRecentAnalyses);
 
 module.exports = router;

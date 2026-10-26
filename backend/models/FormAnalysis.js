@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const FormAnalysisSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  workoutId: { type: mongoose.Schema.Types.ObjectId, ref: 'Workout', default: null, index: true },
+  planId: { type: mongoose.Schema.Types.ObjectId, ref: 'WorkoutPlan', default: null, index: true },
+  planDayIndex: { type: Number, default: null },
+  planExerciseIndex: { type: Number, default: null },
   exercise: { type: String, required: true },
   analysisMode: { type: String, enum: ['squat', 'deadlift', 'pushup', 'bench_press', 'shoulder_press', 'adaptive'], default: 'adaptive' },
   dominantJoint: { type: String, default: null },

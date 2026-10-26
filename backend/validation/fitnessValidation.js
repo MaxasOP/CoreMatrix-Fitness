@@ -34,6 +34,9 @@ const validateWorkout = [
   body('log_date')
     .optional()
     .isISO8601().toDate().withMessage('Invalid date format for log_date (YYYY-MM-DD)'),
+  body('plan_id').optional({ values: 'falsy' }).isMongoId().withMessage('Invalid workout plan ID'),
+  body('plan_day_index').optional({ values: 'null' }).isInt({ min: 0, max: 6 }).toInt(),
+  body('plan_exercise_index').optional({ values: 'null' }).isInt({ min: 0, max: 50 }).toInt(),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

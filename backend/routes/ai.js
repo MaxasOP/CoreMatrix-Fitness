@@ -129,8 +129,10 @@ router.get('/workout-plan', authRequired, async (req, res) => {
     }
 
     res.json({
+      planId: savedPlan._id,
       workoutPlan: savedPlan.plan,
       preferences: savedPlan.preferences,
+      progress: savedPlan.progress || [],
       savedAt: savedPlan.createdAt
     });
   } catch (error) {
@@ -180,7 +182,9 @@ router.post('/workout-plan', authRequired, async (req, res) => {
 
     res.status(201).json({
       message: 'Workout plan generated and saved',
+      planId: savedPlan._id,
       workoutPlan: savedPlan.plan,
+      progress: savedPlan.progress || [],
       savedAt: savedPlan.createdAt
     });
   } catch (error) {

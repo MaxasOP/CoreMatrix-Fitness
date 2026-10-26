@@ -12,6 +12,9 @@ const WorkoutSchema = new mongoose.Schema({
   calories_burned: { type: Number },
   intensity: { type: String, enum: ['low', 'medium', 'high'], default: 'medium' },
   difficulty_level: { type: String, enum: ['beginner', 'intermediate', 'advanced'], default: 'intermediate' },
+  plan_id: { type: mongoose.Schema.Types.ObjectId, ref: 'WorkoutPlan', default: null, index: true },
+  plan_day_index: { type: Number, default: null },
+  plan_exercise_index: { type: Number, default: null },
   
   // Video & Form Analysis
   video_url: { type: String },
