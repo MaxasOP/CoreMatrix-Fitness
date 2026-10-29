@@ -5,6 +5,62 @@ const User = require('../models/User');
 const MealPlan = require('../models/MealPlan');
 const WorkoutPlan = require('../models/WorkoutPlan');
 const aiService = require('../services/aiService');
+const Workout = require('../models/Workout');
+const FormAnalysis = require('../models/FormAnalysis');
+const { recommendExercise } = require('../services/trainingCoach');
+
+router.get('/training-coach', authRequired, async (req, res) => {
+  try {
+    const workouts = await Workout.find({ user_id: req.user.id }).sort({ created_at: -1 }).limit(100).lean();
+    const analyses = await FormAnalysis.find({ userId: req.user.id }).sort({ createdAt: -1 }).limit(100).lean();
+    const seen = new Set();
+    const recommendations = workouts.filter(workout => {
+      const name = workout.name.trim().toLowerCase();
+      if (seen.has(name)) return false;
+      seen.add(name);
+      return true;
+    }).map(workout => ({ name: workout.name, workoutId: workout._id, ...recommendExercise(workout, analyses.find(item => String(item.workoutId) === String(workout._id))) }));
+    res.json({ recommendations });
+  } catch (error) { res.status(500).json({ error: 'Training guidance could not be loaded.' }); }
+});
+
+router.post('/workout-plan/next-cycle', authRequired, async (req, res) => {
+  try {
+    const current = await WorkoutPlan.findOne({ userId: req.user.id, status: 'active' }).sort({ createdAt: -1 });
+    const routine = current?.plan?.weekly_routine || [];
+    if (!routine.length || routine.some((day, index) => day.exercises?.length && !current.sessions.some(session => session.dayIndex === index))) return res.status(409).json({ error: 'Finish every training session before starting the next cycle.' });
+    const logs = await Workout.find({ user_id: req.user.id, plan_id: current._id }).sort({ created_at: -1 }).lean();
+    const analyses = await FormAnalysis.find({ userId: req.user.id, workoutId: { $in: logs.map(item => item._id) } }).sort({ createdAt: -1 }).lean();
+    const nextRoutine = routine.map(day => ({ ...day, exercises: (day.exercises || []).map(exercise => {
+      const log = logs.find(item => item.name.trim().toLowerCase() === exercise.name.trim().toLowerCase());
+      const advice = recommendExercise(log, analyses.find(item => String(item.workoutId) === String(log?._id)));
+      return { ...exercise, ...(advice.reps ? { reps: advice.reps } : {}), notes: advice.reason };
+    }) }));
+    // Claim the active cycle first so repeated clicks cannot create multiple successors.
+    const claimed = await WorkoutPlan.findOneAndUpdate({ _id: current._id, userId: req.user.id, status: 'active' }, { $set: { status: 'archived' } });
+    if (!claimed) return res.status(409).json({ error: 'This cycle has already been advanced. Refresh your plan.' });
+    try {
+      const next = await WorkoutPlan.create({ userId: req.user.id, preferences: current.preferences, plan: { ...current.plan, weekly_routine: nextRoutine } });
+      res.status(201).json({ planId: next._id });
+    } catch (error) { await WorkoutPlan.updateOne({ _id: current._id }, { $set: { status: 'active' } }); throw error; }
+  } catch (error) { res.status(500).json({ error: 'The next cycle could not be saved. Try again.' }); }
+});
+
+router.post('/workout-plan/complete-day', authRequired, async (req, res) => {
+  try {
+    const dayIndex = Number(req.body.dayIndex);
+    const plan = await WorkoutPlan.findOne({ userId: req.user.id, status: 'active' }).sort({ createdAt: -1 });
+    const day = Number.isInteger(dayIndex) && plan?.plan?.weekly_routine?.[dayIndex];
+    if (!day?.exercises?.length) return res.status(400).json({ error: 'Choose a training day with exercises.' });
+    const entries = day.exercises.map((_exercise, exerciseIndex) => plan.progress.find(item => item.dayIndex === dayIndex && item.exerciseIndex === exerciseIndex));
+    if (entries.some(item => !item)) return res.status(409).json({ error: 'Log every planned exercise before finishing this session.' });
+    const logs = await Workout.find({ _id: { $in: entries.map(item => item.workoutId) }, user_id: req.user.id }).lean();
+    if (logs.length !== entries.length) return res.status(409).json({ error: 'A session log is missing. Refresh and log the missing exercise.' });
+    const summary = { dayIndex, exerciseCount: logs.length, totalSets: logs.reduce((sum, item) => sum + (Number(item.sets) || 0), 0), completedAt: new Date() };
+    await WorkoutPlan.updateOne({ _id: plan._id, userId: req.user.id, 'sessions.dayIndex': { $ne: dayIndex } }, { $push: { sessions: summary }, $set: { updatedAt: new Date() } });
+    res.json({ session: plan.sessions?.find(item => item.dayIndex === dayIndex) || summary });
+  } catch (error) { res.status(500).json({ error: 'The session could not be finished. Try again.' }); }
+});
 
 /**
  * POST /api/ai/meal-plan
@@ -133,6 +189,7 @@ router.get('/workout-plan', authRequired, async (req, res) => {
       workoutPlan: savedPlan.plan,
       preferences: savedPlan.preferences,
       progress: savedPlan.progress || [],
+      sessions: savedPlan.sessions || [],
       savedAt: savedPlan.createdAt
     });
   } catch (error) {

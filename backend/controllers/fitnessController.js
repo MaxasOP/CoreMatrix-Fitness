@@ -22,6 +22,12 @@ async function getAllWorkouts(req, res) {
 async function createWorkout(req, res) {
   try {
     const userId = req.user.id;
+    if (req.body.plan_id) {
+      const plan = await WorkoutPlan.findOne({ _id: req.body.plan_id, userId, status: 'active' });
+      const dayIndex = Number(req.body.plan_day_index);
+      const exerciseIndex = Number(req.body.plan_exercise_index);
+      if (!plan || !Number.isInteger(dayIndex) || !Number.isInteger(exerciseIndex) || !plan.plan?.weekly_routine?.[dayIndex]?.exercises?.[exerciseIndex]) return res.status(400).json({ error: 'This planned exercise is unavailable. Refresh your plan.' });
+    }
     const workoutData = {
       ...req.body,
       category: req.body.category || 'General',
@@ -34,7 +40,7 @@ async function createWorkout(req, res) {
       await WorkoutPlan.findOneAndUpdate(
         { _id: w.plan_id, userId, status: 'active' },
         {
-          $pull: { progress: { dayIndex: w.plan_day_index, exerciseIndex: w.plan_exercise_index } },
+          $pull: { progress: { dayIndex: w.plan_day_index, exerciseIndex: w.plan_exercise_index }, sessions: { dayIndex: w.plan_day_index } },
           $set: { updatedAt: new Date() }
         }
       );
@@ -60,6 +66,7 @@ async function updateWorkout(req, res) {
     }
     const doc = await Workout.findOneAndUpdate({ _id: id, user_id: userId }, updateData, { new: true });
     if (!doc) return res.status(404).json({ error: 'Not found' });
+    if (doc.plan_id) await WorkoutPlan.updateOne({ _id: doc.plan_id, userId }, { $pull: { sessions: { dayIndex: doc.plan_day_index } } });
     res.json(doc);
   } catch (err) { res.status(500).json({ error: err.message }); }
 }
@@ -73,7 +80,7 @@ async function deleteWorkout(req, res) {
     if (doc.plan_id) {
       await WorkoutPlan.updateOne(
         { _id: doc.plan_id, userId },
-        { $pull: { progress: { workoutId: doc._id } }, $set: { updatedAt: new Date() } }
+        { $pull: { progress: { workoutId: doc._id }, sessions: { dayIndex: doc.plan_day_index } }, $set: { updatedAt: new Date() } }
       );
     }
     res.json({ success: true, id: doc._id });

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import api from '../api';
 import { AuthContext } from '../AuthContext';
 import useDocumentMetadata from '../hooks/useDocumentMetadata';
+import NutritionBrief from '../components/NutritionBrief';
 
 const week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const dateKey = value => {
@@ -18,8 +19,35 @@ function Stat({ value, label, detail }) {
   return <div className="metric-card"><span className="metric-label">{label}</span><strong>{value}</strong><small>{detail}</small></div>;
 }
 
+const trainingLoop = [
+  { step: '01', title: 'Plan', detail: 'A week built around your goal, schedule, and equipment.' },
+  { step: '02', title: 'Train', detail: 'Log sets quickly while the plan keeps you moving.' },
+  { step: '03', title: 'Review', detail: 'Check one key set and understand what to improve.' },
+  { step: '04', title: 'Adapt', detail: 'Use the result to make the next session more useful.' },
+];
+
+function TrainingLoop() {
+  return (
+    <section className="training-loop" aria-labelledby="training-loop-title">
+      <div className="training-loop-intro">
+        <p className="eyebrow">How it helps</p>
+        <h2 id="training-loop-title">Every session informs the next.</h2>
+        <p>DumbbellDore connects planning, logging, form review, and progress instead of leaving them as separate tools.</p>
+      </div>
+      <ol>
+        {trainingLoop.map(item => (
+          <li key={item.step}>
+            <span>{item.step}</span>
+            <div><strong>{item.title}</strong><p>{item.detail}</p></div>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
 function resolveNextAction(user, activePlan, analyses) {
-  if (!user) return { href: '/auth', label: 'Sign in to begin', detail: 'Save your training data' };
+  if (!user) return { href: '/auth', label: 'Build my first week', detail: 'Get a clear plan, log the work, review one key set, and know what comes next.' };
   if (!activePlan?.workoutPlan?.weekly_routine?.length) return { href: '/ai-workout', label: 'Build your training week', detail: 'Choose days and equipment' };
   const routine = activePlan.workoutPlan.weekly_routine;
   let reviewCandidate = null;
@@ -67,7 +95,10 @@ export default function Home() {
     const today = dateKey();
     const todaysMeals = meals.filter(item => dateKey(item.date || item.log_date) === today);
     const todaysWorkouts = workouts.filter(item => dateKey(item.date || item.log_date) === today);
-    const activeDays = new Set(workouts.map(item => {
+    const weekStart = new Date();
+    weekStart.setHours(0, 0, 0, 0);
+    weekStart.setDate(weekStart.getDate() - (weekStart.getDay() + 6) % 7);
+    const activeDays = new Set(workouts.filter(item => new Date(item.date || item.log_date) >= weekStart).map(item => {
       const value = new Date(item.date || item.log_date);
       return Number.isNaN(value.getTime()) ? null : (value.getDay() + 6) % 7;
     }).filter(value => value !== null));
@@ -80,6 +111,9 @@ export default function Home() {
   }, [meals, workouts]);
 
   const nextAction = resolveNextAction(user, activePlan, analyses);
+  const goal = user?.goal || 'your goal';
+  const completedExercises = activePlan?.progress?.length || 0;
+  const plannedExercises = activePlan?.workoutPlan?.weekly_routine?.reduce((total, day) => total + (day.exercises?.length || 0), 0) || 0;
 
   if (authLoading || (user && loading)) {
     return (
@@ -141,18 +175,35 @@ export default function Home() {
           <i /><i /><i /><i /><i /><i /><i /><i /><i />
         </div>
         <div className="command-content">
-          <p className="eyebrow">Today&apos;s Focus</p>
-          <h1>{user ? `${user.name.split(' ')[0]}, show up.` : 'Log the work.'}</h1>
+          <p className="eyebrow">{user ? 'Your next useful action' : 'Training that learns'}</p>
+          <h1>{user ? `${user.name.split(' ')[0]}, keep the loop moving.` : 'Know what to do next.'}</h1>
           <p className="hero-copy">{nextAction.detail}</p>
-          <div className="hero-actions"><Link href={nextAction.href} className="action-primary">{nextAction.label} <span>→</span></Link><Link href="/progress" className="action-secondary">Review week</Link></div>
+          <div className="hero-actions"><Link href={nextAction.href} className="action-primary">{nextAction.label} <span>→</span></Link><Link href={user ? '/progress' : '#training-loop-title'} className="action-secondary">{user ? 'Review week' : 'How it works'}</Link></div>
         </div>
         <div className="today-score" aria-label="Weekly training progress"><span>This week</span><strong>{summary.activeDays.size}<small>/7</small></strong><p>active days</p></div>
       </section>
 
       {error && <div className="status-note">{error} You can still explore the app.</div>}
 
+      {!user && <TrainingLoop />}
+
+      {user && (
+        <section className="coach-brief" aria-labelledby="coach-brief-title">
+          <div>
+            <p className="eyebrow">Coach brief</p>
+            <h2 id="coach-brief-title">Built around {goal.toLowerCase()}.</h2>
+            <p>{activePlan ? `${completedExercises} of ${plannedExercises} planned exercises are complete. Your next action keeps the current week moving.` : 'Create a training week and the dashboard will guide you from the next set through review and recovery.'}</p>
+          </div>
+          <div className="coach-brief-action">
+            <span>{activePlan ? 'Current week' : 'Start here'}</span>
+            <strong>{activePlan ? `${completedExercises}/${plannedExercises}` : 'One plan'}</strong>
+            <small>{activePlan ? 'exercises logged' : 'built for your schedule'}</small>
+          </div>
+        </section>
+      )}
+
       <section className="metrics-grid" aria-label="Today's summary">
-        <Stat value={summary.sessions} label="Sessions" detail="completed today" />
+        <Stat value={summary.sessions} label="Exercises" detail="logged today" />
         <Stat value={summary.calories.toLocaleString()} label="Energy" detail="kcal logged" />
         <Stat value={`${summary.protein}g`} label="Protein" detail="toward recovery" />
       </section>
@@ -169,6 +220,7 @@ export default function Home() {
           <span className="training-visual-copy"><small>Technique</small><strong>Check your form.</strong><b>Upload a set →</b></span>
         </Link>
       </section>
+      {user && <NutritionBrief user={user} meals={meals} workouts={workouts} />}
 
       <section className="dashboard-grid">
         <article className="focus-card">
@@ -178,7 +230,7 @@ export default function Home() {
         </article>
 
         <aside className="quick-card">
-          <p className="eyebrow">Training loop</p><h2>Continue the work</h2>
+          <p className="eyebrow">Next decisions</p><h2>Continue the work</h2>
           <Link href={nextAction.href}><span>{nextAction.label}</span><small>{nextAction.detail}</small><b>↗</b></Link>
           <Link href="/ai-workout"><span>Adjust the week</span><small>Replace the active plan</small><b>↗</b></Link>
           <Link href="/form-analysis"><span>Review another lift</span><small>Upload one working set</small><b>↗</b></Link>

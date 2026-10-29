@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import api from '../../api';
 import useDocumentMetadata from '../../hooks/useDocumentMetadata';
 import ProtectedRoute from '../../components/ProtectedRoute';
+import Link from 'next/link';
 
 const MAX_VIDEO_BYTES = 40 * 1024 * 1024;
 const VIDEO_TYPES = new Set(['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm']);
@@ -253,6 +254,7 @@ function VideoFormAnalysisContent() {
               <p>{result.feedback?.cues?.join(' ') || 'Repeat the same camera angle and keep the tempo controlled.'}</p>
             </div>
           </div>
+          <div className="session-finish"><p>Your review is saved. Next-session guidance combines this linked review with your reported effort; low-visibility clips won’t trigger progression.</p><Link href="/progress" className="btn-core-primary">See next-session guidance →</Link><Link href="/forge" className="plan-day-action">Return to workout log</Link></div>
         </section>
       ) : null}
 

@@ -1,372 +1,172 @@
-# 🚀 CoreMatrix Fitness Super App - Project Overview
+# DumbbellDore
 
-> India's Most Advanced Fitness, Nutrition & Wellness Platform
+An Indian-first training, nutrition, and fitness platform for planning workouts, logging sessions and meals, reviewing progress, and improving exercise form.
 
-**Version: 0.2.0 | Backend: ✅ Complete | Frontend: 🚀 Starting | Status: Production Ready**
+The repository is still named `CoreMatrix-Fitness`; the current product interface and brand are **DumbbellDore**.
 
----
+![DumbbellDore dashboard on desktop](./docs/images/dashboard-desktop.png)
 
-<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/0088cb17-0962-4cb9-b826-c9c0e2e56ca0" />
+<p align="center">
+  <img src="./docs/images/dashboard-mobile.png" width="360" alt="DumbbellDore dashboard on mobile" />
+</p>
 
-## 🎯 What is CoreMatrix?
+## What is included
 
-CoreMatrix is not just another fitness app. It's an **integrated health & wellness ecosystem** that combines:
+- Focused daily dashboard with session, energy, protein, and weekly activity summaries
+- Workout logging and AI-assisted weekly workout planning
+- Exercise-form video analysis with a separate Python motion-analysis service
+- Meal logging, AI diet planning, and Indian food alternatives
+- Progress history, challenges, leaderboards, and community reels
+- Supplement discovery and price-comparison APIs
+- Trainer marketplace, bookings, payments, and notifications
+- Responsive desktop and mobile navigation
 
-- **🌍 Indian-First** - Everything designed keeping Indian user's special needs in mind
-- **💪 Fitness Tracking** - Workouts with AI/ML form correction (including Yoga poses and exercises)
-- **🍽️ Nutrition Planning** - AI dietician with Indian alternatives (scanning Thalis as whole for cal count)
-- **💊 Supplement Intelligence** - Smart recommendations with price comparison (shows lowest among sites)
-- **👥 Social Community** - Progress reels, leaderboards, challenges (motivate one-another)
-- **🏋️ Trainer Marketplace** - Book certified trainers & specialists (both online/offline bookings)
-- **🏪 Gym Discovery** - Find gyms near you (google map integration)
-- **🎮 Gamification** - Challenges,streaks,rewards,leaderboards (weekly challenges and real time scoreboards)
+## The training loop
 
----
+1. Set a goal, experience level, schedule, and available equipment during onboarding.
+2. Generate a saved plan, then log each planned exercise and its perceived effort.
+3. Finish a training day to save its session summary. Attach a video review to a specific logged exercise.
+4. Review the next-session suggestion. Easy effort plus a clearly visible linked review with no flagged issues can suggest one extra rep at the same load; otherwise the baseline is repeated.
+5. After every planned day is finished, start the next cycle with those rep targets. Previous logs remain in history.
+6. Use the dashboard and meal log to see protein and energy remaining against your saved daily targets.
 
-<img width="2946" height="1641" alt="Screenshot 2026-06-05 125401" src="https://github.com/user-attachments/assets/1e578fe6-f133-4efc-88cc-ba043e2cdb95" />
+Progression is a transparent rule-based suggestion. It does not automatically increase weight. Nutrition targets remain profile estimates; they are not automatically adjusted by exercise calories.
 
+### Upgrade verification
 
-## 📊 Project Statistics
+The backend includes `scripts/verifyTrainingLoop.js`, an isolated integration harness covering registration, profile setup, saved plans, workout logs, linked form results, progression, session completion, meals, deletion consistency, and the next cycle. It requires `mongodb-memory-server` (or an absolute module path through `TEST_MONGO_MODULE`) and never connects to the configured application database. Plan generation and video findings use synthetic fixtures in this harness; live AI provider quality is a separate check.
 
-### What We've Built (Phase 1)
+## Stack
 
-| Metric | Count |
-|--------|-------|
-| Database Models | 15 |
-| API Endpoints | 50+ |
-| Lines of Backend Code | 15,000+ |
-| Features Implemented | 25+ |
-| Revenue Opportunities | 8 |
-| Supported Languages | 6 (ready) |
+| Layer | Technology |
+| --- | --- |
+| Web app | Next.js 16, React 19, Tailwind CSS 4 |
+| API | Node.js, Express, MongoDB, Mongoose |
+| AI | Google Gemini |
+| Motion analysis | Python service |
+| Media | Cloudinary / S3-compatible uploads |
+| Cache and realtime | Redis, Socket.IO |
+| Payments | Razorpay and Stripe |
+| Deployment | Vercel, Render, Docker |
 
-### Technology Stack
+## Repository layout
 
-```
-Backend:    Node.js, Express, MongoDB, Mongoose
-Frontend:   Next.js 14, Tailwind CSS
-AI:         Gemini 2.5 Flash
-Media:      Cloudinary
-Email:      SendGrid
-Database:   MongoDB Atlas (production ready)
-Deploy:     Docker, Render, Vercel
-Real-time:  Socket.io (ready)
-```
-
----
-
-<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/8be4011a-ff11-4e40-ab90-980122e158c6" />
-
-
-## 🎁 Key Features
-
-### 🍽️ AI Dietician
-✅ Personalized meal plans based on:
-- Age, weight, height, activity level
-- Fitness goals
-- Budget constraints
-- Dietary preferences (vegetarian, vegan, jain, non-veg)
-- Indian food alternatives
-- Monthly cost estimation
-
-**Example**: 
-```
-Input: 25yr, 75kg, muscle gain goal, ₹5000/month, vegetarian
-Output: 
-  - Breakfast: Paneer Paratha + Curd
-  - Lunch: Dal Makhani + Rice
-  - Dinner: Grilled Tilapia + Roti
-  - Macros: 150g protein, 250g carbs, 70g fat
-  - Cost: ₹6200/month
-  - Alternatives: Sprouts, Soya, Eggs, Lentils
-```
-
-### 💊 Smart Supplement Engine
-✅ AI-powered supplement recommendations with:
-- Price comparison (Amazon, Flipkart, HealthKart, MuscleBlaze)
-- Authenticity scoring (batch verification, QR codes)
-- Lowest verified price highlights
-- User reviews & ratings
-- Affiliate commission tracking
-
-**Example**:
-```
-Whey Protein Comparison:
-  HealthKart:   ₹4,699 ⭐ (Lowest)
-  Flipkart:     ₹4,999
-  Amazon:       ₹5,200
-Authenticity: 95/100 ✅ Verified Sellers
-```
-
-### 📊 Indian Leaderboards
-✅ Compete on multiple levels:
-- **National**: Top performers across India
-- **City-wise**: Mumbai, Delhi, Bangalore, etc.
-- **College-wise**: IIT-B, DU, Anna, etc. (Viral potential!)
-- **Company-wise**: Employee wellness competitions
-
-**Categories**:
-- Top Fat Loss (% weight lost)
-- Top Muscle Gain
-- Most Consistent
-- Longest Streak
-
-<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/7d567523-90db-45f2-97fd-0985b0c80d0c" />
-
-
-### 🏆 Fitness Challenges
-✅ Engaging community challenges:
-- 10,000 Steps Challenge
-- 30-Day Yoga Challenge
-- 100 Pushups Challenge
-- 30-Day Fat Loss Challenge
-- Sponsored Challenges (revenue!)
-
-**Features**:
-- Leaderboard tracking
-- Reward points
-- Progress verification
-- Completion badges
-
-### 📱 Progress Reels
-✅ Social fitness sharing:
-- Transformation photos
-- Workout videos
-- Yoga sessions
-- Meal posts
-- Journey updates
-- Smart feed (similar goals, age, city)
-- AI content moderation
-
-### ❤️ Health Twin Intelligence
-✅ 7-factor health assessment:
-1. **Fitness Age** - Your body's fitness level
-2. **Strength Score** - Muscular capability
-3. **Recovery Score** - Recovery quality
-4. **Mobility Score** - Flexibility
-5. **Nutrition Score** - Diet quality
-6. **Consistency Score** - Habit strength
-7. **Overall Health Score** (0-100)
-
----
-
-<img width="590" height="1280" alt="image" src="https://github.com/user-attachments/assets/41df44ff-848d-4be3-ac6a-cc8866de1207" />
-
-
-## 📁 Project Structure
-
-```
+```text
 CoreMatrix-Fitness/
-├── backend/
-│   ├── models/ (15 MongoDB schemas) ✅
-│   ├── routes/ (50+ API endpoints) ✅
-│   ├── services/ (AI integrations) ✅
-│   ├── controllers/ (business logic)
-│   ├── middleware/ (auth, validation)
-│   ├── scripts/ (database seeding) ✅
-│   ├── server.js ✅
-│   ├── package.json ✅
-│   └── .env.example ✅
-├── client/
-│   ├── src/
-│   │   ├── app/         # Next.js App Router (15+ pages)
-│   │   ├── components/  # Shared UI components
-│   │   ├── hooks/       # Custom React hooks
-│   │   └── api.js       # Axios API client
-│   ├── public/
-│   └── package.json
-├── FEATURES.md ✅ (Comprehensive API docs)
-├── SETUP_GUIDE.md ✅ (Step-by-step setup)
-├── BUILD_SUMMARY.md ✅ (What we built)
-├── DEVELOPMENT_CHECKLIST.md ✅ (Roadmap)
-├── ENV_CHECKLIST.md ✅ (Environment variables checklist)
-├── ENV_VARIABLES_SETUP.md ✅ (Detailed environment setup guide)
-└── QUICK_START.md ✅ (Quick start guide)
+├── client/       # Next.js application
+├── backend/      # Express API, models, services, and tests
+├── ai_service/   # Python motion-analysis service
+├── docs/images/  # README screenshots
+└── docker-compose.yml
 ```
 
----
-
-## 🚀 Getting Started (3 Steps)
+## Run locally
 
 ### Prerequisites
-- Node.js 16+ installed
-- npm installed
-- MongoDB instance (local or Atlas)
-- Redis instance (local or cloud) - for caching, real-time features
-- Basic API keys from services (Gemini, Razorpay/Stripe, SendGrid)
 
-### 1️⃣ Clone & Setup
+- Node.js 20 or newer
+- npm
+- MongoDB
+- Python 3.10+ when running the motion-analysis service locally
+- Redis for caching and realtime features that depend on it
+
+### 1. Install dependencies
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-repo/CoreMatrix-Fitness.git
+git clone https://github.com/your-org/CoreMatrix-Fitness.git
 cd CoreMatrix-Fitness
 
-# Install backend dependencies
 cd backend
 npm install
 
-# Install frontend dependencies
 cd ../client
 npm install
 ```
 
-### 2️⃣ Configure Environment
+### 2. Configure the backend
 
-```bash
-# Copy backend environment template
-cd backend
-cp .env.example .env
+Create `backend/.env` and add the values needed by the features you plan to run. At minimum, configure MongoDB and authentication:
 
-# Edit .env with your API keys (see ENV_VARIABLES_SETUP.md for details)
-# Minimum required for basic setup:
-# - MONGO_URI
-# - JWT_SECRET
-# - NODE_ENV=development
-# - PORT=4000
-# - GEMINI_API_KEY (for AI features)
-# - RAZORPAY_KEY_ID & RAZORPAY_KEY_SECRET (for payments)
-# - SENDGRID_API_KEY (for email)
-
-nano .env
-
-# For the frontend, create client/.env.local (if not using Vercel env vars)
-cat > client/.env.local << EOF
-NEXT_PUBLIC_API_URL=http://localhost:4000/api
-EOF
+```dotenv
+MONGO_URI=mongodb://127.0.0.1:27017/corematrix
+JWT_SECRET=replace-with-a-long-random-secret
+NODE_ENV=development
+PORT=4000
 ```
 
-### 3️⃣ Start Services
+Optional integrations such as Gemini, Cloudinary, SendGrid, Razorpay, Stripe, and Redis require their corresponding environment variables. See [ENV_CHECKLIST.md](./ENV_CHECKLIST.md) and [ENV_VARIABLES_SETUP.md](./ENV_VARIABLES_SETUP.md).
 
-#### Terminal 1: Backend
+The frontend uses `/api` in development. To point it at another API, create `client/.env.local`:
+
+```dotenv
+NEXT_PUBLIC_API_URL=http://localhost:4000/api
+```
+
+### 3. Start the API and web app
+
 ```bash
+# terminal 1
 cd backend
 npm run dev
-# Backend runs on http://localhost:4000
-```
 
-#### Terminal 2: Frontend
-```bash
+# terminal 2
 cd client
 npm run dev
-# Frontend runs on http://localhost:3000
 ```
 
-### 4️⃣ Verify Setup
+Open [http://localhost:3000](http://localhost:3000). The API health endpoint is [http://localhost:4000/api/health](http://localhost:4000/api/health).
 
-- Open `http://localhost:3000` in your browser.
-- Backend health check: `http://localhost:4000/api/health`
-- Try signup/login.
-- Visit Dashboard.
-
-### 5️⃣ Populate Sample Data (Optional)
+To add sample data:
 
 ```bash
-# In backend directory
+cd backend
 node scripts/seedDatabase.js
 ```
 
----
+## Useful commands
 
-## 🔑 Environment Variables
+| Location | Command | Purpose |
+| --- | --- | --- |
+| `client/` | `npm run dev` | Start the Next.js development server |
+| `client/` | `npm run build` | Create a production frontend build |
+| `client/` | `npm run lint` | Run frontend lint checks |
+| `backend/` | `npm run dev` | Start the API with Nodemon |
+| `backend/` | `npm test` | Run backend tests |
+| repository root | `docker compose up --build` | Start the API and AI service containers |
 
-For a complete and detailed list of all environment variables, their purpose, and how to obtain them, please refer to:
-- [`ENV_CHECKLIST.md`](./ENV_CHECKLIST.md)
-- [`ENV_VARIABLES_SETUP.md`](./ENV_VARIABLES_SETUP.md)
+## Main application routes
 
----
+| Route | Purpose |
+| --- | --- |
+| `/` | Daily training dashboard |
+| `/forge` | Workout logging |
+| `/ai-workout` | AI workout-plan generation |
+| `/form-analysis` | Exercise-form analysis |
+| `/fuel` | Meal logging |
+| `/ai-dietician` | AI meal planning |
+| `/progress` | Training progress |
+| `/challenges` | Fitness challenges |
+| `/leaderboards` | Rankings |
+| `/reels` | Community progress feed |
+| `/supplements` | Supplement discovery |
+| `/trainer-marketplace` | Trainer discovery and booking |
 
-## ☁️ Deployment Notes
+## Documentation
 
-- **Backend**: Deployed on Render as a container. Ensure `MONGO_URI`, `JWT_SECRET`, and other necessary API keys are set in Render's environment variables for the service.
-- **Frontend**: Deployed on Vercel (root set to `client/`). Configure `REACT_APP_API_URL` to point to your deployed backend URL (e.g., `https://your-render-backend.onrender.com/api`) in Vercel's Environment Variables.
-- **Docker**: `Dockerfile` is included for local development and potential containerized deployments. `docker-publish.yml` GitHub Actions workflow can build and push images to GitHub Container Registry (GHCR).
+- [Feature and API overview](./FEATURES.md)
+- [Quick start](./QUICK_START.md)
+- [Environment checklist](./ENV_CHECKLIST.md)
+- [Environment setup](./ENV_VARIABLES_SETUP.md)
+- [Backend notes](./backend/README.md)
+- [AI service notes](./ai_service/README.md)
 
----
+## Deployment
 
-## 📋 API Reference (High-Level)
+- Set the Vercel project root to `client/` for the web app.
+- Configure `NEXT_PUBLIC_API_URL` with the deployed API URL.
+- Deploy the Express API and Python AI service separately, or use the included Docker configuration as a starting point.
+- Keep secrets in the deployment provider's environment-variable store; do not commit `.env` files.
 
-- `GET /api/health` — returns `{ status: 'ok' }` for health checks.
-- `POST /api/auth/register` — create an account; response includes `token`.
-- `POST /api/auth/login` — login; response includes `token`.
-- `PUT /api/auth/profile` — update user profile (authenticated).
-- `GET /api/workouts` — returns workouts for the authenticated user.
-- `POST /api/workouts` — create a workout (authenticated, with validation).
-- `PUT /api/workouts/:id` — update a workout (authenticated, with validation).
-- `DELETE /api/workouts/:id` — delete a workout (authenticated).
-- `GET /api/meals` — returns meals for the authenticated user.
-- `POST /api/meals` — create a meal (authenticated, with validation).
-- `PUT /api/meals/:id` — update a meal (authenticated, with validation).
-- `DELETE /api/meals/:id` — delete a meal (authenticated).
-- `GET /api/tip` — get a daily nutrition tip (authenticated).
-- `POST /api/supplements/recommend` — get AI-powered supplement recommendations (authenticated).
-- `GET /api/supplements/search` — search supplements.
-- `GET /api/supplements/:supplementId/prices` — get price comparison for a supplement.
-- `GET /api/challenges` — list active challenges.
-- `POST /api/challenges/:challengeId/join` — join a challenge (authenticated).
-- `POST /api/challenges/:challengeId/update-progress` — update progress in a challenge (authenticated).
-- `GET /api/challenges/user-challenges` — get authenticated user's challenges.
-- `POST /api/video/analyze` — upload and analyze workout video (authenticated).
-- `GET /api/analytics/user-analytics` — get user analytics (authenticated).
+## License
 
----
-
-## 🐛 Troubleshooting
-
-- **Blank frontend or dashboard not loading**:
-    - Ensure `REACT_APP_API_URL` on Vercel points to your deployed backend API (e.g. `https://your-render-backend.onrender.com/api`).
-    - Check browser console for CORS or 405/500 errors.
-    - Verify your backend service is running and accessible from the frontend.
-
-- **Registration / login failing (401 Unauthorized)**:
-    - Confirm the backend URL is correctly set in `client/.env.local` (for local development) or Vercel environment variables (for deployment).
-    - Inspect backend logs (local console or Render logs) for stack traces.
-    - Ensure `JWT_SECRET` is correctly configured and matches the secret used to sign tokens.
-
-- **500 errors from backend**:
-    - Check backend logs for exact error messages. The centralized error handler should provide more informative output.
-    - Common causes include database connection issues (`MONGO_URI`), invalid data leading to Mongoose errors (now partially mitigated by `express-validator`), or unhandled exceptions.
-
-- **Docker build errors on Render**:
-    - Ensure your `Dockerfile` creates and uses a non-root user properly. If `chown` or file permissions are issues, review the Dockerfile.
-
----
-
-## 🛠️ Where to look in the code (Quick Links)
-
-- API entrypoint: [`backend/server.js`](./backend/server.js)
-- Auth logic: [`backend/controllers/authController.js`](./backend/controllers/authController.js)
-- Fitness controllers: [`backend/controllers/fitnessController.js`](./backend/controllers/fitnessController.js)
-- Client entry: [`client/src/index.js`](./client/src/index.js)
-- Client API wrapper: [`client/src/api.js`](./client/src/api.js)
-- Main layout and styles: [`client/src/components/Layout.js`](./client/src/components/Layout.js), [`client/src/styles.css`](./client/src/styles.css)
-- Backend Authentication Middleware: [`backend/middleware/authMiddleware.js`](./backend/middleware/authMiddleware.js)
-- Backend Validation Middleware: [`backend/validation/fitnessValidation.js`](./backend/validation/fitnessValidation.js)
-- Frontend Protected Routes: [`client/src/components/ProtectedRoute.js`](./client/src/components/ProtectedRoute.js)
-
----
-
-## 🎯 Next Steps and Recommendations
-
-1.  **Frontend Development:** Continue building out the remaining frontend components for dashboard, meal planning, supplement marketplace UI, etc., as outlined in [`DEVELOPMENT_CHECKLIST.md`](./DEVELOPMENT_CHECKLIST.md).
-2.  **Responsiveness and UI/UX Enhancements:** Address specific responsiveness issues and integrate more engaging UI elements (animations, SVGs, icons) to enhance user experience, ensuring no app bloat.
-3.  **Refine Authentication and Authorization**: Implement robust authorization (e.g., admin roles) as noted in [`backend/routes/challenges.js`](./backend/routes/challenges.js) for POST endpoints.
-4.  **Testing**: Implement comprehensive unit, integration, and end-to-end tests for both frontend and backend.
-5.  **Performance Optimization**: Review and implement caching strategies (Redis), image optimization, and API response pagination as suggested in [`BUILD_SUMMARY.md`](./BUILD_SUMMARY.md).
-
----
-
-## 📜 License
-
-MIT License - See [LICENSE](./LICENSE) file for details
-
----
-
-## 🚀 Let's Build!
-
-CoreMatrix has the potential to become **India's #1 Fitness & Wellness Platform**.Completely open to suggestions and your valuable input.
-
-We're just getting started! 💪
-
-**Current Status**: Backend MVP Complete ✅ | Frontend Development 🚀 | Let's Go! 🔥 
-Integration of some features is pending!! 
-Kindly provide your love and support if possible <3
+[MIT](./LICENSE)

@@ -22,6 +22,7 @@ const validateWorkout = [
   body('intensity')
     .optional()
     .isIn(['low', 'medium', 'high']).withMessage('Intensity must be low, medium, or high'),
+  body('feel').optional().isIn(['easy', 'moderate', 'hard', 'very_hard']).withMessage('Choose a valid effort rating'),
   body('duration_minutes')
     .optional({ values: 'falsy' })
     .isInt({ min: 1, max: 1440 }).withMessage('Duration must be an integer between 1 and 1440 minutes'),

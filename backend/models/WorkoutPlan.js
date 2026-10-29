@@ -15,6 +15,7 @@ const WorkoutPlanSchema = new mongoose.Schema({
     completedAt: { type: Date, default: Date.now },
     analysisId: { type: mongoose.Schema.Types.ObjectId, ref: 'FormAnalysis', default: null }
   }],
+  sessions: [{ dayIndex: Number, completedAt: { type: Date, default: Date.now }, exerciseCount: Number, totalSets: Number }],
   status: { type: String, enum: ['active', 'archived'], default: 'active', index: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }

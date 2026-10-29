@@ -7,6 +7,7 @@ import api from '../../api';
 import { AuthContext } from '../../AuthContext';
 import useDocumentMetadata from '../../hooks/useDocumentMetadata';
 import ProtectedRoute from '../../components/ProtectedRoute';
+import NutritionBrief from '../../components/NutritionBrief';
 
 const presets = [
   { name: 'Power oats', type: 'Breakfast', calories: 420, protein: 25, carbs: 55, fat: 10 },
@@ -22,7 +23,9 @@ function FuelContent() {
     description: 'Track your daily food intake, search presets for meals, and manage your protein, fat, and carbohydrate macronutrient targets.'
   });
   const [meals, setMeals] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [workouts, setWorkouts] = useState([]);
+  const [saving, setSaving] = useState(false);
   function getTodayKey() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -33,12 +36,14 @@ function FuelContent() {
 
   const isAuthed = Boolean(user);
 
-  useEffect(() => { fetchMeals(); }, []);
-
-  async function fetchMeals() {
-    setLoading(true);
-    try { const res = await api.get('/meals'); setMeals(res.data || []); } catch (err) { console.warn(err); } finally { setLoading(false); }
-  }
+  useEffect(() => {
+    async function fetchMeals() {
+      setLoading(true);
+      try { const res = await api.get('/meals'); setMeals(res.data || []); } catch { setMsg('Your meals could not be loaded. Refresh to try again.'); } finally { setLoading(false); }
+    }
+    fetchMeals();
+    api.get('/workouts').then(({ data }) => setWorkouts(data || [])).catch(() => setWorkouts([]));
+  }, []);
 
   function onChange(e) { const { name, value } = e.target; setForm(prev => ({ ...prev, [name]: value })); }
 
@@ -47,11 +52,14 @@ function FuelContent() {
   }
 
   async function addOrUpdateMeal() {
+    if (saving) return;
     if (!isAuthed) {
       setMsg('Please sign in to log meals.');
       setTimeout(() => setMsg(''), 4000);
       return;
     }
+    if (!form.name.trim() || ['calories', 'protein', 'carbs', 'fat'].some(key => !Number.isFinite(Number(form[key])) || Number(form[key]) < 0)) { setMsg('Enter a meal name and non-negative nutrition values.'); return; }
+    setSaving(true);
     try {
       if (editingId) {
         const res = await api.put(`/meals/${editingId}`, { ...form });
@@ -69,7 +77,7 @@ function FuelContent() {
       const errMsg = err.response?.data?.error || err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || err.message;
       setMsg(`Error saving meal: ${errMsg}`);
       setTimeout(() => setMsg(''), 5000);
-    }
+    } finally { setSaving(false); }
   }
 
   function startEdit(m) {
@@ -108,7 +116,7 @@ function FuelContent() {
     carbs: todayMeals.reduce((s,m)=>s + (Number(m.carbs)||0), 0),
     fat: todayMeals.reduce((s,m)=>s + (Number(m.fat)||0), 0),
   };
-  const calorieGoal = user?.calorieGoal || 2200;
+  const calorieGoal = Number(user?.calorieGoal) || 0;
 
   return (
     <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
@@ -134,6 +142,7 @@ function FuelContent() {
         </div>
       )}
       {/* Top Meal Hero Showcase */}
+      {loading ? <p role="status">Loading today’s nutrition…</p> : <NutritionBrief user={user} meals={meals} workouts={workouts} />}
       <section className="relative min-h-[300px] sm:min-h-[360px] md:min-h-[340px] rounded-[28px] overflow-hidden bg-[#11140f] shadow-xl flex items-end">
         <Image
           src="/assets/meal.webp"
@@ -173,22 +182,22 @@ function FuelContent() {
           </div>
 
           <div className="mt-4 grid sm:grid-cols-2 gap-3">
-            <input id="fuel-meal-name" name="name" placeholder="Meal name" value={form.name} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
-            <select id="fuel-meal-type" name="type" value={form.type} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all">
+            <input id="fuel-meal-name" aria-label="Meal name" name="name" placeholder="Meal name" value={form.name} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <select id="fuel-meal-type" aria-label="Meal type" name="type" value={form.type} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all">
               <option>Breakfast</option>
               <option>Lunch</option>
               <option>Dinner</option>
               <option>Snack</option>
             </select>
-            <input id="fuel-calories" name="calories" type="number" placeholder="kcal" value={form.calories} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
-            <input id="fuel-protein" name="protein" type="number" placeholder="Protein (g)" value={form.protein} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
-            <input id="fuel-carbs" name="carbs" type="number" placeholder="Carbs (g)" value={form.carbs} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
-            <input id="fuel-fat" name="fat" type="number" placeholder="Fat (g)" value={form.fat} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
-            <input id="fuel-date" name="date" type="date" value={form.date} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all sm:col-span-2" />
+            <input id="fuel-calories" aria-label="Calories in kcal" name="calories" type="number" placeholder="kcal" value={form.calories} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input id="fuel-protein" aria-label="Protein in grams" name="protein" type="number" placeholder="Protein (g)" value={form.protein} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input id="fuel-carbs" aria-label="Carbohydrates in grams" name="carbs" type="number" placeholder="Carbs (g)" value={form.carbs} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input id="fuel-fat" aria-label="Fat in grams" name="fat" type="number" placeholder="Fat (g)" value={form.fat} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all" />
+            <input id="fuel-date" aria-label="Meal date" name="date" type="date" value={form.date} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all sm:col-span-2" />
           </div>
 
           <div className="mt-4 flex flex-wrap gap-3">
-            <button id="btn-fuel-save-meal" onClick={addOrUpdateMeal} className="btn-core-primary" disabled={!isAuthed}>{editingId ? 'Save Meal' : 'Add Meal'}</button>
+            <button id="btn-fuel-save-meal" onClick={addOrUpdateMeal} className="btn-core-primary" disabled={!isAuthed || saving}>{saving ? 'Saving…' : editingId ? 'Save Meal' : 'Add Meal'}</button>
             {editingId && <button onClick={() => { setEditingId(null); setForm({ name: '', type: 'Lunch', calories: 0, protein: 0, carbs: 0, fat: 0, date: getTodayKey() }); }} className="btn-core-secondary">Cancel</button>}
           </div>
         </div>
@@ -197,9 +206,9 @@ function FuelContent() {
           <div>
             <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Today&apos;s Intake</div>
             <h3 className="text-4xl font-extrabold text-gray-900">{totals.calories} <span className="text-lg text-gray-400 font-medium">kcal</span></h3>
-            <div className="text-sm text-gray-500 font-medium mt-1">Goal: {calorieGoal} kcal</div>
+            <div className="text-sm text-gray-500 font-medium mt-1">{calorieGoal ? `Goal: ${calorieGoal} kcal` : 'Set your goal in profile setup'}</div>
             <div className="h-3 bg-gray-100 rounded-full mt-4 overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-600 animate-gradient-x rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, Math.round((totals.calories / calorieGoal) * 100))}%` }} />
+              <div className="h-full bg-lime-400" style={{ width: `${calorieGoal ? Math.min(100, Math.round((totals.calories / calorieGoal) * 100)) : 0}%` }} />
             </div>
             <div className="mt-6 space-y-3 text-sm">
               <div className="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100"><span className="text-gray-600 font-medium">Protein</span><strong className="text-gray-900">{totals.protein}g</strong></div>
@@ -209,7 +218,7 @@ function FuelContent() {
           </div>
           <div className="mt-6 pt-4 border-t border-gray-100 text-xs text-gray-500 flex items-center justify-between">
             <span>Macro balance</span>
-            <span className="font-semibold text-emerald-600">Optimal ratio</span>
+            <span className="font-semibold text-emerald-600">Recorded intake</span>
           </div>
         </aside>
       </section>
@@ -258,7 +267,7 @@ function FuelContent() {
               alt=""
               aria-hidden="true"
               fill
-              quality={30}
+              quality={75}
               className="object-cover blur-2xl opacity-40 scale-110 pointer-events-none"
             />
             {/* Full athlete photo - zero cropping */}

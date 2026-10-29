@@ -7,16 +7,9 @@ import api from '../../api';
 import { AuthContext } from '../../AuthContext';
 import useDocumentMetadata from '../../hooks/useDocumentMetadata';
 import ProtectedRoute from '../../components/ProtectedRoute';
+import TrainingGuidance from '../../components/TrainingGuidance';
 
-const weekPlan = [
-  { day: 'Monday',    group: 'PUSH', dayIndex: 1 },
-  { day: 'Tuesday',   group: 'PULL', dayIndex: 2 },
-  { day: 'Wednesday', group: 'REST', dayIndex: 3 },
-  { day: 'Thursday',  group: 'LEGS', dayIndex: 4 },
-  { day: 'Friday',    group: 'PUSH', dayIndex: 5 },
-  { day: 'Saturday',  group: 'PULL', dayIndex: 6 },
-  { day: 'Sunday',    group: 'REST', dayIndex: 0 },
-];
+const weekPlan = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, index) => ({ day, group: 'LOG', dayIndex: (index + 1) % 7 }));
 
 function parseLocalDate(value) {
   if (!value) return null;
@@ -70,7 +63,10 @@ function ProgressContent() {
         };
       });
     }
-    const daysWithWorkout = new Set(workouts.map(w => {
+    const weekStart = new Date();
+    weekStart.setHours(0, 0, 0, 0);
+    weekStart.setDate(weekStart.getDate() - (weekStart.getDay() + 6) % 7);
+    const daysWithWorkout = new Set(workouts.filter(w => new Date(w.date || w.log_date) >= weekStart).map(w => {
       const dt = parseLocalDate(w.date || w.log_date);
       return dt ? dt.getDay() : null;
     }).filter(d => d !== null));
@@ -93,6 +89,7 @@ function ProgressContent() {
 
   return (
     <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+      <TrainingGuidance />
       <section className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 card p-6 flex flex-col justify-between">
           <div>
@@ -107,7 +104,7 @@ function ProgressContent() {
             <div className="mt-4 text-6xl font-black flex items-center gap-4">
               <span className="text-lime-300">{weekProgress}%</span>
             </div>
-            <div className="text-gray-500 font-medium mt-1">{completed} of {targetDays} planned days completed</div>
+            <div className="text-gray-500 font-medium mt-1">{activePlan ? `${completed} of ${targetDays} planned days completed` : `${completed} active days this week. Build a plan to track a training target.`}</div>
           </div>
 
           <div className="weekly-chart" role="img" aria-label={`${completed} of ${targetDays} planned training days completed`}>

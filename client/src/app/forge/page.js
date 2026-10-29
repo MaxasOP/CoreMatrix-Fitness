@@ -32,6 +32,7 @@ function ForgeContent() {
   });
   const [workouts, setWorkouts] = useState([]);
   const [activePlan, setActivePlan] = useState(null);
+  const [planLoading, setPlanLoading] = useState(true);
   const [selectedPlanDay, setSelectedPlanDay] = useState(0);
   const [plannedExercise, setPlannedExercise] = useState(null);
   function getTodayKey() {
@@ -42,19 +43,18 @@ function ForgeContent() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [receipt, setReceipt] = useState(null);
+  const [guidance, setGuidance] = useState([]);
+  const [session, setSession] = useState(null);
+  const [finishing, setFinishing] = useState(false);
+  const [sessionError, setSessionError] = useState('');
+  const [appliedGuidance, setAppliedGuidance] = useState(null);
+  const [advancing, setAdvancing] = useState(false);
 
   const isAuthed = Boolean(user);
 
   useEffect(() => {
-    fetchWorkouts();
-    api.get('/ai/workout-plan').then(({ data }) => {
-      setActivePlan(data);
-      const requestedDay = Number(new URLSearchParams(window.location.search).get('planDay'));
-      const boundedDay = Number.isInteger(requestedDay) && requestedDay >= 0 && requestedDay < (data.workoutPlan?.weekly_routine?.length || 0) ? requestedDay : 0;
-      setSelectedPlanDay(boundedDay);
-    }).catch(() => setActivePlan(null));
-  }, []);
-
   async function fetchWorkouts() {
     setLoading(true);
     try { 
@@ -68,13 +68,25 @@ function ForgeContent() {
       setLoading(false); 
     }
   }
+    fetchWorkouts();
+    api.get('/ai/training-coach').then(({ data }) => setGuidance(data.recommendations || [])).catch(() => setGuidance([]));
+    api.get('/ai/workout-plan').then(({ data }) => {
+      setActivePlan(data);
+      const requestedDay = Number(new URLSearchParams(window.location.search).get('planDay'));
+      const boundedDay = Number.isInteger(requestedDay) && requestedDay >= 0 && requestedDay < (data.workoutPlan?.weekly_routine?.length || 0) ? requestedDay : 0;
+      setSelectedPlanDay(boundedDay);
+    }).catch(() => setActivePlan(null)).finally(() => setPlanLoading(false));
+  }, []);
+
 
   function onChange(e) { 
+    if (e.target.name === 'name') { setPlannedExercise(null); setAppliedGuidance(null); }
     setForm({ ...form, [e.target.name]: e.target.value }); 
     setValidationErrors(prevErrors => ({ ...prevErrors, [e.target.name]: undefined }));
   }
 
   function applyTemplate(t) {
+    setPlannedExercise(null);
     setForm({ ...form, name: t.name, category: t.category, sets: t.sets, reps: t.reps, weight: t.weight, intensity: t.intensity });
     setValidationErrors({});
   }
@@ -82,14 +94,45 @@ function ForgeContent() {
   function loadPlannedExercise(exercise, exerciseIndex) {
     const repMatch = String(exercise.reps || 10).match(/\d+/);
     setPlannedExercise({ exerciseIndex });
+    const suggestion = guidance.find(item => item.name.toLowerCase() === exercise.name.toLowerCase());
+    setAppliedGuidance(suggestion || null);
     setForm(current => ({
       ...current,
       name: exercise.name,
       category: activePlan?.workoutPlan?.weekly_routine?.[selectedPlanDay]?.target_muscle_group || 'General',
       sets: Number(exercise.sets) || 3,
-      reps: repMatch ? Number(repMatch[0]) : 10
+      reps: suggestion?.reps || (repMatch ? Number(repMatch[0]) : 10),
+      weight: suggestion?.weight ?? 0,
+      feel: ''
     }));
     setValidationErrors({});
+  }
+
+  async function finishSession() {
+    if (finishing) return;
+    setFinishing(true);
+    setSessionError('');
+    try {
+      const { data } = await api.post('/ai/workout-plan/complete-day', { dayIndex: selectedPlanDay });
+      setSession(data.session);
+      setActivePlan(current => ({ ...current, sessions: [...(current.sessions || []).filter(item => item.dayIndex !== selectedPlanDay), data.session] }));
+    } catch (error) { setSessionError(error.response?.data?.error || 'Could not finish this session. Try again.'); }
+    finally { setFinishing(false); }
+  }
+
+  const selectedDay = activePlan?.workoutPlan?.weekly_routine?.[selectedPlanDay];
+  const allLogged = selectedDay?.exercises?.length > 0 && selectedDay.exercises.every((_exercise, index) => activePlan.progress?.some(item => item.dayIndex === selectedPlanDay && item.exerciseIndex === index));
+  const completedSession = session?.dayIndex === selectedPlanDay ? session : activePlan?.sessions?.find(item => item.dayIndex === selectedPlanDay);
+  const cycleComplete = activePlan?.workoutPlan?.weekly_routine?.length > 0 && activePlan.workoutPlan.weekly_routine.every((day, index) => !day.exercises?.length || activePlan.sessions?.some(item => item.dayIndex === index));
+
+  async function startNextCycle() {
+    if (advancing) return;
+    setAdvancing(true);
+    setSessionError('');
+    try {
+      await api.post('/ai/workout-plan/next-cycle');
+      window.location.assign('/ai-workout');
+    } catch (error) { setSessionError(error.response?.data?.error || 'Could not start the next cycle. Try again.'); setAdvancing(false); }
   }
 
   function validateForm() {
@@ -106,6 +149,7 @@ function ForgeContent() {
   }
 
   async function addWorkout() {
+    if (saving) return;
     if (!isAuthed) {
       setMsg('Please sign in to log workouts.');
       setTimeout(() => setMsg(''), 4000);
@@ -118,9 +162,11 @@ function ForgeContent() {
       return;
     }
 
+    setSaving(true);
     try {
       const payload = {
         ...form,
+        feel: form.feel || undefined,
         ...(plannedExercise && activePlan?.planId ? {
           plan_id: activePlan.planId,
           plan_day_index: selectedPlanDay,
@@ -128,8 +174,11 @@ function ForgeContent() {
         } : {})
       };
       const res = await api.post('/workouts', payload);
+      const saved = res.data || res;
+      setReceipt({ ...saved, planDay: plannedExercise ? selectedPlanDay : null, exerciseIndex: plannedExercise?.exerciseIndex });
       setWorkouts(prev => [res.data || res, ...prev]);
       setForm({ name: '', category: 'Chest', sets: 3, reps: 10, weight: 0, intensity: 'medium', date: getTodayKey() });
+      setAppliedGuidance(null);
       if (plannedExercise) {
         setActivePlan(current => current ? {
           ...current,
@@ -148,6 +197,8 @@ function ForgeContent() {
       const errMsg = err.response?.data?.error || err.response?.data?.message || err.response?.data?.errors?.[0]?.msg || err.message;
       setMsg(`Error logging workout: ${errMsg}`);
       setTimeout(() => setMsg(''), 5000);
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -161,6 +212,12 @@ function ForgeContent() {
     try {
       await api.delete(`/workouts/${id}`);
       setWorkouts(prev => prev.filter(w => (w._id || w.id) !== id));
+      setActivePlan(current => {
+        if (!current) return current;
+        const removed = current.progress.find(item => String(item.workoutId) === String(id));
+        return { ...current, progress: current.progress.filter(item => String(item.workoutId) !== String(id)), sessions: (current.sessions || []).filter(item => item.dayIndex !== removed?.dayIndex) };
+      });
+      setSession(null);
     } catch (err) { 
       console.error('Delete failed', err); 
       const errMsg = err.response?.data?.error || err.response?.data?.message || err.message;
@@ -192,7 +249,7 @@ function ForgeContent() {
           </div>
         </div>
       )}
-      {activePlan?.workoutPlan?.weekly_routine?.length ? (
+      {planLoading ? <p role="status">Loading your training day…</p> : activePlan?.workoutPlan?.weekly_routine?.length ? (
         <section className="session-plan" aria-labelledby="today-plan-title">
           <div className="session-plan-head">
             <div>
@@ -218,9 +275,28 @@ function ForgeContent() {
               );
             })}
           </ol>
+          <div className="session-finish">
+            <p>{allLogged ? 'Every exercise in this day is logged. Finish the session to save your summary.' : 'Log each planned exercise to unlock your session summary.'}</p>
+            <button type="button" className="btn-core-primary" disabled={!allLogged || finishing || Boolean(completedSession)} onClick={finishSession}>{completedSession ? 'Session finished ✓' : finishing ? 'Finishing…' : 'Finish session'}</button>
+            {sessionError && <p role="alert">{sessionError}</p>}
+            {cycleComplete && <><p>Your training cycle is complete. Carry the same schedule into the next cycle, with rep targets guided by your logged effort and linked form reviews. Previous logs are kept.</p><button type="button" disabled={advancing} onClick={startNextCycle} className="btn-core-secondary">{advancing ? 'Saving next cycle…' : 'Start next cycle with feedback →'}</button></>}
+          </div>
         </section>
       ) : (
         <section className="session-plan-empty"><p>No active training plan.</p><Link href="/ai-workout">Build your week →</Link></section>
+      )}
+      {completedSession && <section className="workout-receipt" aria-labelledby="session-summary-title"><p className="eyebrow">Session complete</p><h2 id="session-summary-title">You finished {selectedDay?.target_muscle_group || selectedDay?.day}.</h2><p>{completedSession.exerciseCount} exercises · {completedSession.totalSets} sets · Saved {new Date(completedSession.completedAt).toLocaleDateString()}</p><div className="workout-receipt-next"><div><h3>Review one working set</h3><p>Use the review links above to connect technique feedback to a logged exercise. Your effort rating and linked review guide the next baseline.</p></div><div><h3>Close the loop</h3><p>Review your next-session suggestions and log your meals against today’s nutrition targets.</p></div></div><div className="flex flex-wrap gap-3"><Link href="/progress" className="btn-core-primary">See next-session guidance</Link><Link href="/fuel" className="btn-core-secondary">Check today’s nutrition</Link><Link href="/" className="btn-core-secondary">Back to today</Link></div></section>}
+      {receipt && (
+        <section className="workout-receipt" aria-labelledby="workout-receipt-title" role="status">
+          <div className="workout-receipt-head"><p className="eyebrow">Saved to your training history</p><button type="button" onClick={() => setReceipt(null)} aria-label="Dismiss workout summary">Dismiss ×</button></div>
+          <h2 id="workout-receipt-title">{receipt.name}, logged.</h2>
+          <p>{receipt.sets} sets × {receipt.reps} reps · {receipt.weight} kg · {receipt.intensity} effort</p>
+          <div className="workout-receipt-next">
+            <div><h3>What changed</h3><p>{receipt.planDay !== null ? 'This exercise is marked complete in your current plan. Your dashboard now points to the next unfinished exercise.' : 'Your history and daily totals now include this exercise. Use it as a reference next time.'} Your weights haven’t been changed automatically.</p></div>
+            <div><h3>Make the next set useful</h3><p>Have a video of this exercise? Attach a form review to this log, or continue your session.</p><Link className="plan-day-action" href={`/form-analysis?workout=${receipt._id || receipt.id}&name=${encodeURIComponent(receipt.name)}${receipt.planDay !== null ? `&planDay=${receipt.planDay}&exercise=${receipt.exerciseIndex}` : ''}`}>Review this exercise →</Link></div>
+          </div>
+          <div className="flex flex-wrap gap-3"><button type="button" className="btn-core-primary" onClick={() => setReceipt(null)}>Continue logging</button><Link href="/progress" className="btn-core-secondary">Review progress</Link><Link href="/fuel" className="btn-core-secondary">Log a meal</Link></div>
+        </section>
       )}
       <section className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 card p-6">
@@ -228,6 +304,7 @@ function ForgeContent() {
             <div>
               <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Workout builder</div>
               <h2 className="text-3xl font-extrabold text-gray-900">{plannedExercise ? 'Log planned exercise' : 'Log an exercise'}</h2>
+              {appliedGuidance && <p className="muted mt-3">Suggested baseline: {appliedGuidance.weight} kg × {appliedGuidance.reps} reps. {appliedGuidance.reason} You can edit these values below.</p>}
             </div>
           </div>
 
@@ -239,10 +316,10 @@ function ForgeContent() {
 
           <div className="mt-4 grid sm:grid-cols-2 gap-3">
             <div>
-              <input id="forge-exercise-name" name="name" placeholder="Exercise name" value={form.name} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.name ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              <input id="forge-exercise-name" aria-label="Exercise name" name="name" placeholder="Exercise name" value={form.name} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.name ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
               {validationErrors.name && <p className="text-red-500 text-xs mt-1">{validationErrors.name}</p>}
             </div>
-            <select id="forge-category" name="category" value={form.category} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
+            <select id="forge-category" aria-label="Muscle group" name="category" value={form.category} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
               <option>Chest</option>
               <option>Back</option>
               <option>Legs</option>
@@ -252,27 +329,28 @@ function ForgeContent() {
               <option>Cardio</option>
             </select>
             <div>
-              <input id="forge-sets" name="sets" type="number" placeholder="Sets" value={form.sets} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.sets ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              <input id="forge-sets" aria-label="Completed sets" name="sets" type="number" placeholder="Sets" value={form.sets} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.sets ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
               {validationErrors.sets && <p className="text-red-500 text-xs mt-1">{validationErrors.sets}</p>}
             </div>
             <div>
-              <input id="forge-reps" name="reps" type="number" placeholder="Reps" value={form.reps} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.reps ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              <input id="forge-reps" aria-label="Reps per set" name="reps" type="number" placeholder="Reps" value={form.reps} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.reps ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
               {validationErrors.reps && <p className="text-red-500 text-xs mt-1">{validationErrors.reps}</p>}
             </div>
             <div>
-              <input id="forge-weight" name="weight" type="number" placeholder="Weight (kg)" value={form.weight} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.weight ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              <input id="forge-weight" aria-label="Weight in kilograms" name="weight" type="number" placeholder="Weight (kg)" value={form.weight} onChange={onChange} className={`w-full rounded-xl border ${validationErrors.weight ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
               {validationErrors.weight && <p className="text-red-500 text-xs mt-1">{validationErrors.weight}</p>}
             </div>
-            <select id="forge-intensity" name="intensity" value={form.intensity} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
+            <select id="forge-intensity" aria-label="Training intensity" name="intensity" value={form.intensity} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all">
               <option value="low">low</option>
               <option value="medium">medium</option>
               <option value="high">high</option>
             </select>
-            <input id="forge-date" name="date" type="date" value={form.date} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all sm:col-span-2" />
+            <input id="forge-date" aria-label="Training date" name="date" type="date" value={form.date} onChange={onChange} className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all sm:col-span-2" />
+            <label className="sm:col-span-2 text-sm">How did the completed sets feel?<select name="feel" value={form.feel || ''} onChange={onChange} className="input mt-2"><option value="">Not rated</option><option value="easy">Easy — more reps available</option><option value="moderate">Moderate — controlled effort</option><option value="hard">Hard — close to my limit</option><option value="very_hard">Very hard — could not repeat it</option></select></label>
           </div>
 
           <div className="mt-4">
-            <button id="btn-forge-add-workout" onClick={addWorkout} className="btn-core-primary" disabled={!isAuthed}>Add workout</button>
+            <button id="btn-forge-add-workout" onClick={addWorkout} className="btn-core-primary" disabled={!isAuthed || saving}>{saving ? 'Saving exercise…' : 'Save completed exercise'}</button>
           </div>
         </div>
 

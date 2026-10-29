@@ -8,11 +8,11 @@ const UserSchema = new mongoose.Schema({
   profile_picture: { type: String },
   
   // Physical attributes
-  goal: { type: String, default: 'Build Muscle', enum: ['Build Muscle', 'Lose Weight', 'Improve Health', 'Learn Yoga', 'Fix Posture'] },
+  goal: { type: String, default: 'Build Muscle', enum: ['Build Muscle', 'Cut Fat', 'Improve Endurance', 'General Fitness', 'Lose Weight', 'Improve Health', 'Learn Yoga', 'Fix Posture'] },
   weight_kg: { type: Number },
   height_cm: { type: Number },
   age_years: { type: Number },
-  activity_level: { type: String, default: 'moderate', enum: ['sedentary', 'light', 'moderate', 'active', 'very_active'] },
+  activity_level: { type: String, default: 'moderate', enum: ['sedentary', 'light', 'moderate', 'high', 'athlete', 'active', 'very_active'] },
   bmi: { type: Number },
   calorie_goal: { type: Number },
   protein_goal: { type: Number },

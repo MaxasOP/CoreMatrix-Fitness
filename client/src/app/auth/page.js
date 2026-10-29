@@ -81,16 +81,16 @@ export default function Auth() {
           <div className="space-y-4">
             {mode !== 'login' && (
               <>
-                <input id="auth-name" name="name" placeholder="Full Name" value={form.name} onChange={onChange} className={`w-full rounded-xl border ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'} px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+                <input id="auth-name" aria-label="Full name" name="name" placeholder="Full Name" value={form.name} onChange={onChange} className={`w-full rounded-xl border ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'} px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
                 {errors.name && <p className="text-xs text-red-500 -mt-2 ml-1">{errors.name}</p>}
               </>
             )}
             <div>
-              <input id="auth-email" name="email" type="email" placeholder="Email Address" value={form.email} onChange={onChange} className={`w-full rounded-xl border ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'} px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              <input id="auth-email" aria-label="Email address" name="email" type="email" placeholder="Email Address" value={form.email} onChange={onChange} className={`w-full rounded-xl border ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'} px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
               {errors.email && <p className="text-xs text-red-500 -mt-2 ml-1">{errors.email}</p>}
             </div>
             <div>
-              <input id="auth-password" name="password" type="password" placeholder="Password" value={form.password} onChange={onChange} className={`w-full rounded-xl border ${errors.password ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'} px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
+              <input id="auth-password" aria-label="Password" name="password" type="password" placeholder="Password" value={form.password} onChange={onChange} className={`w-full rounded-xl border ${errors.password ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'} px-4 py-3.5 text-gray-900 focus:bg-white focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 outline-none transition-all`} />
               {errors.password && <p className="text-xs text-red-500 -mt-2 ml-1">{errors.password}</p>}
             </div>
           </div>

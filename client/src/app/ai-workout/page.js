@@ -110,7 +110,7 @@ function WorkoutPlannerContent() {
           <div className="lg:col-span-1 bg-white rounded-2xl shadow-lg p-6 h-fit lg:sticky top-24">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Experience Level</label>
+                <label htmlFor="workout-experience-level" className="block text-sm font-semibold text-gray-700 mb-1">Experience Level</label>
                 <select
                   id="workout-experience-level"
                   name="experience_level"
@@ -125,7 +125,7 @@ function WorkoutPlannerContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Days Per Week</label>
+                <label htmlFor="workout-days-per-week" className="block text-sm font-semibold text-gray-700 mb-1">Days Per Week</label>
                 <input
                   id="workout-days-per-week"
                   type="number"
@@ -139,7 +139,7 @@ function WorkoutPlannerContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Available Equipment</label>
+                <label htmlFor="workout-equipment-available" className="block text-sm font-semibold text-gray-700 mb-1">Available Equipment</label>
                 <select
                   id="workout-equipment-available"
                   name="equipment_available"
