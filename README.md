@@ -4,11 +4,16 @@ An Indian-first training, nutrition, and fitness platform for planning workouts,
 
 The repository is still named `CoreMatrix-Fitness`; the current product interface and brand are **DumbbellDore**.
 
-![DumbbellDore dashboard on desktop](./docs/images/dashboard-desktop.png)
+<img width="645" height="1398" alt="image" src="https://github.com/user-attachments/assets/4d623f54-2017-424e-9f6b-e29225891ad9" />
 
-<p align="center">
-  <img src="./docs/images/dashboard-mobile.png" width="360" alt="DumbbellDore dashboard on mobile" />
-</p>
+<img width="645" height="1398" alt="image" src="https://github.com/user-attachments/assets/c5372358-fb73-4583-9d30-bf8aaa124e47" />
+<img width="645" height="1398" alt="image" src="https://github.com/user-attachments/assets/394879e9-092a-4e1c-b632-6c962f3a7c72" />
+<img width="645" height="1398" alt="image" src="https://github.com/user-attachments/assets/75f08213-0424-46a8-a2c6-d89b4bb1e040" />
+
+
+<img width="645" height="1398" alt="image" src="https://github.com/user-attachments/assets/95c9ebc8-7085-4dc6-9c3a-a54d56845655" />
+<img width="645" height="1398" alt="image" src="https://github.com/user-attachments/assets/4790adb9-7e15-47d5-b7d4-24fbe5823e5b" />
+
 
 ## What is included
 
