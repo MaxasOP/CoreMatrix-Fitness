@@ -508,6 +508,10 @@ button:disabled {
 }
 
 /* Focused dashboard */
+.page-photo-hero { position:relative; display:flex; align-items:flex-end; min-height:340px; padding:clamp(24px,4vw,40px); overflow:hidden; border-radius:28px; background:#11140f; color:white; }
+.page-photo-hero > img { object-position:center 8%!important; }
+.page-photo-hero > .relative { max-width:560px; }
+@media (max-width:640px) { .page-photo-hero { min-height:300px; border-radius:20px; } }
 .nutrition-brief { margin:18px 0; padding:clamp(24px,4vw,40px); border-block:1px solid var(--line); }
 .nutrition-brief h2 { font-family:var(--font-display),sans-serif; font-size:clamp(26px,3vw,36px); line-height:1.1; }
 .nutrition-brief p { max-width:720px; color:var(--muted); font-size:14px; line-height:1.65; margin:14px 0; }
@@ -942,7 +946,7 @@ button:disabled {
 .plan-exercise-row.is-complete { opacity:.65; }
 .session-plan { border-top:1px solid rgba(255,255,255,.14); border-bottom:1px solid rgba(255,255,255,.1); padding:26px 0 8px; }
 .session-plan-head { display:flex; align-items:end; justify-content:space-between; gap:24px; }
-.session-plan-head h1 { margin-top:6px; color:#eef2e9; font-size:clamp(28px,5vw,48px); font-weight:780; line-height:1; letter-spacing:-.035em; }
+.session-plan-head h2 { margin-top:6px; color:#eef2e9; font-size:clamp(28px,5vw,48px); font-weight:780; line-height:1; letter-spacing:-.035em; }
 .session-plan-head > a,.session-plan-empty a { color:#bfff4a; font-size:13px; font-weight:750; }
 .plan-day-tabs { margin-top:24px; display:flex; gap:18px; overflow-x:auto; border-bottom:1px solid rgba(255,255,255,.08); scrollbar-width:none; }
 .plan-day-tabs button { flex:0 0 auto; min-height:42px; color:#777f74; border-bottom:2px solid transparent; font-size:12px; font-weight:750; }
@@ -969,7 +973,7 @@ button:disabled {
 @media (max-width:640px) {
   .session-plan { padding:24px 20px 4px; }
   .session-plan-head { align-items:start; }
-  .session-plan-head h1 { font-size:30px; }
+  .session-plan-head h2 { font-size:30px; }
   .session-exercise-list li { grid-template-columns:26px 1fr; padding:14px 0; }
   .session-exercise-list li > button,.session-exercise-list li > a { grid-column:2; justify-self:start; min-height:34px; display:flex; align-items:center; }
   .session-plan-empty { padding:22px 20px; }

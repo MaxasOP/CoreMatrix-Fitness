@@ -228,6 +228,25 @@ function ForgeContent() {
 
   return (
     <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <section className="page-photo-hero">
+          <Image
+            src="/assets/forge-athlete.webp"
+            alt="Female athlete performing a barbell front squat with proper form"
+            fill
+            priority
+            quality={95}
+            sizes="(max-width: 1280px) 100vw, 1280px"
+            className="object-cover object-[center_12%] sm:object-[center_15%] md:object-[center_18%] transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent pointer-events-none" />
+          <div className="relative z-10 max-w-sm">
+            <div className="font-semibold text-lime-300 uppercase tracking-wider text-xs mb-1.5 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Focus
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Train with intent.</h1>
+            <p className="text-gray-200 mt-2 text-sm leading-relaxed">Use templates to speed up logging. Capture sets, reps, and intensity in under 10 seconds.</p>
+          </div>
+        </section>
       {msg && (
         <div className="fixed z-[100] bottom-24 inset-x-4 sm:bottom-6 sm:inset-x-auto sm:right-6 px-5 py-4 rounded-2xl shadow-2xl bg-white/95 backdrop-blur-xl border border-gray-100 text-gray-900 font-bold flex items-center gap-4 reveal">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg shrink-0 ${msg.includes('sign in') || msg.includes('manage') ? 'bg-gradient-to-br from-orange-400 to-red-500 shadow-orange-500/30' : 'bg-gradient-to-br from-green-400 to-emerald-600 shadow-emerald-500/30'}`}>
@@ -254,7 +273,7 @@ function ForgeContent() {
           <div className="session-plan-head">
             <div>
               <p className="eyebrow">Active plan</p>
-              <h1 id="today-plan-title">{activePlan.workoutPlan.weekly_routine[selectedPlanDay]?.day}: {activePlan.workoutPlan.weekly_routine[selectedPlanDay]?.target_muscle_group}</h1>
+              <h2 id="today-plan-title">{activePlan.workoutPlan.weekly_routine[selectedPlanDay]?.day}: {activePlan.workoutPlan.weekly_routine[selectedPlanDay]?.target_muscle_group}</h2>
             </div>
             <Link href="/ai-workout">Full plan</Link>
           </div>
@@ -298,7 +317,7 @@ function ForgeContent() {
           <div className="flex flex-wrap gap-3"><button type="button" className="btn-core-primary" onClick={() => setReceipt(null)}>Continue logging</button><Link href="/progress" className="btn-core-secondary">Review progress</Link><Link href="/fuel" className="btn-core-secondary">Log a meal</Link></div>
         </section>
       )}
-      <section className="grid md:grid-cols-3 gap-6">
+      <section>
         <div className="md:col-span-2 card p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -354,25 +373,6 @@ function ForgeContent() {
           </div>
         </div>
 
-        <aside className="order-first md:order-last bg-gray-900 text-white rounded-2xl p-6 sm:p-7 shadow-lg relative overflow-hidden group min-h-[460px] sm:min-h-[520px] md:min-h-full flex items-end">
-          <Image
-            src="/assets/forge-athlete.webp"
-            alt="Female athlete performing a barbell front squat with proper form"
-            fill
-            priority
-            quality={95}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover object-[center_12%] sm:object-[center_15%] md:object-[center_18%] transition-transform duration-700 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent pointer-events-none" />
-          <div className="relative z-10 max-w-sm">
-            <div className="font-semibold text-lime-300 uppercase tracking-wider text-xs mb-1.5 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" /> Focus
-            </div>
-            <h3 className="text-2xl font-extrabold text-white tracking-tight">Train with intent</h3>
-            <p className="text-gray-200 mt-2 text-sm leading-relaxed">Use templates to speed up logging. Capture sets, reps, and intensity in under 10 seconds.</p>
-          </div>
-        </aside>
       </section>
 
       <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">

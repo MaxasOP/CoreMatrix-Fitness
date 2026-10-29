@@ -89,14 +89,32 @@ function ProgressContent() {
 
   return (
     <div className="mt-6 space-y-8 page page-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <section className="page-photo-hero">
+          <Image
+            src="/assets/progress-athlete.webp"
+            alt="Athlete pushing sled in high-intensity training session"
+            fill
+            priority
+            quality={95}
+            sizes="(max-width: 1280px) 100vw, 1280px"
+            className="object-cover object-[center_18%] sm:object-[center_20%] md:object-[center_22%] transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent pointer-events-none" />
+          <div className="relative z-10 max-w-sm">
+            <div className="font-semibold text-lime-300 uppercase tracking-wider text-xs mb-1.5">This week</div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Your training progress.</h1>
+            <p className="text-gray-200 mt-2 text-sm leading-relaxed">Your logged exercises are measured against the active plan.</p>
+            <Link href="/ai-workout" className="plan-day-action mt-4 inline-flex">Adjust plan →</Link>
+          </div>
+        </section>
       <TrainingGuidance />
-      <section className="grid md:grid-cols-3 gap-6">
+      <section>
         <div className="md:col-span-2 card p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-semibold text-gray-500 uppercase tracking-wide text-xs mb-2">Consistency</div>
-                <h1 className="text-3xl font-extrabold text-gray-900">Weekly progress</h1>
+                <h2 className="text-3xl font-extrabold text-gray-900">Weekly progress</h2>
               </div>
               <span className="hidden sm:inline-block text-xs font-semibold text-gray-500">Target · {targetDays} days</span>
             </div>
@@ -118,24 +136,6 @@ function ProgressContent() {
           </div>
         </div>
 
-        <aside className="order-first md:order-last bg-gray-900 text-white rounded-2xl p-6 sm:p-7 shadow-lg relative overflow-hidden group min-h-[460px] sm:min-h-[520px] md:min-h-full flex items-end">
-          <Image
-            src="/assets/progress-athlete.webp"
-            alt="Athlete pushing sled in high-intensity training session"
-            fill
-            priority
-            quality={95}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover object-[center_18%] sm:object-[center_20%] md:object-[center_22%] transition-transform duration-700 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent pointer-events-none" />
-          <div className="relative z-10 max-w-sm">
-            <div className="font-semibold text-lime-300 uppercase tracking-wider text-xs mb-1.5">This week</div>
-            <h3 className="text-2xl font-extrabold text-white tracking-tight">{completed} training days</h3>
-            <p className="text-gray-200 mt-2 text-sm leading-relaxed">Your logged exercises are measured against the active plan.</p>
-            <Link href="/ai-workout" className="plan-day-action mt-4 inline-flex">Adjust plan →</Link>
-          </div>
-        </aside>
       </section>
 
       <section className="grid md:grid-cols-3 gap-4">

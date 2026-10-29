@@ -142,7 +142,6 @@ function FuelContent() {
         </div>
       )}
       {/* Top Meal Hero Showcase */}
-      {loading ? <p role="status">Loading today’s nutrition…</p> : <NutritionBrief user={user} meals={meals} workouts={workouts} />}
       <section className="relative min-h-[300px] sm:min-h-[360px] md:min-h-[340px] rounded-[28px] overflow-hidden bg-[#11140f] shadow-xl flex items-end">
         <Image
           src="/assets/meal.webp"
@@ -165,6 +164,7 @@ function FuelContent() {
         </div>
       </section>
 
+      {loading ? <p role="status">Loading today’s nutrition…</p> : <NutritionBrief user={user} meals={meals} workouts={workouts} />}
       <section className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 card p-6">
           <div className="flex items-center justify-between">
