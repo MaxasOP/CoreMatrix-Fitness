@@ -116,7 +116,7 @@ function VideoFormAnalysisContent() {
       <header className="analysis-intro">
         <p className="analysis-kicker">Movement review</p>
         <h1>Put one working set under the lens.</h1>
-        <p>Record from the side with your full body visible. CoreMatrix follows the main working joint, counts complete repetitions, and flags visible range issues.</p>
+        <p>Record from the side with your full body visible. DumbbellDore follows the main working joint, counts complete repetitions, and flags visible range issues.</p>
         {linkedWorkout ? <p className="analysis-linked-note">Linked to the exercise you just logged. The result will appear with that session.</p> : null}
       </header>
 

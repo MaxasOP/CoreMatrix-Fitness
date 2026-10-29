@@ -81,6 +81,11 @@ body {
 }
 
 .site-shell { isolation: isolate; }
+.brand-lockup { display:inline-flex; align-items:center; gap:9px; color:#f1f4ed; text-decoration:none; }
+.brand-mark { width:27px; height:27px; color:#bfff4a; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:square; stroke-linejoin:miter; transition:transform .2s ease; }
+.brand-lockup:hover .brand-mark { transform:translateY(-1px); }
+.brand-wordmark { font-family:var(--font-display),sans-serif; font-size:20px; font-weight:500; letter-spacing:-.035em; line-height:1; white-space:nowrap; }
+.brand-wordmark b { font-weight:800; }
 .site-canvas {
   position: fixed;
   inset: 0;
@@ -778,7 +783,9 @@ button:disabled {
 
 @media (max-width:640px) {
   .site-header-inner { height:64px; }
-  .site-header .site-logo { height:32px; }
+  .brand-lockup { gap:7px; }
+  .brand-mark { width:23px; height:23px; }
+  .brand-wordmark { font-size:17px; }
   .header-account-action { min-height:40px; padding:0 14px; border-radius:9px; font-size:13px; }
   .site-main { padding-bottom:0; }
   .dashboard-shell { width:100%; padding:0; }
@@ -815,7 +822,7 @@ button:disabled {
 }
 
 @media (max-width:370px) {
-  .site-header .site-logo { height:29px; }
+  .brand-wordmark { font-size:16px; }
   .header-account-action { padding-inline:12px; }
   .command-hero { padding-inline:16px; }
   .command-hero h1 { font-size:clamp(37px,11.5vw,44px); }

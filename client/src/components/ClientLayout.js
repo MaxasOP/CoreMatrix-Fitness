@@ -2,7 +2,6 @@
 
 import React, { useContext, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { AuthContext, AuthProvider } from '../AuthContext';
 
@@ -48,17 +47,11 @@ function LayoutContent({ children }) {
 
       <header className="site-header sticky top-0 z-50 backdrop-blur-xl border-b border-white/10">
         <div className="site-header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <Link href="/" className="group shrink-0 flex items-center" aria-label="CoreMatrix home">
-            <Image
-              src="/assets/corematrix-logo.webp"
-              alt="CoreMatrix"
-              width={768}
-              height={256}
-              preload
-              quality={95}
-              className="site-logo w-auto transition-opacity group-hover:opacity-80"
-              sizes="(max-width: 640px) 132px, 156px"
-            />
+          <Link href="/" className="brand-lockup group shrink-0" aria-label="DumbbellDore home">
+            <svg className="brand-mark" viewBox="0 0 28 28" aria-hidden="true">
+              <path d="M3 11v6M7 8v12M21 8v12M25 11v6M7 14h14" />
+            </svg>
+            <span className="brand-wordmark"><b>Dumbbell</b>Dore</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-2 lg:gap-3">

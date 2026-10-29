@@ -8,11 +8,11 @@ import { usePathname } from 'next/navigation';
 export default function useDocumentMetadata({ title, description }) {
   const pathname = usePathname();
   const siteUrl = 'https://corematrix.vercel.app';
-  const defaultTitle = 'CoreMatrix - Premium Fitness & Nutrition Tracker';
-  const defaultDesc = 'CoreMatrix helps you forge workouts, log meals, track macronutrients, and analyze your lifting form with AI.';
+  const defaultTitle = 'DumbbellDore - Fitness & Nutrition Tracker';
+  const defaultDesc = 'DumbbellDore helps you log workouts and meals, track progress, and review your lifting form.';
 
   useEffect(() => {
-    const finalTitle = title ? `${title} | CoreMatrix` : defaultTitle;
+    const finalTitle = title ? `${title} | DumbbellDore` : defaultTitle;
     document.title = finalTitle;
 
     const getOrCreateMeta = (attrName, attrValue) => {

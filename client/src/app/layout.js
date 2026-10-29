@@ -14,8 +14,8 @@ const barlowCondensed = Barlow_Condensed({
 });
 
 export const metadata = {
-  title: "CoreMatrix",
-  description: "CoreMatrix records workouts, meals, form reviews, and weekly training progress.",
+  title: "DumbbellDore",
+  description: "DumbbellDore records workouts, meals, form reviews, and weekly training progress.",
 };
 
 export default function RootLayout({ children }) {

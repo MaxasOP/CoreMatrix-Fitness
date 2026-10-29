@@ -18,7 +18,7 @@ export default function Auth() {
 
   useDocumentMetadata({
     title: mode === 'login' ? 'Sign In' : 'Join Program',
-    description: 'Access your CoreMatrix account to log workouts, track progress, and customize your diet and fitness goals.'
+    description: 'Access your DumbbellDore account to log workouts, track progress, and customize your diet and fitness goals.'
   });
 
   function onChange(e) {
