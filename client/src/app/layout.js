@@ -16,6 +16,15 @@ const barlowCondensed = Barlow_Condensed({
 export const metadata = {
   title: "DumbbellDore",
   description: "DumbbellDore records workouts, meals, form reviews, and weekly training progress.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({ children }) {
